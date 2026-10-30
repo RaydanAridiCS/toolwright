@@ -49,6 +49,7 @@ import meta_lorem_ipsum from "./tools/lorem-ipsum/meta";
 import meta_markdown_preview from "./tools/markdown-preview/meta";
 import meta_meeting_planner from "./tools/meeting-planner/meta";
 import meta_merge_pdf from "./tools/merge-pdf/meta";
+import meta_mermaid_editor from "./tools/mermaid-editor/meta";
 import meta_mime_types from "./tools/mime-types/meta";
 import meta_mortgage_affordability_calculator from "./tools/mortgage-affordability-calculator/meta";
 import meta_number_base_converter from "./tools/number-base-converter/meta";
@@ -143,6 +144,7 @@ export const tools: readonly ToolMeta[] = [
   meta_markdown_preview,
   meta_meeting_planner,
   meta_merge_pdf,
+  meta_mermaid_editor,
   meta_mime_types,
   meta_mortgage_affordability_calculator,
   meta_number_base_converter,

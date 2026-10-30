@@ -50,6 +50,7 @@ const PAGES = [
   "/tools/unit-price-comparison",
   "/tools/meeting-planner",
   "/tools/sign-pdf",
+  "/tools/mermaid-editor",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

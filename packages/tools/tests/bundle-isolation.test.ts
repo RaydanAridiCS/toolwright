@@ -37,6 +37,17 @@ describe("PDF.js stays out of shared bundles", () => {
     expect(index).not.toContain("pdf-compress");
   });
 
+  it("loads Mermaid only from one file, with a dynamic import", () => {
+    const importsMermaid = /(?:from\s+|import\(\s*)["']mermaid["']/;
+    expect(FILES.filter((f) => importsMermaid.test(f.src)).map((f) => f.rel)).toEqual(["packages/tools/src/shared/mermaid-render.ts"]);
+    const render = FILES.find((f) => f.rel === "packages/tools/src/shared/mermaid-render.ts")!.src;
+    expect(render).toMatch(/await import\("mermaid"\)/);
+    expect(render).not.toMatch(/^\s*import\s[^;(]*from\s+["']mermaid["']/m);
+    // The security settings the privacy claim relies on.
+    expect(render).toContain('securityLevel: "strict"');
+    expect(render).toContain("htmlLabels: false");
+  });
+
   it("keeps DOM and network APIs out of the pure compression module", () => {
     const core = FILES.find((f) => f.rel === "packages/core/src/pdf-compress.ts")!.src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|\s)\/\/.*$/gm, "$1");
     expect(core).not.toMatch(/\b(document|window|fetch|OffscreenCanvas|createImageBitmap|localStorage)\b/);

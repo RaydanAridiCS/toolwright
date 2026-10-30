@@ -53,6 +53,7 @@ export const toolLoaders: Record<string, ToolLoader> = {
   "markdown-preview": () => import("./tools/markdown-preview/Tool"),
   "meeting-planner": () => import("./tools/meeting-planner/Tool"),
   "merge-pdf": () => import("./tools/merge-pdf/Tool"),
+  "mermaid-editor": () => import("./tools/mermaid-editor/Tool"),
   "mime-types": () => import("./tools/mime-types/Tool"),
   "mortgage-affordability-calculator": () => import("./tools/mortgage-affordability-calculator/Tool"),
   "number-base-converter": () => import("./tools/number-base-converter/Tool"),

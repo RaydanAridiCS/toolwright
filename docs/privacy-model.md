@@ -42,6 +42,7 @@ Other headers: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origi
 - `packages/core` is free of DOM and network APIs.
 - Shareable state lives in the URL **fragment** (`#s=…`). Browsers never include fragments in HTTP requests or `Referer` headers.
 - Tools handling secrets (JWTs, passwords, API keys, Wi-Fi passwords) keep that data in component state, not the URL.
+- The Mermaid Diagram Editor loads the `mermaid` library on demand from this site, in strict security mode, with plain SVG labels, and shows the result through an `<img>` (which cannot run script). The library makes no network requests of its own (checked in its source), and a browser test draws every diagram type under the production policy.
 - Compress PDF's "Smallest file" mode and the PDF Page Organizer's page previews load PDF.js on demand. The library, its worker, fonts and character maps are all served from this site (`/pdfjs/`, copied from the npm package at build time), so the page still talks only to its own origin. WebAssembly is not used: the policy has no `'wasm-unsafe-eval'`, so PDF.js runs its JavaScript decoders. The compression worker for "Keep text" is bundled with the page and receives the file once, in memory.
 - User-supplied HTML (Markdown preview) is sanitized with DOMPurify before insertion; SVG output is generated from controlled values; SVG input is rendered via `<img>`, which cannot run scripts.
 

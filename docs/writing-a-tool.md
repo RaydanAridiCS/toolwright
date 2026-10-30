@@ -202,6 +202,8 @@
 - **Bundlers rewrite worker entries.** Your own worker (`new Worker(new URL("./x.worker.ts", import.meta.url))`) works, but a third-party worker such as PDF.js's never finished its handshake inside Turbopack's wrapper. Copy it to `apps/web/public/` with a script (see `scripts/copy-pdfjs-assets.mjs`) and start it from a plain URL.
 - **The production CSP has no `'wasm-unsafe-eval'`.** Dev mode has `'unsafe-eval'`, which hides this. Anything that needs WebAssembly must be tested against `npm run build && npm start` (the e2e suite does) and needs a JavaScript fallback or a deliberate CSP change.
 - **Browsers apply the EXIF turn when decoding a JPEG, even with `imageOrientation: "none"`.** PDFs ignore EXIF, so strip the EXIF segment (`stripJpegExif` in core) before drawing the image to a canvas.
+- **Abandoned async work must still reset your "busy" flag.** If an effect starts a slow draw and is replaced before it finishes (the user cleared the text), the old run is ignored, so the new branch has to clear `busy` itself. Otherwise the UI sticks on "Drawing…".
+- **Playwright's `fill()` is very slow for tens of thousands of characters** in a textarea. To test a huge paste, set the value with the native setter and dispatch an `input` event (see `e2e/mermaid.spec.ts`); the tool itself handles it in milliseconds.
 - **Never offer a bigger file.** Run the result through `pickSmaller` and give the original back with an honest message when nothing was gained.
 - **Honest scope:** check \`docs/tools.md\` for an existing tool before you promise a new one fills a gap. The PDF organizer overlaps Extract and Rotate; its value is the visual list and the duplex collation.
 `

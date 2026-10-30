@@ -10,5 +10,5 @@ export default defineTool({
   category: "text",
   keywords: ["markdown editor", "markdown preview", "markdown to html", "gfm", "readme editor"],
   icon: BookOpen,
-  related: ["text-diff", "word-counter", "html-entities", "html-to-markdown"],
+  related: ["mermaid-editor", "text-diff", "word-counter", "html-entities", "html-to-markdown"],
 });
