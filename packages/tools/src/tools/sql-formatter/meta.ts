@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["sql formatter", "sql beautifier", "format sql", "minify sql", "postgres formatter", "mysql formatter"],
   icon: Database,
   popular: true,
-  related: ["json-formatter", "text-diff", "string-escape"],
+  related: ["graphql-formatter", "json-formatter", "text-diff", "string-escape"],
 });

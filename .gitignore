@@ -14,3 +14,6 @@ test-results
 
 # Copied from pdfjs-dist by scripts/copy-pdfjs-assets.mjs
 apps/web/public/pdfjs/
+
+# Private notes from the assistant to the owner (decisions, concerns, things to look at)
+owner-notes/

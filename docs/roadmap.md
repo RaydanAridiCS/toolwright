@@ -6,14 +6,14 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 
 - **Audio and video** — trim, convert and compress in the browser (WebAssembly FFmpeg). Must be bundled locally (the CSP forbids loading it from a CDN) and lazy-loaded.
 - **Image background remover** — a small on-device model.
-- **JSON merge** (three-way, key-order aware). JSON diff, the JSON Schema generator and the JSONPath tester are built.
+- **JSON** — JSON diff, three-way JSON merge, the JSON Schema generator and the JSONPath tester are built.
 - **HEIC → JPG**, **animated GIF/APNG tools**. The favicon pack generator is built.
 - **OCR** — text from images and scanned PDFs with a local engine.
 - **Diagrams** — Mermaid editor/renderer.
-- **Text** — readability scores, text-to-speech preview using the Web Speech API. HTML → Markdown is built; Markdown → HTML is the Markdown Previewer's HTML tab.
-- **Developer** — GraphQL formatter, Dockerfile/YAML linting, fetch → cURL (the reverse of the built cURL → fetch converter).
-- **Calculators** — unit price comparison, BMI (with honest caveats), timezone meeting planner with shareable link. Mortgage affordability and the salary/hourly converter are built.
-- **PDF** — Compress PDF follow-ups: recompress lossless images that are clearly photographs, and let Smallest file keep selectable text with an invisible text layer (needs OCR). Page previews could also come to Split PDF and Extract PDF Pages, using the same renderer.
+- **Text** — text-to-speech preview using the Web Speech API. Readability scores and HTML → Markdown are built; Markdown → HTML is the Markdown Previewer's HTML tab.
+- **Developer** — GraphQL formatter, Dockerfile linter, YAML validator and fetch → cURL are built. Still open: a `docker-compose` / Kubernetes manifest checker (needs schemas bundled locally), and a GraphQL query-against-schema validator.
+- **Calculators** — unit price comparison, BMI (with honest caveats), the meeting time planner, mortgage affordability and the salary/hourly converter are built.
+- **PDF** — Sign PDF (visual signatures) is built. A certificate-based digital signature is a separate, larger job that needs a security review. Compress PDF follow-ups: recompress lossless images that are clearly photographs, and let Smallest file keep selectable text with an invisible text layer (needs OCR). Page previews could also come to Split PDF and Extract PDF Pages, using the same renderer.
 
 ## Platform improvements
 

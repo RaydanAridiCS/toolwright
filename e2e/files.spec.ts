@@ -2,7 +2,9 @@ import { readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
-import { PDFDocument, PDFName, PDFRawStream, decodePDFRawStream } from "pdf-lib";
+import { PDFDocument, PDFName, PDFRawStream, decodePDFRawStream, degrees } from "pdf-lib";
+import { scanContent } from "../packages/core/src/pdf-compress";
+import { displaySize, readPageGeometry, userToDisplay } from "../packages/core/src/pdf-sign";
 import { unzipSync } from "fflate";
 import { appAlert, makeJpeg, makePng, trackRequests, withExifOrientation } from "./helpers";
 
@@ -345,6 +347,121 @@ test.describe("Compress PDF in a real browser", () => {
     await expect(page.getByText("Cancelled. Your original file is untouched.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Flatten pages and compress" })).toBeEnabled();
     await expect(page.getByText("Your smaller file is ready.")).toHaveCount(0);
+  });
+});
+
+/** Where the signature picture ended up on a page, as a reader sees it (fractions of the shown page), found by replaying the page's drawing instructions. */
+async function signaturePlacement(bytes: Buffer, pageIndex: number) {
+  const g = (await readPageGeometry(new Uint8Array(bytes)))[pageIndex]!;
+  const shown = displaySize(g);
+  const doc = await PDFDocument.load(bytes);
+  const contents = doc.getPage(pageIndex).node.Contents();
+  const streams = contents && "size" in contents ? Array.from({ length: contents.size() }, (_, i) => doc.context.lookup(contents.get(i))) : [contents];
+  const text = streams.map((s) => Buffer.from(decodePDFRawStream(s as PDFRawStream).decode()).toString("latin1")).join("\n");
+  let matrix: number[] | null = null;
+  scanContent(text, [1, 0, 0, 1, 0, 0], { onDo: (_n, ctm) => (matrix = [...ctm]) });
+  if (!matrix) return null;
+  const [a, b, c, d, e, f] = matrix as number[];
+  const at = (px: number, py: number) => userToDisplay(g, a! * px + c! * py + e!, b! * px + d! * py + f!);
+  const topLeft = at(0, 1);
+  const bottomLeft = at(0, 0);
+  const bottomRight = at(1, 0);
+  return { left: topLeft.u / shown.width, top: topLeft.v / shown.height, width: (bottomRight.u - bottomLeft.u) / shown.width, upright: topLeft.v < bottomLeft.v && bottomRight.u > bottomLeft.u };
+}
+
+test.describe("Sign PDF", () => {
+  async function turnedPdf(): Promise<Buffer> {
+    const doc = await PDFDocument.create();
+    const font = await doc.embedFont("Helvetica");
+    const first = doc.addPage([612, 792]);
+    first.setRotation(degrees(90));
+    first.drawText("Contract, page 1 (stored turned)", { x: 60, y: 700, size: 18, font });
+    doc.addPage([612, 792]).drawText("Contract, page 2", { x: 60, y: 700, size: 18, font });
+    return Buffer.from(await doc.save());
+  }
+
+  async function draw(page: import("@playwright/test").Page) {
+    const pad = page.getByLabel(/^Signature pad/);
+    await pad.scrollIntoViewIfNeeded();
+    const box = (await pad.boundingBox())!;
+    await page.mouse.move(box.x + box.width * 0.1, box.y + box.height * 0.6);
+    await page.mouse.down();
+    for (let i = 1; i <= 24; i++) await page.mouse.move(box.x + box.width * (0.1 + i * 0.03), box.y + box.height * (0.5 + 0.25 * Math.sin(i / 2)));
+    await page.mouse.up();
+  }
+
+  test("draw it, nudge it with the keyboard, and it lands upright on a page that is stored turned", async ({ page, baseURL }) => {
+    test.setTimeout(90_000);
+    const tracker = trackRequests(page);
+    const violations: string[] = [];
+    page.on("console", (m) => /Content Security Policy|Refused to/i.test(m.text()) && violations.push(m.text()));
+    await page.goto("/tools/sign-pdf");
+    await page.locator('input[type="file"]').setInputFiles({ name: "contract.pdf", mimeType: "application/pdf", buffer: await turnedPdf() });
+    await expect(page.getByText("Make a signature above")).toBeVisible();
+    await draw(page);
+    const box = page.getByTestId("signature-box");
+    await expect(box).toBeVisible();
+    await expect(page.getByAltText("Page 1 of the PDF")).toBeVisible({ timeout: 30_000 });
+
+    await box.focus();
+    for (let i = 0; i < 10; i++) await page.keyboard.press("ArrowLeft"); // 0.55 -> 0.45
+    await page.getByRole("button", { name: "Sign PDF", exact: true }).click();
+    await expect(page.getByText("Done! Your file is ready.")).toBeVisible();
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
+    expect(download.suggestedFilename()).toBe("contract-signed.pdf");
+    const signed = await readFile((await download.path())!);
+
+    const placed = (await signaturePlacement(signed, 0))!;
+    expect(placed.upright).toBe(true);
+    expect(placed.left).toBeCloseTo(0.45, 2);
+    expect(placed.top).toBeCloseTo(0.8, 2);
+    expect(placed.width).toBeCloseTo(0.3, 2);
+    // Only the page that was shown was signed.
+    expect(await signaturePlacement(signed, 1)).toBeNull();
+    expect((await PDFDocument.load(signed)).getPageCount()).toBe(2);
+
+    expect(tracker.external(baseURL!)).toEqual([]);
+    expect(tracker.all.filter((r) => r.method() !== "GET" && !r.url().includes("/_next/"))).toEqual([]);
+    expect(violations).toEqual([]);
+  });
+
+  test("type it, sign every page and print a date line", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.goto("/tools/sign-pdf");
+    await page.locator('input[type="file"]').setInputFiles({ name: "contract.pdf", mimeType: "application/pdf", buffer: await turnedPdf() });
+    await page.getByRole("radio", { name: "Type" }).check({ force: true });
+    await page.getByLabel("Your name").fill("Ada Lovelace");
+    await expect(page.getByTestId("signature-box")).toBeVisible();
+    await page.getByRole("radio", { name: "Every page" }).check({ force: true });
+    await page.getByRole("switch", { name: /Print a line of text/ }).check({ force: true });
+    await page.getByLabel("Text under the signature", { exact: true }).fill("Signed 2026-03-15");
+    await page.getByRole("button", { name: "Sign 2 pages" }).click();
+    await expect(page.getByText("2 pages signed")).toBeVisible();
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
+    const signed = await readFile((await download.path())!);
+    for (const index of [0, 1]) {
+      const placed = (await signaturePlacement(signed, index))!;
+      expect(placed.upright).toBe(true);
+      expect(placed.left).toBeCloseTo(0.55, 2);
+    }
+    expect(pageContent(await PDFDocument.load(signed), 1)).toContain(hex("Signed 2026-03-15"));
+  });
+
+  test("warns when the file already carries a digital signature, and refuses signing without a signature", async ({ page }) => {
+    await page.goto("/tools/sign-pdf");
+    const doc = await PDFDocument.create();
+    doc.addPage([300, 300]);
+    doc.context.register(doc.context.obj({ Type: "Sig", ByteRange: [0, 10, 20, 30] }));
+    await page.locator('input[type="file"]').setInputFiles({ name: "signed.pdf", mimeType: "application/pdf", buffer: Buffer.from(await doc.save({ useObjectStreams: false })) });
+    await expect(page.getByRole("status").filter({ hasText: "looks digitally signed" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign PDF", exact: true })).toBeDisabled();
+    await expect(page.getByText("A picture of a signature, not a digital signature")).toBeVisible();
+  });
+
+  test("a non-PDF is refused with a clear message", async ({ page }) => {
+    await page.goto("/tools/sign-pdf");
+    await page.locator('input[type="file"]').setInputFiles({ name: "x.pdf", mimeType: "application/pdf", buffer: Buffer.from("nope, not a pdf") });
+    await expect(appAlert(page)).toContainText("does not look like a PDF");
   });
 });
 

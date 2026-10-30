@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["time zone converter", "world clock", "meeting planner", "convert time", "utc converter", "est to pst"],
   icon: Globe,
   popular: true,
-  related: ["timestamp-converter", "date-calculator", "cron-explainer"],
+  related: ["meeting-planner", "timestamp-converter", "date-calculator", "cron-explainer"],
 });

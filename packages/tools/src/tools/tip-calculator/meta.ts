@@ -9,5 +9,5 @@ export default defineTool({
   category: "calculators",
   keywords: ["tip calculator", "split bill", "bill splitter", "gratuity calculator", "restaurant tip"],
   icon: Receipt,
-  related: ["percentage-calculator", "loan-calculator", "unit-converter"],
+  related: ["unit-price-comparison", "percentage-calculator", "loan-calculator", "unit-converter"],
 });

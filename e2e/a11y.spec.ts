@@ -40,6 +40,16 @@ const PAGES = [
   "/tools/mortgage-affordability-calculator",
   "/tools/salary-converter",
   "/tools/compress-pdf",
+  "/tools/fetch-to-curl",
+  "/tools/json-merge",
+  "/tools/graphql-formatter",
+  "/tools/dockerfile-linter",
+  "/tools/yaml-validator",
+  "/tools/readability-score",
+  "/tools/bmi-calculator",
+  "/tools/unit-price-comparison",
+  "/tools/meeting-planner",
+  "/tools/sign-pdf",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

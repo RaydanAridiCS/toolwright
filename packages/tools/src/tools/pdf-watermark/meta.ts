@@ -9,5 +9,5 @@ export default defineTool({
   category: "pdf",
   keywords: ["pdf watermark", "add watermark to pdf", "draft stamp", "confidential watermark", "text watermark pdf"],
   icon: Stamp,
-  related: ["pdf-page-numbers", "merge-pdf", "pdf-metadata-editor"],
+  related: ["sign-pdf", "pdf-page-numbers", "merge-pdf", "pdf-metadata-editor"],
 });

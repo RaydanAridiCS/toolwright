@@ -16,5 +16,5 @@ export default defineTool({
     { question: "How is reading time calculated?", answer: "Reading time assumes an average adult pace of 230 words per minute; speaking time assumes 130 words per minute." },
     { question: "Does it count emoji and accented letters correctly?", answer: "Yes. Characters are counted as Unicode code points, so an emoji counts as one character. The byte count shows the UTF-8 size." },
   ],
-  related: ["word-frequency", "case-converter", "line-tools"],
+  related: ["readability-score", "word-frequency", "case-converter", "line-tools"],
 });

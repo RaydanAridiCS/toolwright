@@ -16,5 +16,5 @@ export default defineTool({
     { question: "Are my PDFs uploaded to a server?", answer: "No. Merging runs in your browser with pdf-lib. You can disconnect from the internet after the page loads and it still works." },
     { question: "Is there a size or page limit?", answer: "There is no limit imposed by Toolwright; the practical limit is your device's memory. Merging a few hundred megabytes is usually fine on a modern computer." },
   ],
-  related: ["split-pdf", "extract-pdf-pages", "images-to-pdf", "rotate-pdf", "compress-pdf"],
+  related: ["split-pdf", "extract-pdf-pages", "images-to-pdf", "rotate-pdf", "compress-pdf", "sign-pdf"],
 });

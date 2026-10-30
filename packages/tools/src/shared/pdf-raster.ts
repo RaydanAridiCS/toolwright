@@ -148,8 +148,8 @@ export async function rasterizePdf(file: File, settings: CompressSettings, optio
 
 export interface PageThumbnailer {
   pageCount: number;
-  /** Draws one page (zero-based) as a small JPEG, turned the way the PDF itself says. Draws happen one at a time. */
-  render(pageIndex: number): Promise<Blob>;
+  /** Draws one page (zero-based) as a JPEG with its longer side `maxSide` pixels (default: the size given to `createThumbnailer`), turned the way the PDF itself says. Draws happen one at a time. */
+  render(pageIndex: number, maxSide?: number): Promise<Blob>;
   dispose(): void;
 }
 
@@ -167,18 +167,18 @@ export async function createThumbnailer(file: File, maxSide = 160): Promise<Page
 
   return {
     pageCount: open.pdf.numPages,
-    render(pageIndex) {
+    render(pageIndex, size = maxSide) {
       const job = queue.then(async () => {
         if (disposed) throw new Error("The previews were closed.");
         const page = await open.pdf.getPage(pageIndex + 1);
         const natural = page.getViewport({ scale: 1 });
-        const viewport = page.getViewport({ scale: maxSide / Math.max(natural.width, natural.height) });
+        const viewport = page.getViewport({ scale: size / Math.max(natural.width, natural.height) });
         canvas.width = Math.max(1, Math.ceil(viewport.width));
         canvas.height = Math.max(1, Math.ceil(viewport.height));
         context.fillStyle = "#ffffff";
         context.fillRect(0, 0, canvas.width, canvas.height);
         await page.render({ canvas, canvasContext: context, viewport, annotationMode: open.pdfjs.AnnotationMode.ENABLE }).promise;
-        const blob = await toBlob(canvas, "image/jpeg", 0.8);
+        const blob = await toBlob(canvas, "image/jpeg", size > 400 ? 0.9 : 0.8);
         page.cleanup();
         return blob;
       });
