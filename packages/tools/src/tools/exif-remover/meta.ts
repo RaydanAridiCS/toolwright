@@ -15,5 +15,5 @@ export default defineTool({
     { question: "Does removing metadata reduce image quality?", answer: "No. Unlike re-saving an image, this tool deletes only the metadata segments and copies the image data unchanged, so the picture is identical." },
     { question: "What gets removed?", answer: "EXIF (camera, date and GPS location), XMP, IPTC/Photoshop data and comments. By default the embedded color profile is kept so colors still look right; you can remove it too." },
   ],
-  related: ["exif-viewer", "image-compressor", "pdf-metadata-editor"],
+  related: ["exif-viewer", "image-compressor", "pdf-metadata-editor", "image-crop"],
 });

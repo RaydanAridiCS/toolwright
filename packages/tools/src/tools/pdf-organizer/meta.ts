@@ -35,5 +35,5 @@ export default defineTool({
       answer: "Extract PDF Pages takes a typed list of page numbers. This tool is a visual list where you can also turn and duplicate individual pages, which suits a few hands-on fixes.",
     },
   ],
-  related: ["extract-pdf-pages", "rotate-pdf", "delete-pdf-pages", "merge-pdf", "split-pdf"],
+  related: ["extract-pdf-pages", "rotate-pdf", "delete-pdf-pages", "merge-pdf", "split-pdf", "pdf-to-images"],
 });

@@ -16,5 +16,5 @@ export default defineTool({
     { question: "Is my JSON uploaded anywhere?", answer: "No. Parsing and formatting use your browser's built-in JSON engine, and the page makes no network requests with your data." },
     { question: "What does Repair fix?", answer: "It removes comments and trailing commas, converts single quotes to double quotes and quotes bare keys, so JSON5-style or hand-edited data becomes strict JSON." },
   ],
-  related: ["json-to-typescript", "json-yaml-converter", "json-csv-converter", "text-diff", "json-diff", "json-schema-generator", "jsonpath-tester"],
+  related: ["json-to-typescript", "json-yaml-converter", "json-csv-converter", "text-diff", "json-diff", "json-schema-generator", "jsonpath-tester", "xml-formatter"],
 });

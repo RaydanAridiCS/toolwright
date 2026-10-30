@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Liftoff News</title>
+    <link>http://liftoff.msfc.nasa.gov/</link>
+    <description>Liftoff to Space Exploration.</description>
+    <item>
+      <title>Star City</title>
+      <description><![CDATA[How do Americans get ready to work with Russians aboard the <b>International Space Station</b>? They take a crash course in culture, language & protocol.]]></description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid isPermaLink="false">http://liftoff.msfc.nasa.gov/2003/06/03.html#item573</guid>
+    </item>
+    <item>
+      <title>The Engine That Does More &amp; Costs Less &#169;</title>
+      <category>Rockets</category>
+      <category>Engines</category>
+    </item>
+  </channel>
+</rss>

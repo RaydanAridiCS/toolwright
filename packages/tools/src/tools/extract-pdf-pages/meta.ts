@@ -10,5 +10,5 @@ export default defineTool({
   category: "pdf",
   keywords: ["extract pdf pages", "select pages from pdf", "pdf page extractor", "reorder pdf pages", "keep pages"],
   icon: FileOutput,
-  related: ["delete-pdf-pages", "split-pdf", "merge-pdf", "pdf-organizer"],
+  related: ["delete-pdf-pages", "split-pdf", "merge-pdf", "pdf-organizer", "pdf-to-images", "pdf-to-text"],
 });

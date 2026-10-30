@@ -9,5 +9,5 @@ export default defineTool({
   category: "developer",
   keywords: ["port numbers", "tcp ports", "default ports", "common ports", "postgres port", "redis port"],
   icon: Network,
-  related: ["http-status-codes", "mime-types", "url-parser"],
+  related: ["http-status-codes", "mime-types", "url-parser", "subnet-calculator"],
 });

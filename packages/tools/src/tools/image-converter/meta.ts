@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["image converter", "png to jpg", "jpg to png", "webp to png", "convert to webp", "avif converter", "heic alternative"],
   icon: FileImage,
   popular: true,
-  related: ["image-compressor", "image-resizer", "svg-to-png", "image-to-svg", "gif-maker"],
+  related: ["image-compressor", "image-resizer", "svg-to-png", "image-to-svg", "gif-maker", "image-crop"],
 });

@@ -33,5 +33,5 @@ export default defineTool({
       answer: "It is not in this tool's list of standard headers. Many sites add their own, and names starting with X- are usually specific to one site or product.",
     },
   ],
-  related: ["http-status-codes", "curl-to-fetch", "jwt-decoder", "url-parser"],
+  related: ["http-status-codes", "curl-to-fetch", "jwt-decoder", "url-parser", "subnet-calculator"],
 });

@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["json to yaml", "yaml to json", "yaml converter", "convert yaml", "kubernetes yaml", "docker compose"],
   icon: ArrowLeftRight,
   popular: true,
-  related: ["json-formatter", "json-csv-converter", "json-to-typescript"],
+  related: ["json-formatter", "json-csv-converter", "json-to-typescript", "xml-formatter"],
 });

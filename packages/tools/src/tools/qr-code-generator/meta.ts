@@ -15,5 +15,5 @@ export default defineTool({
     { question: "Will my QR code stop working?", answer: "No. These are static QR codes: the content is encoded directly in the image, with no redirect service in between. They keep working forever and nothing about scans is tracked." },
     { question: "What error correction level should I choose?", answer: "Medium (M) suits most uses. Choose Quartile or High if the code will be printed small, worn, or have a logo placed over it, at the cost of a denser pattern." },
   ],
-  related: ["utm-builder", "url-cleaner", "image-to-base64"],
+  related: ["utm-builder", "url-cleaner", "image-to-base64", "barcode-generator"],
 });

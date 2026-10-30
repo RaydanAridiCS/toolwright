@@ -2,7 +2,7 @@
 
 **Free, open-source tools that never see your data.**
 
-Toolwright is a collection of 70+ everyday online tools — format JSON, merge PDFs, compress images, generate passwords, decode JWTs, and more — where **every tool runs entirely in your browser**. Nothing you type or drop in is uploaded, there are no accounts, and a strict Content Security Policy means a page physically cannot send your input to a third party.
+Toolwright is a collection of 110 everyday online tools — format JSON, merge PDFs, compress images, generate passwords, decode JWTs, and more — where **every tool runs entirely in your browser**. Nothing you type or drop in is uploaded, there are no accounts, and a strict Content Security Policy means a page physically cannot send your input to a third party.
 
 [Browse the tools](docs/tools.md) · [How privacy works](docs/privacy-model.md) · [Design language](docs/design-language.md) · [Contribute](CONTRIBUTING.md)
 
@@ -30,14 +30,14 @@ Toolwright looks like **a tool catalogue kept by a careful workshop**: warm pape
 
 | Category | Examples |
 | --- | --- |
-| **Developer** | JSON formatter & validator, JWT decoder, regex tester, cron explainer, SQL formatter, timestamp converter, JSON → TypeScript |
-| **PDF** | Merge, split, rotate, extract/delete pages, images → PDF, page numbers, watermark, metadata editor |
-| **Image** | Compressor, converter, resizer, EXIF remover & viewer, SVG → PNG, image → Base64, color picker, image → SVG tracing, animated GIF maker & editor |
+| **Developer** | JSON formatter & validator, JWT decoder, regex tester, cron explainer, SQL formatter, timestamp converter, JSON → TypeScript, XML formatter & XML ↔ JSON, IP & subnet calculator (IPv4 and IPv6) |
+| **PDF** | Merge, split, rotate, extract/delete pages, images → PDF, PDF → images, PDF → text, page numbers, watermark, metadata editor |
+| **Image** | Compressor, converter, resizer, crop / rotate / flip, EXIF remover & viewer, SVG → PNG, image → Base64, color picker, image → SVG tracing, animated GIF maker & editor |
 | **SVG** | Optimizer (SVGO), editor with live preview, sanitizer, data URI, SVG → React/TSX, path tools, recolor, blob/wave/polygon/star generator |
 | **Text** | Word counter, diff checker, case converter, find & replace, sort/dedupe lines, Markdown preview |
 | **Encoders & hashes** | Base64, URL & HTML encoding, hash generator (MD5/SHA/HMAC), hex/binary, string escaping |
 | **Color & design** | Color converter, WCAG contrast checker, palette generator, QR codes (static, never expire) |
-| **Generators** | Passwords & passphrases, UUID v4/v7, ULID, NanoID, lorem ipsum |
+| **Generators** | Passwords & passphrases, UUID v4/v7, ULID, NanoID, lorem ipsum, barcodes (Code 128, EAN, UPC, Code 39, ITF) |
 | **Calculators** | Units, percentages, dates, time zones, loans, compound interest, number bases |
 
 See the [full catalogue](docs/tools.md). Missing something? [Request it](#request-a-tool) or build it.

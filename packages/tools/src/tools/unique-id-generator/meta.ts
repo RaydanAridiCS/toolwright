@@ -15,5 +15,5 @@ export default defineTool({
     { question: "Which should I use, UUID v4 or v7?", answer: "v4 is fully random. v7 starts with a timestamp so values sort by creation time, which is friendlier to database indexes. Both are fine for uniqueness." },
     { question: "How random are these IDs?", answer: "They use crypto.getRandomValues, the same cryptographically secure source browsers use for TLS keys." },
   ],
-  related: ["password-generator", "hash-generator", "lorem-ipsum"],
+  related: ["password-generator", "hash-generator", "lorem-ipsum", "barcode-generator"],
 });

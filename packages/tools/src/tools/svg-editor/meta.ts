@@ -38,5 +38,5 @@ export default defineTool({
       answer: "This tool edits the code. For paths use SVG Path Tools, and for colours use SVG Recolor.",
     },
   ],
-  related: ["svg-optimizer", "svg-path-tools", "svg-recolor", "svg-to-png", "svg-sanitizer"],
+  related: ["svg-optimizer", "svg-path-tools", "svg-recolor", "svg-to-png", "svg-sanitizer", "xml-formatter"],
 });

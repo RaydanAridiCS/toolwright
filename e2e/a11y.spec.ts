@@ -62,6 +62,12 @@ const PAGES = [
   "/tools/svg-shape-generator",
   "/tools/gif-maker",
   "/tools/gif-editor",
+  "/tools/image-crop",
+  "/tools/pdf-to-images",
+  "/tools/pdf-to-text",
+  "/tools/xml-formatter",
+  "/tools/subnet-calculator",
+  "/tools/barcode-generator",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

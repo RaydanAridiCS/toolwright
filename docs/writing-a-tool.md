@@ -215,6 +215,16 @@
 - **An `aria-label` that contains another field's label breaks `getByLabel`** (a button named "Random seed" next to a field named "Seed"). Give buttons a visible text name instead.
 - **Never offer a bigger file.** Run the result through `pickSmaller` and give the original back with an honest message when nothing was gained.
 - **Honest scope:** check \`docs/tools.md\` for an existing tool before you promise a new one fills a gap. The PDF organizer overlaps Extract and Rotate; its value is the visual list and the duplex collation.
+- **Results that arrive after a pause need a waiting assertion.** The crop tool saves 400 ms after the last change, so a test that reads its "Result" number straight after typing gets the old value. Wait for it to change (`expect(el).not.toHaveText(oldValue)`) before you read it.
+- **Never show a refusal on top of the error that caused it.** Page 9 of a 2-page PDF gave "Page 9 is out of range" and also "No pages are selected", two alerts for one mistake (and an ambiguous test locator). Work out the second message only when the first is absent.
+- **Round whole pixels before you place things.** A drag that keeps a box's shape computes a width from a height; round both first and then position the box from its fixed corner, or the corner drifts by a pixel with every drag. In the same way `792 * 150 / 72` is `1650.0000000000002`, so `Math.ceil` made a 1651-pixel page; subtract a tiny epsilon before rounding up.
+- **Control characters are not valid in XML, even escaped.** A Code 128 barcode can hold a tab or a bell. Putting it in an SVG `<title>` produced a file that libvips refused, and any strict XML parser would too. Replace such characters when you escape text for SVG.
+- **Maps built from file keys need no prototype.** An XML tag named `__proto__` is legal. `Object.create(null)` makes it an ordinary key instead of changing the object, and `JSON.stringify` handles it.
+- **Cap recursion you do not control.** The XML reader and writer are iterative and survive 50,000 levels, but turning a tree into nested JSON objects recurses (in `JSON.stringify` too), so the converter stops at 1,000 levels with a message. Pretty-printing 50,000 levels would write gigabytes of indentation, so output over 60 million characters is refused.
+- **`ajv` cannot run here.** It builds validators with `new Function`, and the production CSP has no `'unsafe-eval'`. For JSON Schema use a library that interprets the schema (for example `@cfworker/json-schema`) and test it against `npm run build && npm start`.
+- **Pointer-only controls need a second way in.** The crop box can be dragged, but it also has typed left, top, width and height fields and arrow keys, because dragging is no use to a keyboard or a screen reader. Handles are `aria-hidden`; the box is a focusable group.
+- **A name that is also a segmented option is not a good label.** In the subnet tool a text field called "Network" shares its name with a tab called "Network". Use `getByRole("textbox", { name, exact: true })` in tests, or give the field a more specific name.
+- **Playwright can read downloads back.** The PDF to Images test opens the ZIP with `unzipSync` from `fflate` and reads the pixel size from the PNG header, so a "download works" test also proves the file is what it says.
 `
 `
 `## Conventions

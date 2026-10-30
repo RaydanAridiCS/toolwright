@@ -9,5 +9,5 @@ export default defineTool({
   category: "developer",
   keywords: ["url parser", "parse url", "query string parser", "url components", "url decoder"],
   icon: Globe,
-  related: ["url-encoder", "utm-builder", "url-cleaner", "curl-to-fetch"],
+  related: ["url-encoder", "utm-builder", "url-cleaner", "curl-to-fetch", "subnet-calculator"],
 });

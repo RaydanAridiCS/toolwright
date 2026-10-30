@@ -1,6 +1,6 @@
 /**
- * Draws PDF pages with PDF.js: for Compress PDF's "Smallest file" mode (rebuild a PDF from page pictures) and for the
- * page previews in the PDF Page Organizer.
+ * Draws and reads PDF pages with PDF.js: for Compress PDF's "Smallest file" mode (rebuild a PDF from page pictures),
+ * for the page previews in the PDF Page Organizer, and for PDF to Images and PDF to Text.
  *
  * This is the only file that may mention `pdfjs-dist` (a test enforces it), and PDF.js is imported only when a
  * file is actually drawn, so nothing from it reaches the shared bundles or the page chunks. The renderer, its worker,
@@ -8,6 +8,8 @@
  */
 import { COMPRESS_LIMITS, CompressCancelled, createImagePdfBuilder, planRaster, type CompressProgress, type CompressSettings } from "@toolwright/core/pdf-compress";
 import { PdfError } from "@toolwright/core/pdf";
+import { PdfCancelled, PAGE_IMAGE_LIMITS, formatInfo, normalizeQuality, overBudget, planPageImage, type PageImageFormat } from "@toolwright/core/pdf-to-images";
+import { TEXT_LIMITS, assemblePage, toPieces, type TextOptions } from "@toolwright/core/pdf-to-text";
 
 export interface RasterResult {
   data: Uint8Array;
@@ -191,4 +193,163 @@ export async function createThumbnailer(file: File, maxSide = 160): Promise<Page
       void open.close();
     },
   };
+}
+
+/* ----------------------------------------------------------------------------------------------- */
+/* PDF to Images                                                                                    */
+/* ----------------------------------------------------------------------------------------------- */
+
+export interface PageImage {
+  /** Zero-based page number. */
+  pageIndex: number;
+  blob: Blob;
+  width: number;
+  height: number;
+  /** Drawn at a lower resolution than asked, to stay under the canvas size limit. */
+  capped: boolean;
+}
+
+export interface PageImagesOptions {
+  /** Zero-based pages to draw, in order. */
+  pageIndexes: number[];
+  dpi: number;
+  format: PageImageFormat;
+  /** 40 to 100, for JPG and WebP. */
+  quality: number;
+  signal?: AbortSignal;
+  onProgress?: (progress: CompressProgress) => void;
+  /** Called with each finished picture, so the page can show progress as it happens. */
+  onPage?: (image: PageImage) => void;
+}
+
+export interface PageImagesResult {
+  images: PageImage[];
+  pageCount: number;
+  /** The run stopped early because the pictures together grew too large to keep in memory. */
+  stoppedEarly: boolean;
+}
+
+/** Draws the chosen pages one at a time as PNG, JPG or WebP pictures. Nothing leaves the tab. */
+export async function renderPagesToImages(file: File, options: PageImagesOptions): Promise<PageImagesResult> {
+  const { pageIndexes, dpi, signal, onProgress, onPage } = options;
+  const cancelled = () => signal?.aborted === true;
+  if (cancelled()) throw new PdfCancelled();
+  const info = formatInfo(options.format);
+  const quality = normalizeQuality(options.quality);
+
+  const canvas = document.createElement("canvas");
+  let rendering: { cancel(): void } | null = null;
+  const onAbort = () => rendering?.cancel();
+  signal?.addEventListener("abort", onAbort);
+  let open: OpenPdf | null = null;
+
+  try {
+    open = await openPdf(file);
+    const { pdfjs, pdf } = open;
+    if (cancelled()) throw new PdfCancelled();
+    if (pageIndexes.some((i) => !Number.isInteger(i) || i < 0 || i >= pdf.numPages)) throw new PdfError("A selected page does not exist in this PDF.");
+    if (pageIndexes.length > PAGE_IMAGE_LIMITS.maxPages) throw new PdfError(`At most ${PAGE_IMAGE_LIMITS.maxPages} pages can be drawn in one run.`);
+
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) throw new PdfError("This browser cannot draw pages.");
+    const images: PageImage[] = [];
+    let totalBytes = 0;
+    let stoppedEarly = false;
+
+    for (const [position, pageIndex] of pageIndexes.entries()) {
+      if (cancelled()) throw new PdfCancelled();
+      if (overBudget(totalBytes)) {
+        stoppedEarly = true;
+        break;
+      }
+      onProgress?.({ done: position, total: pageIndexes.length });
+      try {
+        const page = await pdf.getPage(pageIndex + 1);
+        const plan = planPageImage(page.view as [number, number, number, number], page.rotate, dpi);
+        const viewport = page.getViewport({ scale: plan.scale });
+        // A tiny rounding error (792 × 150 ÷ 72 is 1650.0000000000002) must not add a stray row of pixels.
+        canvas.width = Math.max(1, Math.ceil(viewport.width - 1e-4));
+        canvas.height = Math.max(1, Math.ceil(viewport.height - 1e-4));
+        // PDF pages have no paper of their own: paint it, or JPG would turn black where nothing is drawn.
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        const task = page.render({ canvas, canvasContext: context, viewport, annotationMode: pdfjs.AnnotationMode.ENABLE });
+        rendering = task;
+        await task.promise;
+        rendering = null;
+        const blob = await toBlob(canvas, info.mime, quality);
+        page.cleanup();
+        const image: PageImage = { pageIndex, blob, width: canvas.width, height: canvas.height, capped: plan.capped };
+        totalBytes += blob.size;
+        images.push(image);
+        onPage?.(image);
+      } catch (err) {
+        if (cancelled()) throw new PdfCancelled();
+        if (err instanceof PdfError) throw err;
+        throw new PdfError(`Page ${pageIndex + 1} could not be drawn. Your original file is untouched.`);
+      }
+    }
+    onProgress?.({ done: images.length, total: pageIndexes.length });
+    return { images, pageCount: pdf.numPages, stoppedEarly };
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
+    canvas.width = canvas.height = 0;
+    await open?.close();
+  }
+}
+
+/* ----------------------------------------------------------------------------------------------- */
+/* PDF to Text                                                                                      */
+/* ----------------------------------------------------------------------------------------------- */
+
+export interface PdfTextOptions extends TextOptions {
+  signal?: AbortSignal;
+  onProgress?: (progress: CompressProgress) => void;
+}
+
+export interface PdfTextResult {
+  /** One string per page, in page order. */
+  pages: string[];
+  pageCount: number;
+  /** Reading stopped because the text passed the size limit. */
+  truncated: boolean;
+}
+
+/** Reads the text layer of every page. Pictures of text (scans) give empty pages; there is no OCR. */
+export async function extractPdfText(file: File, options: PdfTextOptions): Promise<PdfTextResult> {
+  const { signal, onProgress } = options;
+  const cancelled = () => signal?.aborted === true;
+  if (cancelled()) throw new PdfCancelled();
+  let open: OpenPdf | null = null;
+  try {
+    open = await openPdf(file);
+    const { pdf } = open;
+    if (pdf.numPages > TEXT_LIMITS.maxPages) throw new PdfError(`This PDF has ${pdf.numPages} pages. At most ${TEXT_LIMITS.maxPages} can be read at once; split it first.`);
+    const pages: string[] = [];
+    let characters = 0;
+    let truncated = false;
+    for (let number = 1; number <= pdf.numPages; number++) {
+      if (cancelled()) throw new PdfCancelled();
+      onProgress?.({ done: number - 1, total: pdf.numPages });
+      if (characters > TEXT_LIMITS.maxCharacters) {
+        truncated = true;
+        break;
+      }
+      try {
+        const page = await pdf.getPage(number);
+        const content = await page.getTextContent();
+        const text = assemblePage(toPieces(content.items as unknown[]), { joinHyphens: options.joinHyphens });
+        characters += text.length;
+        pages.push(text);
+        page.cleanup();
+      } catch {
+        if (cancelled()) throw new PdfCancelled();
+        throw new PdfError(`The text on page ${number} could not be read. Your original file is untouched.`);
+      }
+    }
+    onProgress?.({ done: pages.length, total: pdf.numPages });
+    return { pages, pageCount: pdf.numPages, truncated };
+  } finally {
+    await open?.close();
+  }
 }

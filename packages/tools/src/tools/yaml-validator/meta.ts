@@ -33,5 +33,5 @@ export default defineTool({
       answer: "A document that repeats an alias many times can expand into a huge JSON text. When the JSON would be over about 1 MB, the view is hidden and a note says so.",
     },
   ],
-  related: ["json-yaml-converter", "json-formatter", "dockerfile-linter", "json-schema-generator", "csv-delimiter-converter"],
+  related: ["json-yaml-converter", "json-formatter", "dockerfile-linter", "json-schema-generator", "csv-delimiter-converter", "xml-formatter"],
 });

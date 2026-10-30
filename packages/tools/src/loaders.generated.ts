@@ -4,6 +4,7 @@ import type { ComponentType } from "react";
 export type ToolLoader = () => Promise<{ default: ComponentType }>;
 
 export const toolLoaders: Record<string, ToolLoader> = {
+  "barcode-generator": () => import("./tools/barcode-generator/Tool"),
   "base64-encoder": () => import("./tools/base64-encoder/Tool"),
   "bmi-calculator": () => import("./tools/bmi-calculator/Tool"),
   "case-converter": () => import("./tools/case-converter/Tool"),
@@ -37,6 +38,7 @@ export const toolLoaders: Record<string, ToolLoader> = {
   "image-color-picker": () => import("./tools/image-color-picker/Tool"),
   "image-compressor": () => import("./tools/image-compressor/Tool"),
   "image-converter": () => import("./tools/image-converter/Tool"),
+  "image-crop": () => import("./tools/image-crop/Tool"),
   "image-resizer": () => import("./tools/image-resizer/Tool"),
   "image-to-base64": () => import("./tools/image-to-base64/Tool"),
   "image-to-svg": () => import("./tools/image-to-svg/Tool"),
@@ -66,6 +68,8 @@ export const toolLoaders: Record<string, ToolLoader> = {
   "pdf-metadata-editor": () => import("./tools/pdf-metadata-editor/Tool"),
   "pdf-organizer": () => import("./tools/pdf-organizer/Tool"),
   "pdf-page-numbers": () => import("./tools/pdf-page-numbers/Tool"),
+  "pdf-to-images": () => import("./tools/pdf-to-images/Tool"),
+  "pdf-to-text": () => import("./tools/pdf-to-text/Tool"),
   "pdf-watermark": () => import("./tools/pdf-watermark/Tool"),
   "percentage-calculator": () => import("./tools/percentage-calculator/Tool"),
   "port-numbers": () => import("./tools/port-numbers/Tool"),
@@ -81,6 +85,7 @@ export const toolLoaders: Record<string, ToolLoader> = {
   "split-pdf": () => import("./tools/split-pdf/Tool"),
   "sql-formatter": () => import("./tools/sql-formatter/Tool"),
   "string-escape": () => import("./tools/string-escape/Tool"),
+  "subnet-calculator": () => import("./tools/subnet-calculator/Tool"),
   "svg-data-uri": () => import("./tools/svg-data-uri/Tool"),
   "svg-editor": () => import("./tools/svg-editor/Tool"),
   "svg-optimizer": () => import("./tools/svg-optimizer/Tool"),
@@ -107,5 +112,6 @@ export const toolLoaders: Record<string, ToolLoader> = {
   "whitespace-cleaner": () => import("./tools/whitespace-cleaner/Tool"),
   "word-counter": () => import("./tools/word-counter/Tool"),
   "word-frequency": () => import("./tools/word-frequency/Tool"),
+  "xml-formatter": () => import("./tools/xml-formatter/Tool"),
   "yaml-validator": () => import("./tools/yaml-validator/Tool"),
 };

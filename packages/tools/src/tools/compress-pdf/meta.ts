@@ -48,5 +48,5 @@ export default defineTool({
       answer: "Files up to 200 MB, and up to 1,000 pages for Smallest file. Bigger files can exhaust a browser tab's memory, so the tool refuses them and suggests splitting the file first. Large files can take a minute or more; you can cancel at any time.",
     },
   ],
-  related: ["merge-pdf", "split-pdf", "images-to-pdf", "image-compressor"],
+  related: ["merge-pdf", "split-pdf", "images-to-pdf", "image-compressor", "pdf-to-images", "pdf-to-text"],
 });
