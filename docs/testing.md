@@ -39,6 +39,10 @@ These are the most numerous and the cheapest. Principles:
 - **Make randomness deterministic.** Inject a fake random source; also test statistical properties (e.g. every character class appears, no modulo bias).
 - **Round-trip properties.** `decode(encode(x)) === x` over many values; `fromRoman(toRoman(n)) === n`; converting every unit to every other and back.
 - **Binary fixtures are built in the test.** The image-metadata and PDF tests construct minimal JPEG/PNG/WebP files and PDFs programmatically, so there are no binary blobs in the repo.
+- **GIF fixtures come from a different encoder.** `scripts/make-gif-fixtures.mjs` (sharp/libvips) writes the files in `packages/core/tests/fixtures/gif/`, so the decoder is checked against GIFs it did not produce. Run the script only to regenerate them.
+- **Hostile and extreme inputs have tests.** The SVG sanitizer is tested with script, `on*` handlers, `foreignObject`, obfuscated `javascript:` links, external hrefs, CSS `@import`/`url()` and animation that targets `href` (`packages/tools/tests/svg-sanitize.test.ts`, run in jsdom). The XML reader is tested with 50,000-deep nesting and the optimizer with 4,000 elements (those two slow tests have explicit 60 s timeouts so a busy full run does not flake).
+- **Generated code is compiled.** The SVG to React tests transpile the output with the TypeScript compiler, so invalid JSX or TSX fails.
+- **`e2e/svg-gif.spec.ts`** drives the 11 SVG and GIF tools in the production build: workers under the real security policy, downloads (file name and first bytes: `PNG`, `GIF89a`, `PK`) and no request leaving the site. It uses `process.cwd()` for fixture paths, because Playwright loads specs as CommonJS and `import.meta` is not available.
 
 ## Layer 2: database tests (`packages/db/tests`)
 

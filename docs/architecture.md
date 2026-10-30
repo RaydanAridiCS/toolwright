@@ -34,6 +34,10 @@ Plain TypeScript modules, one per domain (`json.ts`, `pdf.ts`, `hash.ts`, `color
 
 Notable modules: `pdf.ts` (pdf-lib), `image-meta.ts` (lossless EXIF/metadata stripping for JPEG/PNG/WebP by walking the file's binary structure), `json.ts` (a strict scanner that reports exact error positions on every engine), `cron.ts`, `time.ts` (Intl-based zones), `qr.ts` (SVG output and payload builders).
 
+SVG and GIF modules (all pure, tested in Node): `svg-xml.ts` (a small iterative XML reader and writer that round-trips unformatted files byte for byte and survives 50,000-deep nesting), `svg-optimize.ts` (SVGO with the viewBox always kept), `svg-tools.ts` (info, checks, format, fix, size, viewBox), `svg-data-uri.ts`, `svg-to-jsx.ts`, `svg-path.ts` (path parser, absolute/relative, arcs to curves, transforms, reverse, bounds, length), `svg-colors.ts`, `svg-shapes.ts` (seeded blob, wave, polygon and star generators), `svg-report.ts` (what a cleaning removed), `gif-tools.ts` (decode, edit and encode animated GIFs as full-size RGBA frames) and `image-trace.ts` (imagetracerjs on raw pixels). The DOM-dependent part, `sanitizeSvg` (DOMPurify plus SVG rules), lives in `packages/tools/src/shared/svg-sanitize.ts`.
+
+**Workers.** SVGO, GIF work and tracing run in Web Workers bundled with the page (`shared/svg-optimize.worker.ts`, `gif.worker.ts`, `image-trace.worker.ts`), each with a small client (`*-client.ts`) that starts the worker, passes progress and cancels by terminating it. The heavy libraries (`svgo`, `gifenc`, `omggif`, `imagetracerjs`) are imported by one core file each and, at run time, only by those workers; `packages/tools/tests/bundle-isolation.test.ts` enforces both. SVG previews (`shared/svg-preview.tsx`) draw through an `<img>` from a local blob so a hostile file cannot run script.
+
 ### `packages/ui` — the UI kit
 
 Tailwind-styled, accessible primitives (`Button`, `Field`, `Select`, `Toggle`, `SegmentedControl`, `FileDropzone`, `CopyButton`, `ScrollArea`…) plus the Workshop Ledger primitives (`Plate`, `StatusLine`, `ResultSlab`, `Stat`/`StatGrid`, `Alert`, `Badge`; see [design-system.md](design-system.md)) and two building blocks:

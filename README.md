@@ -32,7 +32,8 @@ Toolwright looks like **a tool catalogue kept by a careful workshop**: warm pape
 | --- | --- |
 | **Developer** | JSON formatter & validator, JWT decoder, regex tester, cron explainer, SQL formatter, timestamp converter, JSON → TypeScript |
 | **PDF** | Merge, split, rotate, extract/delete pages, images → PDF, page numbers, watermark, metadata editor |
-| **Image** | Compressor, converter, resizer, EXIF remover & viewer, SVG → PNG, image → Base64, color picker |
+| **Image** | Compressor, converter, resizer, EXIF remover & viewer, SVG → PNG, image → Base64, color picker, image → SVG tracing, animated GIF maker & editor |
+| **SVG** | Optimizer (SVGO), editor with live preview, sanitizer, data URI, SVG → React/TSX, path tools, recolor, blob/wave/polygon/star generator |
 | **Text** | Word counter, diff checker, case converter, find & replace, sort/dedupe lines, Markdown preview |
 | **Encoders & hashes** | Base64, URL & HTML encoding, hash generator (MD5/SHA/HMAC), hex/binary, string escaping |
 | **Color & design** | Color converter, WCAG contrast checker, palette generator, QR codes (static, never expire) |

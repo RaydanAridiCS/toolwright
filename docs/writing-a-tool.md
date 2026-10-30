@@ -204,6 +204,15 @@
 - **Browsers apply the EXIF turn when decoding a JPEG, even with `imageOrientation: "none"`.** PDFs ignore EXIF, so strip the EXIF segment (`stripJpegExif` in core) before drawing the image to a canvas.
 - **Abandoned async work must still reset your "busy" flag.** If an effect starts a slow draw and is replaced before it finishes (the user cleared the text), the old run is ignored, so the new branch has to clear `busy` itself. Otherwise the UI sticks on "Drawing…".
 - **Playwright's `fill()` is very slow for tens of thousands of characters** in a textarea. To test a huge paste, set the value with the native setter and dispatch an `input` event (see `e2e/mermaid.spec.ts`); the tool itself handles it in milliseconds.
+- **Give each heavy library its own worker and client.** See `shared/gif.worker.ts` + `gif-client.ts`: the page imports only the client (types come from the worker with `import type`, which is erased), so the library is not in the page bundle. A constant the page also needs (for example the tracing size limit) goes in its own tiny file (`core/src/image-trace-limits.ts`), because importing it from the heavy module would pull the library into the page.
+- **Transferring an `ArrayBuffer` detaches it.** If you want to reuse the pixels (try again with other settings), send a copy (`buffer.slice(0)`), as `GifSession.make` and `traceInWorker` do.
+- **A new request must replace an old one.** The clients reject the older request or terminate its worker, and the Tool ignores the rejection (`GifAborted`, `TraceAborted`), so a slow old run can never overwrite a newer result.
+- **DOMPurify drops `<use>` by default.** The sanitizer adds it back with `ADD_TAGS` and keeps only `#local` references in its attribute hook.
+- **Browsers show GIF delays of 10 ms or less as 100 ms**, so the GIF tools never write a delay below 20 ms.
+- **jsdom has no `URL.createObjectURL`.** `useObjectUrl` checks for it so smoke tests mount; real browsers always have it.
+- **The design-rule test scans source words.** The words "gradient", "blur", "glow" and "backdrop-" must not appear in `apps/web/src`, `packages/ui/src` or `packages/tools/src`, even in an FAQ answer or a variable name. Say "colour fade" or "soften" instead.
+- **`SegmentedControl` radios are visually hidden.** In Playwright click the label text (`getByRole("radiogroup", { name }).getByText("Wave").click()`), not `check()` on the radio.
+- **An `aria-label` that contains another field's label breaks `getByLabel`** (a button named "Random seed" next to a field named "Seed"). Give buttons a visible text name instead.
 - **Never offer a bigger file.** Run the result through `pickSmaller` and give the original back with an honest message when nothing was gained.
 - **Honest scope:** check \`docs/tools.md\` for an existing tool before you promise a new one fills a gap. The PDF organizer overlaps Extract and Rotate; its value is the visual list and the duplex collation.
 `

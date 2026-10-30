@@ -95,7 +95,7 @@ Remember to place a TLS-terminating reverse proxy or platform load balancer in f
 
 ## Dependency hygiene
 
-- Review updates monthly. Prefer small, widely-used libraries. Current runtime dependencies of note: `pdf-lib` (PDF), `qrcode`, `marked` + `dompurify` (Markdown), `diff`, `js-yaml`, `papaparse`, `sql-formatter`, `cronstrue`, `exifr`, `fflate`, `@scure/bip39` (passphrase word list), `cmdk`, `zod`, `drizzle-orm`, `postgres`.
+- Review updates monthly. Prefer small, widely-used libraries. Current runtime dependencies of note: `pdf-lib` (PDF), `qrcode`, `marked` + `dompurify` (Markdown), `diff`, `js-yaml`, `papaparse`, `sql-formatter`, `cronstrue`, `exifr`, `fflate`, `@scure/bip39` (passphrase word list), `cmdk`, `zod`, `drizzle-orm`, `postgres`. Loaded on demand and kept behind one file each: `pdfjs-dist` (PDF page images), `mermaid` (diagrams), `svgo` (SVG optimizer, about 800 KB), `gifenc` and `omggif` (GIF encode and decode) and `imagetracerjs` (image tracing). `imagetracerjs` has had no release for years and ships no types (it is wrapped in `core/src/image-trace.ts` with one `@ts-expect-error`); if it ever becomes a problem, Image to SVG is the only tool that needs replacing.
 - Anything that handles untrusted input (`marked`, `dompurify`, `js-yaml`, `pdf-lib`, `exifr`) deserves prompt security updates.
 - `npm audit` runs against the lockfile; investigate anything reachable from user input.
 
