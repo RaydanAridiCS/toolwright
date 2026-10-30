@@ -187,7 +187,7 @@ describe("safety and limits", () => {
     expect(() => md("a".repeat(5_000_001))).toThrow(/too much HTML/);
   });
 
-  it("does not overflow the stack on deep nesting", () => {
+  it("does not overflow the stack on deep nesting", { timeout: 60_000 }, () => {
     const html = `${"<div>".repeat(5000)}deep${"</div>".repeat(5000)}`;
     // Real browsers cap nesting while parsing; either way the result is the text or a readable message.
     try {

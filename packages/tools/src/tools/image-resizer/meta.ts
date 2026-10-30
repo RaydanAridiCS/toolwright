@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["image resizer", "resize image", "resize photo", "change image dimensions", "bulk resize", "scale image"],
   icon: Scaling,
   popular: true,
-  related: ["image-compressor", "image-converter", "exif-remover", "favicon-generator"],
+  related: ["image-compressor", "image-converter", "exif-remover", "gif-editor", "favicon-generator"],
 });

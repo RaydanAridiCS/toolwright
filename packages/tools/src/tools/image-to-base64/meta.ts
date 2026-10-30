@@ -10,5 +10,5 @@ export default defineTool({
   category: "image",
   keywords: ["image to base64", "base64 to image", "data uri", "inline image", "base64 image encoder", "embed image css"],
   icon: FileCode,
-  related: ["base64-encoder", "image-compressor", "mime-types"],
+  related: ["base64-encoder", "image-compressor", "svg-data-uri", "mime-types"],
 });

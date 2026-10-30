@@ -51,6 +51,17 @@ const PAGES = [
   "/tools/meeting-planner",
   "/tools/sign-pdf",
   "/tools/mermaid-editor",
+  "/tools/svg-optimizer",
+  "/tools/svg-editor",
+  "/tools/svg-sanitizer",
+  "/tools/svg-data-uri",
+  "/tools/svg-to-react",
+  "/tools/svg-path-tools",
+  "/tools/svg-recolor",
+  "/tools/image-to-svg",
+  "/tools/svg-shape-generator",
+  "/tools/gif-maker",
+  "/tools/gif-editor",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

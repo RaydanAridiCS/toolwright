@@ -48,6 +48,26 @@ describe("PDF.js stays out of shared bundles", () => {
     expect(render).toContain("htmlLabels: false");
   });
 
+  it("keeps the SVG and GIF libraries behind one core file each, and out of the core barrel", () => {
+    const only = (needle: RegExp) => FILES.filter((f) => needle.test(f.src)).map((f) => f.rel);
+    expect(only(/from\s+["']svgo(\/browser)?["']/)).toEqual(["packages/core/src/svg-optimize.ts"]);
+    expect(only(/from\s+["'](gifenc|omggif)["']/)).toEqual(["packages/core/src/gif-tools.ts"]);
+    expect(only(/from\s+["']imagetracerjs["']/)).toEqual(["packages/core/src/image-trace.ts"]);
+    const index = FILES.find((f) => f.rel === "packages/core/src/index.ts")!.src;
+    for (const heavy of ["svg-optimize", "gif-tools", "image-trace"]) expect(index).not.toContain(heavy);
+  });
+
+  it("reaches the heavy SVG and GIF modules at run time only from workers", () => {
+    // "import type" is erased at build time, so only value imports count.
+    const valueImporters = (module: string) => {
+      const pattern = new RegExp(`^import\\s+(?!type\\b)[^;]*from\\s+["']@toolwright/core/${module}["']`, "m");
+      return FILES.filter((f) => pattern.test(f.src)).map((f) => f.rel);
+    };
+    expect(valueImporters("svg-optimize")).toEqual(["packages/tools/src/shared/svg-optimize.worker.ts"]);
+    expect(valueImporters("gif-tools")).toEqual(["packages/tools/src/shared/gif.worker.ts"]);
+    expect(valueImporters("image-trace")).toEqual(["packages/tools/src/shared/image-trace.worker.ts"]);
+  });
+
   it("keeps DOM and network APIs out of the pure compression module", () => {
     const core = FILES.find((f) => f.rel === "packages/core/src/pdf-compress.ts")!.src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|\s)\/\/.*$/gm, "$1");
     expect(core).not.toMatch(/\b(document|window|fetch|OffscreenCanvas|createImageBitmap|localStorage)\b/);

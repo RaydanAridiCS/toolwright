@@ -21,6 +21,8 @@ import meta_extract_pdf_pages from "./tools/extract-pdf-pages/meta";
 import meta_favicon_generator from "./tools/favicon-generator/meta";
 import meta_fetch_to_curl from "./tools/fetch-to-curl/meta";
 import meta_find_and_replace from "./tools/find-and-replace/meta";
+import meta_gif_editor from "./tools/gif-editor/meta";
+import meta_gif_maker from "./tools/gif-maker/meta";
 import meta_graphql_formatter from "./tools/graphql-formatter/meta";
 import meta_hash_generator from "./tools/hash-generator/meta";
 import meta_hex_binary_converter from "./tools/hex-binary-converter/meta";
@@ -33,6 +35,7 @@ import meta_image_compressor from "./tools/image-compressor/meta";
 import meta_image_converter from "./tools/image-converter/meta";
 import meta_image_resizer from "./tools/image-resizer/meta";
 import meta_image_to_base64 from "./tools/image-to-base64/meta";
+import meta_image_to_svg from "./tools/image-to-svg/meta";
 import meta_images_to_pdf from "./tools/images-to-pdf/meta";
 import meta_json_csv_converter from "./tools/json-csv-converter/meta";
 import meta_json_diff from "./tools/json-diff/meta";
@@ -74,7 +77,15 @@ import meta_slug_generator from "./tools/slug-generator/meta";
 import meta_split_pdf from "./tools/split-pdf/meta";
 import meta_sql_formatter from "./tools/sql-formatter/meta";
 import meta_string_escape from "./tools/string-escape/meta";
+import meta_svg_data_uri from "./tools/svg-data-uri/meta";
+import meta_svg_editor from "./tools/svg-editor/meta";
+import meta_svg_optimizer from "./tools/svg-optimizer/meta";
+import meta_svg_path_tools from "./tools/svg-path-tools/meta";
+import meta_svg_recolor from "./tools/svg-recolor/meta";
+import meta_svg_sanitizer from "./tools/svg-sanitizer/meta";
+import meta_svg_shape_generator from "./tools/svg-shape-generator/meta";
 import meta_svg_to_png from "./tools/svg-to-png/meta";
+import meta_svg_to_react from "./tools/svg-to-react/meta";
 import meta_text_ciphers from "./tools/text-ciphers/meta";
 import meta_text_diff from "./tools/text-diff/meta";
 import meta_text_reverser from "./tools/text-reverser/meta";
@@ -116,6 +127,8 @@ export const tools: readonly ToolMeta[] = [
   meta_favicon_generator,
   meta_fetch_to_curl,
   meta_find_and_replace,
+  meta_gif_editor,
+  meta_gif_maker,
   meta_graphql_formatter,
   meta_hash_generator,
   meta_hex_binary_converter,
@@ -128,6 +141,7 @@ export const tools: readonly ToolMeta[] = [
   meta_image_converter,
   meta_image_resizer,
   meta_image_to_base64,
+  meta_image_to_svg,
   meta_images_to_pdf,
   meta_json_csv_converter,
   meta_json_diff,
@@ -169,7 +183,15 @@ export const tools: readonly ToolMeta[] = [
   meta_split_pdf,
   meta_sql_formatter,
   meta_string_escape,
+  meta_svg_data_uri,
+  meta_svg_editor,
+  meta_svg_optimizer,
+  meta_svg_path_tools,
+  meta_svg_recolor,
+  meta_svg_sanitizer,
+  meta_svg_shape_generator,
   meta_svg_to_png,
+  meta_svg_to_react,
   meta_text_ciphers,
   meta_text_diff,
   meta_text_reverser,

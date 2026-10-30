@@ -16,5 +16,5 @@ export default defineTool({
     { question: "Is my image uploaded to a server?", answer: "No. Compression uses your browser's canvas, so the image stays on your device. You can verify this with your browser's network tab." },
     { question: "Will compression remove EXIF metadata?", answer: "Yes. Re-encoding through the canvas drops EXIF and other metadata, including GPS location. Use the EXIF Remover if you want to strip metadata without recompressing." },
   ],
-  related: ["image-converter", "image-resizer", "exif-remover", "images-to-pdf"],
+  related: ["image-converter", "image-resizer", "exif-remover", "gif-editor", "svg-optimizer"],
 });

@@ -10,5 +10,5 @@ export default defineTool({
   category: "image",
   keywords: ["svg to png", "convert svg", "svg to jpg", "rasterize svg", "svg export", "svg to image"],
   icon: Shapes,
-  related: ["mermaid-editor", "image-converter", "image-resizer", "qr-code-generator"],
+  related: ["mermaid-editor", "image-converter", "image-resizer", "svg-editor", "svg-optimizer"],
 });

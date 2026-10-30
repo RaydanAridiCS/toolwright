@@ -7,7 +7,7 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 - **Audio and video** — trim, convert and compress in the browser (WebAssembly FFmpeg). Must be bundled locally (the CSP forbids loading it from a CDN) and lazy-loaded.
 - **Image background remover** — a small on-device model.
 - **JSON** — JSON diff, three-way JSON merge, the JSON Schema generator and the JSONPath tester are built.
-- **HEIC → JPG**, **animated GIF/APNG tools**. The favicon pack generator is built. The Mermaid diagram editor is built.
+- **HEIC → JPG**, **APNG tools**. The favicon pack generator, the Mermaid diagram editor, the animated GIF maker and editor, and eleven SVG tools (optimizer, editor, sanitizer, data URI, React, paths, recolor, shapes, image tracing) are built. Still open for SVG: an icon-sprite builder and SVG to PDF/ICO.
 - **OCR** — text from images and scanned PDFs with a local engine.
 - **Text** — text-to-speech preview using the Web Speech API. Readability scores and HTML → Markdown are built; Markdown → HTML is the Markdown Previewer's HTML tab.
 - **Developer** — GraphQL formatter, Dockerfile linter, YAML validator and fetch → cURL are built. Still open: a `docker-compose` / Kubernetes manifest checker (needs schemas bundled locally), and a GraphQL query-against-schema validator.

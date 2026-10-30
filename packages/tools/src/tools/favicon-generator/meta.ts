@@ -34,5 +34,5 @@ export default defineTool({
       answer: "Not always. A detailed logo can turn to mush at 16 pixels. If so, use a simplified mark as the source image.",
     },
   ],
-  related: ["image-resizer", "image-converter", "svg-to-png", "qr-code-generator"],
+  related: ["image-resizer", "image-converter", "svg-to-png", "svg-editor", "image-to-svg"],
 });

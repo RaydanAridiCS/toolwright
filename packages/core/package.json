@@ -16,15 +16,20 @@
     "@scure/bip39": "^2.4.0",
     "cronstrue": "^3.33.0",
     "diff": "^8.0.2",
+    "gifenc": "1.0.3",
+    "imagetracerjs": "1.2.6",
     "js-yaml": "^4.1.0",
     "marked": "^16.4.1",
+    "omggif": "1.0.10",
     "papaparse": "^5.5.3",
     "pdf-lib": "^1.17.1",
     "qrcode": "^1.5.4",
-    "sql-formatter": "^15.6.10"
+    "sql-formatter": "^15.6.10",
+    "svgo": "4.1.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
+    "@types/omggif": "^1.0.5",
     "@types/papaparse": "^5.5.2",
     "@types/qrcode": "^1.5.6"
   }
