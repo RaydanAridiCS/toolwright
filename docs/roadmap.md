@@ -7,13 +7,14 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 - **PDF compression** — real recompression of embedded images (render pages with PDF.js, re-encode as JPEG, rebuild). Needs a careful bundle-size and memory plan; today `pdf-lib` can only re-save structure.
 - **Audio and video** — trim, convert and compress in the browser (WebAssembly FFmpeg). Must be bundled locally (the CSP forbids loading it from a CDN) and lazy-loaded.
 - **Image background remover** — a small on-device model.
-- **JSON diff / merge** (semantic, key-order aware), **JSON Schema generator**, **JSONPath tester**.
-- **HEIC → JPG**, **animated GIF/APNG tools**, **favicon pack generator** (ICO + sizes as a ZIP).
+- **JSON merge** (three-way, key-order aware). JSON diff, the JSON Schema generator and the JSONPath tester are built.
+- **HEIC → JPG**, **animated GIF/APNG tools**. The favicon pack generator is built.
 - **OCR** — text from images and scanned PDFs with a local engine.
 - **Diagrams** — Mermaid editor/renderer.
-- **Text** — Markdown ⇄ HTML, readability scores, text-to-speech preview using the Web Speech API.
-- **Developer** — HTTP header explainer, cURL ⇄ fetch converter, GraphQL formatter, Dockerfile/YAML linting.
-- **Calculators** — mortgage affordability, unit price comparison, BMI (with honest caveats), timezone meeting planner with shareable link.
+- **Text** — readability scores, text-to-speech preview using the Web Speech API. HTML → Markdown is built; Markdown → HTML is the Markdown Previewer's HTML tab.
+- **Developer** — GraphQL formatter, Dockerfile/YAML linting, fetch → cURL (the reverse of the built cURL → fetch converter).
+- **Calculators** — unit price comparison, BMI (with honest caveats), timezone meeting planner with shareable link. Mortgage affordability and the salary/hourly converter are built.
+- **PDF** — page thumbnails in the organizer (needs a PDF renderer, so it shares the PDF compression bundle plan).
 
 ## Platform improvements
 
