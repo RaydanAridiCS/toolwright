@@ -1,5 +1,7 @@
 /** Browser-side image helpers built on canvas. Nothing here touches the network. */
 
+import { squareLayout, type IconFit } from "@toolwright/core/favicon-generator";
+
 export type OutputFormat = "image/jpeg" | "image/png" | "image/webp" | "image/avif";
 
 export const FORMAT_EXTENSIONS: Record<string, string> = {
@@ -116,4 +118,37 @@ export function blobToDataUrl(blob: Blob): Promise<string> {
     reader.onerror = () => reject(reader.error ?? new Error("The file could not be read."));
     reader.readAsDataURL(blob);
   });
+}
+
+export interface SquareIconOptions {
+  fit: IconFit;
+  /** Empty space kept on every side, as a percentage of the icon size. */
+  padding: number;
+  /** Fill colour behind the image. Leave null to keep transparency. */
+  background?: string | null;
+}
+
+/** Draw an image onto a square PNG of the given size. */
+export async function renderSquareIcon(image: LoadedImage, size: number, options: SquareIconOptions): Promise<Uint8Array> {
+  const layout = squareLayout(image.width, image.height, size, options.fit, options.padding);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Your browser does not support canvas, which this tool needs.");
+  if (options.background) {
+    ctx.fillStyle = options.background;
+    ctx.fillRect(0, 0, size, size);
+  }
+  ctx.imageSmoothingQuality = "high";
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(layout.clip.x, layout.clip.y, layout.clip.size, layout.clip.size);
+  ctx.clip();
+  ctx.drawImage(image.source, layout.x, layout.y, layout.width, layout.height);
+  ctx.restore();
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+  canvas.width = canvas.height = 0; // free memory early
+  if (!blob) throw new Error("The icon could not be encoded. Try a smaller source image.");
+  return blobToBytes(blob);
 }

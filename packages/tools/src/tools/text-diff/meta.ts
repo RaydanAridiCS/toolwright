@@ -12,5 +12,5 @@ export default defineTool({
   icon: Diff,
   popular: true,
   howTo: ["Paste the original text on the left and the changed text on the right.", "Choose line, word or character comparison.", "Switch between side-by-side and inline views, or copy the unified patch."],
-  related: ["find-and-replace", "json-formatter", "line-tools"],
+  related: ["find-and-replace", "json-formatter", "line-tools", "json-diff"],
 });

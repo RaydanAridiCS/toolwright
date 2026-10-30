@@ -122,6 +122,44 @@ test.describe("PDF tools in a real browser", () => {
     const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
     expect(await pageCount((await download.path())!)).toBe(2);
   });
+
+  test("organizer: move, remove and turn pages, then download", async ({ page, baseURL }) => {
+    const tracker = trackRequests(page);
+    await page.goto("/tools/pdf-organizer");
+    await page.locator('input[type="file"]').setInputFiles({ name: "deck.pdf", mimeType: "application/pdf", buffer: await samplePdf(4, "O") });
+    await expect(page.getByText("4 pages in the new file")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Create PDF" })).toBeDisabled();
+
+    await page.getByRole("button", { name: "Move page 4, now at position 4 up" }).click(); // 1, 2, 4, 3
+    await page.getByRole("button", { name: "Remove page 1, now at position 1" }).click(); // 2, 4, 3
+    await page.getByRole("button", { name: "Turn page 2, now at position 1 clockwise" }).click();
+    await expect(page.getByText("3 pages in the new file · 1 of the original left out")).toBeVisible();
+    await expect(page.getByText("Turned 90°")).toBeVisible();
+
+    await page.getByRole("button", { name: "Create PDF" }).click();
+    await expect(page.getByText("Done! Your file is ready.")).toBeVisible();
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
+    expect(download.suggestedFilename()).toBe("deck-organized.pdf");
+    const doc = await PDFDocument.load(await readFile((await download.path())!));
+    // Page i is 300 + 10 * (i - 1) points wide, so widths identify the pages.
+    expect(doc.getPages().map((p) => p.getWidth())).toEqual([310, 330, 320]);
+    expect(doc.getPages().map((p) => p.getRotation().angle)).toEqual([90, 0, 0]);
+    expect(tracker.external(baseURL!)).toEqual([]);
+  });
+
+  test("organizer: collates a double-sided scan and explains an odd page count", async ({ page }) => {
+    await page.goto("/tools/pdf-organizer");
+    await page.locator('input[type="file"]').setInputFiles({ name: "scan.pdf", mimeType: "application/pdf", buffer: await samplePdf(4, "S") });
+    await page.getByRole("button", { name: "Collate double-sided scan" }).click(); // 1, 4, 2, 3
+    await page.getByRole("button", { name: "Create PDF" }).click();
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
+    expect((await PDFDocument.load(await readFile((await download.path())!))).getPages().map((p) => p.getWidth())).toEqual([300, 330, 310, 320]);
+
+    await page.goto("/tools/pdf-organizer");
+    await page.locator('input[type="file"]').setInputFiles({ name: "odd.pdf", mimeType: "application/pdf", buffer: await samplePdf(3, "S") });
+    await page.getByRole("button", { name: "Collate double-sided scan" }).click();
+    await expect(appAlert(page)).toContainText("even number of pages");
+  });
 });
 
 test.describe("image tools in a real browser", () => {
@@ -147,6 +185,51 @@ test.describe("image tools in a real browser", () => {
     await page.locator('input[type="file"]').setInputFiles({ name: "wide.png", mimeType: "image/png", buffer: png });
     await page.getByLabel("Max width").fill("200");
     await expect(page.getByText("800×400 → 200×100")).toBeVisible();
+  });
+
+  test("favicon generator packs icons into a ZIP without uploading", async ({ page, baseURL }) => {
+    const tracker = trackRequests(page);
+    await page.goto("/tools/favicon-generator");
+    await page.locator('input[type="file"]').setInputFiles({ name: "logo.png", mimeType: "image/png", buffer: await makePng(page, 600, 600) });
+    await page.getByRole("button", { name: "Create favicon pack" }).click();
+    await expect(page.getByText("Done! Your file is ready.")).toBeVisible();
+    await expect(page.getByLabel("HTML to paste into the head of your pages")).toHaveValue(/rel="apple-touch-icon" href="\/apple-touch-icon.png"/);
+
+    const [zip] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
+    expect(zip.suggestedFilename()).toBe("favicons.zip");
+    const files = unzipSync(new Uint8Array(await readFile((await zip.path())!)));
+    expect(Object.keys(files).sort()).toEqual([
+      "android-chrome-192x192.png",
+      "android-chrome-512x512.png",
+      "apple-touch-icon.png",
+      "favicon-16x16.png",
+      "favicon-32x32.png",
+      "favicon.ico",
+      "head-snippet.html",
+      "site.webmanifest",
+    ]);
+
+    // The PNG header stores width and height; check the sizes are what the names promise.
+    const size = (name: string) => {
+      const view = new DataView(files[name]!.buffer, files[name]!.byteOffset);
+      return [view.getUint32(16), view.getUint32(20)];
+    };
+    expect(size("favicon-16x16.png")).toEqual([16, 16]);
+    expect(size("apple-touch-icon.png")).toEqual([180, 180]);
+    expect(size("android-chrome-512x512.png")).toEqual([512, 512]);
+
+    // An .ico file: reserved 0, type 1, three images (16, 32, 48).
+    const ico = files["favicon.ico"]!;
+    expect([...ico.subarray(0, 6)]).toEqual([0, 0, 1, 0, 3, 0]);
+    expect([ico[6], ico[22], ico[38]]).toEqual([16, 32, 48]);
+    expect(JSON.parse(new TextDecoder().decode(files["site.webmanifest"]!)).icons).toHaveLength(2);
+    expect(tracker.external(baseURL!)).toEqual([]);
+  });
+
+  test("favicon generator rejects a file that is not an image", async ({ page }) => {
+    await page.goto("/tools/favicon-generator");
+    await page.locator('input[type="file"]').setInputFiles({ name: "logo.png", mimeType: "image/png", buffer: Buffer.from("not an image") });
+    await expect(appAlert(page)).toContainText("could not be read");
   });
 
   test("converter handles several files and offers a ZIP", async ({ page }) => {

@@ -9,11 +9,13 @@ import meta_contrast_checker from "./tools/contrast-checker/meta";
 import meta_cron_explainer from "./tools/cron-explainer/meta";
 import meta_csv_delimiter_converter from "./tools/csv-delimiter-converter/meta";
 import meta_csv_to_markdown from "./tools/csv-to-markdown/meta";
+import meta_curl_to_fetch from "./tools/curl-to-fetch/meta";
 import meta_date_calculator from "./tools/date-calculator/meta";
 import meta_delete_pdf_pages from "./tools/delete-pdf-pages/meta";
 import meta_exif_remover from "./tools/exif-remover/meta";
 import meta_exif_viewer from "./tools/exif-viewer/meta";
 import meta_extract_pdf_pages from "./tools/extract-pdf-pages/meta";
+import meta_favicon_generator from "./tools/favicon-generator/meta";
 import meta_find_and_replace from "./tools/find-and-replace/meta";
 import meta_hash_generator from "./tools/hash-generator/meta";
 import meta_hex_binary_converter from "./tools/hex-binary-converter/meta";
@@ -26,7 +28,9 @@ import meta_image_resizer from "./tools/image-resizer/meta";
 import meta_image_to_base64 from "./tools/image-to-base64/meta";
 import meta_images_to_pdf from "./tools/images-to-pdf/meta";
 import meta_json_csv_converter from "./tools/json-csv-converter/meta";
+import meta_json_diff from "./tools/json-diff/meta";
 import meta_json_formatter from "./tools/json-formatter/meta";
+import meta_json_schema_generator from "./tools/json-schema-generator/meta";
 import meta_json_to_typescript from "./tools/json-to-typescript/meta";
 import meta_json_yaml_converter from "./tools/json-yaml-converter/meta";
 import meta_jwt_decoder from "./tools/jwt-decoder/meta";
@@ -41,6 +45,7 @@ import meta_number_to_words from "./tools/number-to-words/meta";
 import meta_palette_generator from "./tools/palette-generator/meta";
 import meta_password_generator from "./tools/password-generator/meta";
 import meta_pdf_metadata_editor from "./tools/pdf-metadata-editor/meta";
+import meta_pdf_organizer from "./tools/pdf-organizer/meta";
 import meta_pdf_page_numbers from "./tools/pdf-page-numbers/meta";
 import meta_pdf_watermark from "./tools/pdf-watermark/meta";
 import meta_percentage_calculator from "./tools/percentage-calculator/meta";
@@ -82,11 +87,13 @@ export const tools: readonly ToolMeta[] = [
   meta_cron_explainer,
   meta_csv_delimiter_converter,
   meta_csv_to_markdown,
+  meta_curl_to_fetch,
   meta_date_calculator,
   meta_delete_pdf_pages,
   meta_exif_remover,
   meta_exif_viewer,
   meta_extract_pdf_pages,
+  meta_favicon_generator,
   meta_find_and_replace,
   meta_hash_generator,
   meta_hex_binary_converter,
@@ -99,7 +106,9 @@ export const tools: readonly ToolMeta[] = [
   meta_image_to_base64,
   meta_images_to_pdf,
   meta_json_csv_converter,
+  meta_json_diff,
   meta_json_formatter,
+  meta_json_schema_generator,
   meta_json_to_typescript,
   meta_json_yaml_converter,
   meta_jwt_decoder,
@@ -114,6 +123,7 @@ export const tools: readonly ToolMeta[] = [
   meta_palette_generator,
   meta_password_generator,
   meta_pdf_metadata_editor,
+  meta_pdf_organizer,
   meta_pdf_page_numbers,
   meta_pdf_watermark,
   meta_percentage_calculator,

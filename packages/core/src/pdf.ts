@@ -132,6 +132,34 @@ export async function reorderPages(bytes: Uint8Array, order: number[]): Promise<
   return extractPages(bytes, order);
 }
 
+/** One page of the output: which source page (zero-based) to use and how far to turn it. */
+export interface PageOp {
+  source: number;
+  /** Extra clockwise rotation, added to whatever the page already has. */
+  rotate?: 0 | 90 | 180 | 270;
+}
+
+/**
+ * Build a new PDF page by page. A source page may appear more than once (duplicated),
+ * be left out (removed), and be turned, all in a single pass.
+ */
+export async function organizePages(bytes: Uint8Array, ops: PageOp[]): Promise<Uint8Array> {
+  if (ops.length === 0) throw new PdfError("There are no pages left. Keep at least one page.");
+  const src = await load(bytes);
+  const count = src.getPageCount();
+  for (const op of ops) {
+    if (!Number.isInteger(op.source) || op.source < 0 || op.source >= count) throw new PdfError(`Page ${op.source + 1} does not exist (this PDF has ${count} pages).`);
+  }
+  const out = await PDFDocument.create();
+  const copies = await out.copyPages(src, ops.map((op) => op.source));
+  copies.forEach((page, i) => {
+    const extra = ops[i]?.rotate ?? 0;
+    if (extra) page.setRotation(degrees((page.getRotation().angle + extra) % 360));
+    out.addPage(page);
+  });
+  return out.save({ useObjectStreams: true });
+}
+
 export interface PageSize {
   width: number;
   height: number;

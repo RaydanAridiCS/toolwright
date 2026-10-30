@@ -9,5 +9,5 @@ export default defineTool({
   category: "pdf",
   keywords: ["rotate pdf", "rotate pdf pages", "flip pdf", "fix sideways pdf", "turn pdf"],
   icon: RotateCw,
-  related: ["merge-pdf", "split-pdf", "extract-pdf-pages"],
+  related: ["merge-pdf", "split-pdf", "extract-pdf-pages", "pdf-organizer"],
 });

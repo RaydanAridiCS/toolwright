@@ -112,6 +112,46 @@ test.describe("tool pages", () => {
     await expect(page.getByTestId("payment")).toHaveText("$694.44");
   });
 
+  test("JSON diff lists differences by path and can ignore array order", async ({ page }) => {
+    await page.goto("/tools/json-diff");
+    await page.getByRole("button", { name: "Sample" }).click();
+    await expect(page.getByRole("cell", { name: "$.age", exact: true })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "$.roles[0]", exact: true })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "$.address.zip", exact: true })).toBeVisible();
+
+    await page.getByText("Ignore array order", { exact: true }).click();
+    await expect(page.getByRole("cell", { name: "$.roles[2]", exact: true })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "$.roles[0]", exact: true })).toHaveCount(0);
+
+    await page.getByLabel("Changed JSON").fill("{oops}");
+    await expect(appAlert(page)).toContainText("changed side is not valid JSON");
+  });
+
+  test("cURL converter writes fetch code and keeps the command out of the URL", async ({ page }) => {
+    await page.goto("/tools/curl-to-fetch");
+    await page.getByLabel("cURL command").fill(`curl -X POST https://api.example.com/v1/items -H 'Authorization: Bearer SECRET-TOKEN' -d '{"a":1}' -H 'Content-Type: application/json'`);
+    const output = page.getByLabel("fetch code");
+    await expect(output).toHaveValue(/await fetch\("https:\/\/api\.example\.com\/v1\/items"/);
+    await expect(output).toHaveValue(/"Authorization": "Bearer SECRET-TOKEN"/);
+    await expect(output).toHaveValue(/body: JSON\.stringify\(/);
+    expect(page.url()).not.toContain("#s=");
+
+    await page.getByLabel("cURL command").fill("wget https://example.com");
+    await expect(appAlert(page)).toContainText("start with");
+  });
+
+  test("JSON Schema generator infers types and optional keys", async ({ page }) => {
+    await page.goto("/tools/json-schema-generator");
+    await page.getByRole("button", { name: "Sample" }).click();
+    const output = page.getByLabel("JSON Schema", { exact: true });
+    await expect(output).toHaveValue(/"\$schema": "https:\/\/json-schema\.org\/draft\/2020-12\/schema"/);
+    await expect(output).toHaveValue(/"format": "email"/);
+    await expect(output).toHaveValue(/"nickname"/);
+    const schema = JSON.parse(await output.inputValue()) as { items: { required: string[] } };
+    expect(schema.items.required).toContain("email");
+    expect(schema.items.required).not.toContain("nickname");
+  });
+
   test("QR generator renders a code and downloads SVG and PNG", async ({ page }) => {
     await page.goto("/tools/qr-code-generator");
     await expect(page.getByRole("img", { name: "Generated QR code" })).toBeVisible();

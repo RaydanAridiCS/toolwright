@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["json to typescript", "json to interface", "typescript types from json", "generate types", "quicktype alternative"],
   icon: FileJson,
   popular: true,
-  related: ["json-formatter", "json-yaml-converter", "text-diff"],
+  related: ["json-formatter", "json-yaml-converter", "text-diff", "json-schema-generator"],
 });

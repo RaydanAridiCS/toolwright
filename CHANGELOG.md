@@ -21,6 +21,12 @@ The first version looked like a generic generated landing page. The whole interf
 
 ### Added
 
+- Five tools from the roadmap, bringing the catalogue to 76:
+  - **JSON Diff** compares two JSON documents by structure and lists added, removed and changed paths, with an option to ignore array order.
+  - **cURL to Fetch Converter** turns a copied cURL command into `fetch` code and notes any option fetch cannot reproduce. It keeps the command out of shareable links because commands often contain tokens.
+  - **JSON Schema Generator** infers a schema from a sample, merging list items so keys missing from some become optional.
+  - **PDF Page Organizer** reorders, turns, duplicates and removes pages from one list, and can collate a double-sided scan.
+  - **Favicon Generator** makes `favicon.ico`, PNG icons for browsers, iOS and Android, a web app manifest and the HTML tags, as one ZIP.
 - Dockerfile (multi-stage, optional standalone output, `migrate` target) for maintainers; documented only in [docs/maintainers.md](docs/maintainers.md).
 - `docs/design-language.md`, a rewritten `docs/design-system.md`, `docs/images/` screenshots and `npm run screenshots`.
 - Design guardrails as tests: `apps/web/tests/design-rules.test.ts` (no gradients, glows, blur, pills, purple or orange, marketing filler) and `tokens.test.ts` (WCAG AA for every text pair in both themes).

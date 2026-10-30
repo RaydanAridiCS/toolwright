@@ -29,6 +29,11 @@ const PAGES = [
   "/tools/http-status-codes",
   "/tools/chmod-calculator",
   "/tools/date-calculator",
+  "/tools/json-diff",
+  "/tools/curl-to-fetch",
+  "/tools/json-schema-generator",
+  "/tools/pdf-organizer",
+  "/tools/favicon-generator",
 ];
 
 for (const scheme of ["light", "dark"] as const) {
