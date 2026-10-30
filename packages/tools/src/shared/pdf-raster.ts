@@ -1,9 +1,10 @@
 /**
- * "Smallest file": draws every page with PDF.js and rebuilds the PDF from JPEGs.
+ * Draws PDF pages with PDF.js: for Compress PDF's "Smallest file" mode (rebuild a PDF from page pictures) and for the
+ * page previews in the PDF Page Organizer.
  *
  * This is the only file that may mention `pdfjs-dist` (a test enforces it), and PDF.js is imported only when a
- * run starts, so nothing from it reaches the shared bundles or the page chunk. The renderer, its worker, fonts
- * and character maps are all served from this site (see scripts/copy-pdfjs-assets.mjs); nothing is fetched elsewhere.
+ * file is actually drawn, so nothing from it reaches the shared bundles or the page chunks. The renderer, its worker,
+ * fonts and character maps are all served from this site (see scripts/copy-pdfjs-assets.mjs); nothing is fetched elsewhere.
  */
 import { COMPRESS_LIMITS, CompressCancelled, createImagePdfBuilder, planRaster, type CompressProgress, type CompressSettings } from "@toolwright/core/pdf-compress";
 import { PdfError } from "@toolwright/core/pdf";
@@ -22,29 +23,39 @@ export interface RasterOptions {
 
 const ASSETS = "/pdfjs/";
 
-function toBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
-  return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("The page could not be encoded."))), "image/jpeg", quality));
+type Pdfjs = typeof import("pdfjs-dist");
+type PdfDocument = Awaited<ReturnType<Pdfjs["getDocument"]>["promise"]>;
+
+interface OpenPdf {
+  pdfjs: Pdfjs;
+  pdf: PdfDocument;
+  /** Frees the document and stops PDF.js's worker. Safe to call more than once. */
+  close(): Promise<void>;
 }
 
-export async function rasterizePdf(file: File, settings: CompressSettings, options: RasterOptions = {}): Promise<RasterResult> {
-  const { onProgress, signal } = options;
-  const cancelled = () => signal?.aborted === true;
-  if (cancelled()) throw new CompressCancelled();
+function toBlob(canvas: HTMLCanvasElement, type: string, quality: number): Promise<Blob> {
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("The page could not be encoded."))), type, quality));
+}
 
+/** Loads PDF.js (once per page load, cached by the module system) and opens a file in a fresh worker. */
+async function openPdf(file: File): Promise<OpenPdf> {
+  if (typeof Worker === "undefined") throw new PdfError("This browser cannot draw pages.");
   // Loaded here and nowhere else: this is what keeps ~1.7 MB of PDF.js out of everything that does not need it.
   // The minified build has no type declarations of its own; it exports the same API as the main entry.
   // @ts-expect-error TS7016: no declaration file for the .min.mjs build
-  const pdfjs: typeof import("pdfjs-dist") = await import("pdfjs-dist/build/pdf.min.mjs");
-  if (cancelled()) throw new CompressCancelled();
+  const pdfjs: Pdfjs = await import("pdfjs-dist/build/pdf.min.mjs");
 
   // The worker is a plain file served from this site, not bundled: the bundler rewrites worker entries into a
   // classic-script wrapper, and PDF.js's worker never completes its handshake inside that wrapper.
   const worker = new Worker(`${ASSETS}pdf.worker.min.mjs`, { type: "module" });
-  const canvas = document.createElement("canvas");
-  let loading: ReturnType<typeof pdfjs.getDocument> | null = null;
-  let rendering: { cancel(): void } | null = null;
-  const onAbort = () => rendering?.cancel();
-  signal?.addEventListener("abort", onAbort);
+  let loading: ReturnType<Pdfjs["getDocument"]> | null = null;
+  let closed = false;
+  const close = async () => {
+    if (closed) return;
+    closed = true;
+    await loading?.destroy().catch(() => undefined);
+    worker.terminate();
+  };
 
   try {
     const origin = window.location.origin;
@@ -65,6 +76,28 @@ export async function rasterizePdf(file: File, settings: CompressSettings, optio
       if (name === "PasswordException") throw new PdfError("This PDF is password-protected. Remove the password first.");
       throw new PdfError("This PDF could not be read. It may be corrupted or not a PDF.");
     });
+    return { pdfjs, pdf, close };
+  } catch (err) {
+    await close();
+    throw err;
+  }
+}
+
+export async function rasterizePdf(file: File, settings: CompressSettings, options: RasterOptions = {}): Promise<RasterResult> {
+  const { onProgress, signal } = options;
+  const cancelled = () => signal?.aborted === true;
+  if (cancelled()) throw new CompressCancelled();
+
+  const canvas = document.createElement("canvas");
+  let rendering: { cancel(): void } | null = null;
+  const onAbort = () => rendering?.cancel();
+  signal?.addEventListener("abort", onAbort);
+  let open: OpenPdf | null = null;
+
+  try {
+    open = await openPdf(file);
+    const { pdfjs, pdf } = open;
+    if (cancelled()) throw new CompressCancelled();
 
     if (pdf.numPages > COMPRESS_LIMITS.maxSmallestPages) {
       throw new PdfError(`This PDF has ${pdf.numPages} pages. Smallest file is limited to ${COMPRESS_LIMITS.maxSmallestPages}. Split the file first, or use Keep text.`);
@@ -94,7 +127,7 @@ export async function rasterizePdf(file: File, settings: CompressSettings, optio
         rendering = task;
         await task.promise;
         rendering = null;
-        const blob = await toBlob(canvas, settings.quality / 100);
+        const blob = await toBlob(canvas, "image/jpeg", settings.quality / 100);
         await builder.addPage(new Uint8Array(await blob.arrayBuffer()), plan.widthPt, plan.heightPt);
         page.cleanup();
       } catch (err) {
@@ -109,7 +142,53 @@ export async function rasterizePdf(file: File, settings: CompressSettings, optio
   } finally {
     signal?.removeEventListener("abort", onAbort);
     canvas.width = canvas.height = 0;
-    await loading?.destroy().catch(() => undefined);
-    worker.terminate();
+    await open?.close();
   }
+}
+
+export interface PageThumbnailer {
+  pageCount: number;
+  /** Draws one page (zero-based) as a small JPEG, turned the way the PDF itself says. Draws happen one at a time. */
+  render(pageIndex: number): Promise<Blob>;
+  dispose(): void;
+}
+
+/** Opens a PDF for previews. `maxSide` is the longer side of each thumbnail in pixels. */
+export async function createThumbnailer(file: File, maxSide = 160): Promise<PageThumbnailer> {
+  const open = await openPdf(file);
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d", { alpha: false });
+  if (!context) {
+    await open.close();
+    throw new PdfError("This browser cannot draw pages.");
+  }
+  let queue: Promise<unknown> = Promise.resolve();
+  let disposed = false;
+
+  return {
+    pageCount: open.pdf.numPages,
+    render(pageIndex) {
+      const job = queue.then(async () => {
+        if (disposed) throw new Error("The previews were closed.");
+        const page = await open.pdf.getPage(pageIndex + 1);
+        const natural = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({ scale: maxSide / Math.max(natural.width, natural.height) });
+        canvas.width = Math.max(1, Math.ceil(viewport.width));
+        canvas.height = Math.max(1, Math.ceil(viewport.height));
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        await page.render({ canvas, canvasContext: context, viewport, annotationMode: open.pdfjs.AnnotationMode.ENABLE }).promise;
+        const blob = await toBlob(canvas, "image/jpeg", 0.8);
+        page.cleanup();
+        return blob;
+      });
+      queue = job.catch(() => undefined);
+      return job;
+    },
+    dispose() {
+      disposed = true;
+      canvas.width = canvas.height = 0;
+      void open.close();
+    },
+  };
 }

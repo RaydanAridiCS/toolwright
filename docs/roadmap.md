@@ -13,7 +13,7 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 - **Text** — readability scores, text-to-speech preview using the Web Speech API. HTML → Markdown is built; Markdown → HTML is the Markdown Previewer's HTML tab.
 - **Developer** — GraphQL formatter, Dockerfile/YAML linting, fetch → cURL (the reverse of the built cURL → fetch converter).
 - **Calculators** — unit price comparison, BMI (with honest caveats), timezone meeting planner with shareable link. Mortgage affordability and the salary/hourly converter are built.
-- **PDF** — page thumbnails in the organizer. The lazy PDF.js renderer built for Compress PDF (`packages/tools/src/shared/pdf-raster.ts`) can be reused. Compress PDF follow-ups: recompress lossless images that are clearly photographs, and let the Smallest file mode keep selectable text by adding an invisible text layer (needs OCR).
+- **PDF** — Compress PDF follow-ups: recompress lossless images that are clearly photographs, and let Smallest file keep selectable text with an invisible text layer (needs OCR). Page previews could also come to Split PDF and Extract PDF Pages, using the same renderer.
 
 ## Platform improvements
 

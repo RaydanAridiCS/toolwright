@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp, Copy, FileText, RotateCcw, RotateCw, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, RotateCcw, RotateCw, Trash2 } from "lucide-react";
 import { Alert, Badge, Button, baseName } from "@toolwright/ui";
 import { organizePages } from "@toolwright/core/pdf";
 import { collateDuplexScan, duplicatePage, initialPlan, isUntouched, movePage, planToOps, removePage, reversePlan, turnPage, type PlanPage } from "@toolwright/core/pdf-organizer";
 import { DownloadResult, JobError, PdfDrop, PdfSourceCard, RunButton, useJob, usePdfSource, type PdfSource } from "../../shared/pdf-ui";
+import { PageThumb, useThumbnails } from "../../shared/pdf-thumbs";
 
 export default function Tool() {
   const pdf = usePdfSource();
@@ -25,6 +26,7 @@ function Organizer({ source, onRemove }: { source: PdfSource; onRemove: () => vo
   const [plan, setPlan] = useState<PlanPage[]>(() => initialPlan(total));
   const [notice, setNotice] = useState<string | null>(null);
   const job = useJob<Uint8Array>();
+  const thumbs = useThumbnails(source.file);
 
   const edit = (next: (current: PlanPage[]) => PlanPage[]) => {
     setNotice(null);
@@ -63,6 +65,7 @@ function Organizer({ source, onRemove }: { source: PdfSource; onRemove: () => vo
         </p>
       </div>
       {notice ? <Alert tone="error">{notice}</Alert> : null}
+      {thumbs.failed ? <p className="text-sm text-muted-foreground">Page previews could not be drawn for this file. You can still reorder, turn and remove pages.</p> : null}
 
       <ol aria-label="Pages of the new file" className="border-t border-border">
         {plan.map((page, i) => {
@@ -73,9 +76,7 @@ function Organizer({ source, onRemove }: { source: PdfSource; onRemove: () => vo
               <span className="w-8 shrink-0 text-right font-mono text-sm text-muted-foreground" aria-hidden>
                 {i + 1}
               </span>
-              <span aria-hidden className="grid size-9 shrink-0 place-items-center border border-border bg-muted">
-                <FileText className="size-5 text-muted-foreground transition-transform" style={{ transform: `rotate(${page.turn}deg)` }} />
-              </span>
+              <PageThumb store={thumbs.store} pageIndex={page.source} turn={page.turn} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   Page {page.source + 1}

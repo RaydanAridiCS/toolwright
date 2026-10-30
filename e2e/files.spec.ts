@@ -348,6 +348,68 @@ test.describe("Compress PDF in a real browser", () => {
   });
 });
 
+test.describe("PDF Page Organizer previews", () => {
+  const previews = (page: import("@playwright/test").Page) => page.locator('ol[aria-label="Pages of the new file"] img');
+
+  test("each page gets a real preview that turns with the page and stays on the device", async ({ page, baseURL }) => {
+    const tracker = trackRequests(page);
+    const violations: string[] = [];
+    page.on("console", (m) => /Content Security Policy|Refused to/i.test(m.text()) && violations.push(m.text()));
+    await page.goto("/tools/pdf-organizer");
+    await page.locator('input[type="file"]').setInputFiles({ name: "deck.pdf", mimeType: "application/pdf", buffer: await samplePdf(4, "T") });
+    await expect(previews(page)).toHaveCount(4, { timeout: 30_000 });
+
+    // Pages are 300, 310, 320 and 330 points wide and 400 tall, so the previews grow wider in that order.
+    const sizes = await previews(page).evaluateAll((images) => (images as HTMLImageElement[]).map((i) => [i.naturalWidth, i.naturalHeight]));
+    expect(sizes.map(([w]) => w as number)).toEqual([...sizes.map(([w]) => w as number)].sort((a, b) => a - b));
+    expect(new Set(sizes.map(([w]) => w)).size).toBe(4);
+    for (const [, h] of sizes) expect(h).toBeGreaterThanOrEqual(160);
+
+    // The preview shows the page, not a blank sheet: the line of text leaves dark pixels.
+    const darkPixels = await previews(page).first().evaluate((img) => {
+      const image = img as HTMLImageElement;
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(image, 0, 0);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let dark = 0;
+      for (let i = 0; i < data.length; i += 4) if ((data[i] as number) < 110) dark++;
+      return dark;
+    });
+    expect(darkPixels).toBeGreaterThan(20);
+
+    await page.getByRole("button", { name: "Turn page 1, now at position 1 clockwise" }).click();
+    await expect(previews(page).first()).toHaveAttribute("style", /rotate\(90deg\)/);
+    await expect(previews(page)).toHaveCount(4);
+
+    expect(tracker.external(baseURL!)).toEqual([]);
+    expect(tracker.all.filter((r) => r.method() !== "GET" && !r.url().includes("/_next/"))).toEqual([]);
+    expect(violations).toEqual([]);
+  });
+
+  test("a long document only draws the rows that are on screen", async ({ page }) => {
+    await page.goto("/tools/pdf-organizer");
+    await page.locator('input[type="file"]').setInputFiles({ name: "long.pdf", mimeType: "application/pdf", buffer: await samplePdf(300, "L") });
+    await expect(previews(page).first()).toBeVisible({ timeout: 30_000 });
+    await page.waitForTimeout(1500);
+    const drawn = await previews(page).count();
+    expect(drawn).toBeGreaterThan(0);
+    expect(drawn).toBeLessThan(60);
+    // Scrolling to the end draws the last page.
+    await page.getByRole("button", { name: "Remove page 300, now at position 300" }).scrollIntoViewIfNeeded();
+    await expect.poll(() => previews(page).count(), { timeout: 20_000 }).toBeGreaterThan(drawn);
+  });
+
+  test("a text-only PDF gets previews too", async ({ page }) => {
+    await page.goto("/tools/pdf-organizer");
+    await page.locator('input[type="file"]').setInputFiles(join(PDF_FIXTURES, "text-only.pdf"));
+    await expect(page.getByText("2 pages in the new file")).toBeVisible();
+    await expect(previews(page)).toHaveCount(2, { timeout: 30_000 });
+  });
+});
+
 test.describe("image tools in a real browser", () => {
   test("compressor shrinks an image and keeps it on-device", async ({ page, baseURL }) => {
     const tracker = trackRequests(page);
