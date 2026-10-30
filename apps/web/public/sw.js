@@ -1,5 +1,5 @@
 /* Toolwright service worker: makes tools you have opened work offline.
- *  - /_next/static/* and other build assets: cache-first (they are content-hashed and immutable).
+ *  - /_next/static/*, /pdfjs/* (PDF.js fonts and character maps) and other build assets: cache-first (_next/static is content-hashed; /pdfjs is not, so bump CACHE_VERSION when pdfjs-dist is upgraded).
  *  - Page navigations: network-first, falling back to the cached page, then to /offline.html.
  *  - API calls and non-GET requests are never cached.
  * Bump CACHE_VERSION to invalidate everything.
@@ -44,7 +44,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  const isAsset = url.pathname.startsWith("/_next/static/") || /\.(?:js|css|woff2?|png|svg|ico|webmanifest|wasm)$/.test(url.pathname);
+  const isAsset = url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/pdfjs/") || /\.(?:js|css|woff2?|png|svg|ico|webmanifest|wasm)$/.test(url.pathname);
   if (isAsset) {
     event.respondWith(
       caches.match(request).then(

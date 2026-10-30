@@ -9,15 +9,18 @@ export class PdfError extends Error {
   }
 }
 
-async function load(bytes: Uint8Array, label = "PDF"): Promise<PDFDocument> {
+/** `parseSpeed` is how many objects pdf-lib parses before yielding to the event loop; pass `Infinity` inside a worker. */
+export async function loadPdf(bytes: Uint8Array, label = "PDF", parseSpeed?: number): Promise<PDFDocument> {
   try {
-    return await PDFDocument.load(bytes, { ignoreEncryption: false, updateMetadata: false });
+    return await PDFDocument.load(bytes, { ignoreEncryption: false, updateMetadata: false, ...(parseSpeed === undefined ? {} : { parseSpeed }) });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (/encrypted/i.test(message)) throw new PdfError(`${label} is password-protected. Remove the password first.`);
     throw new PdfError(`${label} could not be read. It may be corrupted or not a PDF.`);
   }
 }
+
+const load = loadPdf;
 
 export const isPdf = (bytes: Uint8Array) => bytes.length > 4 && String.fromCharCode(bytes[0] as number, bytes[1] as number, bytes[2] as number, bytes[3] as number) === "%PDF";
 

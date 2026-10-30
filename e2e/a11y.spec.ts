@@ -39,6 +39,7 @@ const PAGES = [
   "/tools/http-header-explainer",
   "/tools/mortgage-affordability-calculator",
   "/tools/salary-converter",
+  "/tools/compress-pdf",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

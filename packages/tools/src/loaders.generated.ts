@@ -9,6 +9,7 @@ export const toolLoaders: Record<string, ToolLoader> = {
   "chmod-calculator": () => import("./tools/chmod-calculator/Tool"),
   "color-converter": () => import("./tools/color-converter/Tool"),
   "compound-interest-calculator": () => import("./tools/compound-interest-calculator/Tool"),
+  "compress-pdf": () => import("./tools/compress-pdf/Tool"),
   "contrast-checker": () => import("./tools/contrast-checker/Tool"),
   "cron-explainer": () => import("./tools/cron-explainer/Tool"),
   "csv-delimiter-converter": () => import("./tools/csv-delimiter-converter/Tool"),

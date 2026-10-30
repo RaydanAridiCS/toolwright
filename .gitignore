@@ -11,3 +11,6 @@ next-env.d.ts
 playwright-report
 test-results
 .DS_Store
+
+# Copied from pdfjs-dist by scripts/copy-pdfjs-assets.mjs
+apps/web/public/pdfjs/

@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["split pdf", "separate pdf pages", "divide pdf", "pdf splitter", "extract pages", "break up pdf"],
   icon: Scissors,
   popular: true,
-  related: ["extract-pdf-pages", "merge-pdf", "delete-pdf-pages", "rotate-pdf"],
+  related: ["extract-pdf-pages", "merge-pdf", "delete-pdf-pages", "rotate-pdf", "compress-pdf"],
 });

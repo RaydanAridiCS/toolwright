@@ -44,5 +44,41 @@ export async function makePng(page: Page, width = 400, height = 300): Promise<Bu
   return Buffer.from(dataUrl.split(",")[1] as string, "base64");
 }
 
+/** A noisy JPEG made in the browser, so compressing it has real work to do. */
+export async function makeJpeg(page: Page, width = 1200, height = 900, quality = 0.95): Promise<Buffer> {
+  const dataUrl = await page.evaluate(
+    ([w, h, q]) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = w as number;
+      canvas.height = h as number;
+      const ctx = canvas.getContext("2d")!;
+      const image = ctx.createImageData(w as number, h as number);
+      let seed = 12345;
+      for (let i = 0; i < image.data.length; i += 4) {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        const x = (i / 4) % (w as number);
+        const y = Math.floor(i / 4 / (w as number));
+        const noise = (seed >>> 24) % 64;
+        image.data[i] = (x * 255) / (w as number) / 2 + noise;
+        image.data[i + 1] = (y * 255) / (h as number) / 2 + noise;
+        image.data[i + 2] = 128 + noise / 2;
+        image.data[i + 3] = 255;
+      }
+      ctx.putImageData(image, 0, 0);
+      return canvas.toDataURL("image/jpeg", q as number);
+    },
+    [width, height, quality],
+  );
+  return Buffer.from(dataUrl.split(",")[1] as string, "base64");
+}
+
+/** Adds an EXIF orientation tag to a JPEG. Orientation 6 means "rotate 90° clockwise to display". */
+export function withExifOrientation(jpeg: Buffer, orientation: number): Buffer {
+  const tiff = Buffer.from([0x4d, 0x4d, 0x00, 0x2a, 0x00, 0x00, 0x00, 0x08, 0x00, 0x01, 0x01, 0x12, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, orientation, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
+  const body = Buffer.concat([Buffer.from("Exif\0\0"), tiff]);
+  const segment = Buffer.concat([Buffer.from([0xff, 0xe1, (body.length + 2) >> 8, (body.length + 2) & 0xff]), body]);
+  return Buffer.concat([jpeg.subarray(0, 2), segment, jpeg.subarray(2)]);
+}
+
 /** App alerts, excluding Next.js's built-in (empty) route announcer which also has role="alert". */
 export const appAlert = (page: Page) => page.locator('[role="alert"]:not(#__next-route-announcer__)');

@@ -1,8 +1,10 @@
-import { readFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { expect, test } from "@playwright/test";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, PDFName, PDFRawStream, decodePDFRawStream } from "pdf-lib";
 import { unzipSync } from "fflate";
-import { appAlert, makePng, trackRequests } from "./helpers";
+import { appAlert, makeJpeg, makePng, trackRequests, withExifOrientation } from "./helpers";
 
 async function samplePdf(pages: number, label: string): Promise<Buffer> {
   const doc = await PDFDocument.create();
@@ -159,6 +161,190 @@ test.describe("PDF tools in a real browser", () => {
     await page.locator('input[type="file"]').setInputFiles({ name: "odd.pdf", mimeType: "application/pdf", buffer: await samplePdf(3, "S") });
     await page.getByRole("button", { name: "Collate double-sided scan" }).click();
     await expect(appAlert(page)).toContainText("even number of pages");
+  });
+});
+
+const PDF_FIXTURES = join(__dirname, "..", "packages", "core", "tests", "fixtures", "pdf");
+
+/** A PDF whose pages each hold the same large photo, drawn 6 inches wide, with a line of real text. */
+async function photoPdf(jpeg: Buffer, pages: number): Promise<Buffer> {
+  const doc = await PDFDocument.create();
+  const font = await doc.embedFont("Helvetica");
+  const image = await doc.embedJpg(jpeg);
+  for (let i = 0; i < pages; i++) {
+    const page = doc.addPage([612, 792]);
+    page.drawText(`Photo page ${i + 1}`, { x: 54, y: 740, size: 18, font });
+    page.drawImage(image, { x: 90, y: 250, width: 432, height: (432 * image.height) / image.width });
+  }
+  return Buffer.from(await doc.save());
+}
+
+const hex = (text: string) => Buffer.from(text).toString("hex").toUpperCase();
+
+/** The drawing instructions of a page, decoded, so tests can look for text. */
+function pageContent(doc: PDFDocument, index: number): string {
+  const contents = doc.getPage(index).node.Contents();
+  const streams = contents && "size" in contents ? Array.from({ length: contents.size() }, (_, i) => doc.context.lookup(contents.get(i))) : [contents];
+  return streams.map((s) => Buffer.from(decodePDFRawStream(s as PDFRawStream).decode()).toString("latin1")).join("\n");
+}
+
+function imageSizes(doc: PDFDocument): [number, number][] {
+  return doc.context
+    .enumerateIndirectObjects()
+    .map(([, o]) => o)
+    .filter((o): o is PDFRawStream => o instanceof PDFRawStream && o.dict.get(PDFName.of("Subtype")) === PDFName.of("Image"))
+    .map((o) => [Number(o.dict.get(PDFName.of("Width"))), Number(o.dict.get(PDFName.of("Height")))]);
+}
+
+test.describe("Compress PDF in a real browser", () => {
+  test("Keep text shrinks the photos, keeps the text and uploads nothing", async ({ page, baseURL }) => {
+    const tracker = trackRequests(page);
+    const violations: string[] = [];
+    page.on("console", (m) => /Content Security Policy|Refused to/i.test(m.text()) && violations.push(m.text()));
+    await page.goto("/tools/compress-pdf");
+    const original = await photoPdf(await makeJpeg(page), 3);
+    await page.locator('input[type="file"]').setInputFiles({ name: "album.pdf", mimeType: "application/pdf", buffer: original });
+    await expect(page.getByText("Images take")).toBeVisible();
+
+    await page.getByRole("button", { name: "Compress PDF", exact: true }).click();
+    await expect(page.getByText("Your smaller file is ready.")).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId("compress-sizes")).toContainText("→");
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download", exact: true }).click()]);
+    expect(download.suggestedFilename()).toBe("album-compressed.pdf");
+    const bytes = await readFile((await download.path())!);
+    expect(bytes.length).toBeLessThan(original.length);
+
+    const doc = await PDFDocument.load(bytes);
+    expect(doc.getPageCount()).toBe(3);
+    // The photo is 1200 px over 6 inches (200 dpi); Balanced allows 150 dpi, so it is scaled to 900 px.
+    expect(imageSizes(doc)).toEqual([[900, 675]]);
+    // Text is still real text.
+    expect(pageContent(doc, 0)).toContain(hex("Photo page 1"));
+
+    expect(tracker.external(baseURL!)).toEqual([]);
+    expect(tracker.all.filter((r) => r.method() !== "GET" && !r.url().includes("/_next/"))).toEqual([]);
+    expect(violations).toEqual([]);
+  });
+
+  test("a photo with an EXIF rotation is not turned or squashed", async ({ page }) => {
+    await page.goto("/tools/compress-pdf");
+    const rotated = withExifOrientation(await makeJpeg(page, 1200, 900), 6);
+    await page.locator('input[type="file"]').setInputFiles({ name: "exif.pdf", mimeType: "application/pdf", buffer: await photoPdf(rotated, 1) });
+    await page.getByRole("button", { name: "Compress PDF", exact: true }).click();
+    await expect(page.getByText("Your smaller file is ready.")).toBeVisible({ timeout: 60_000 });
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download", exact: true }).click()]);
+    // Still landscape (wider than tall), as stored. A browser that applied the EXIF turn would have given 675 x 900.
+    expect(imageSizes(await PDFDocument.load(await readFile((await download.path())!)))).toEqual([[900, 675]]);
+  });
+
+  test("Smallest file warns first, then replaces the text with pictures", async ({ page, baseURL }) => {
+    test.setTimeout(120_000);
+    const tracker = trackRequests(page);
+    const violations: string[] = [];
+    page.on("console", (m) => /Content Security Policy|Refused to/i.test(m.text()) && violations.push(m.text()));
+    await page.goto("/tools/compress-pdf");
+    const original = await photoPdf(await makeJpeg(page), 2);
+    await page.locator('input[type="file"]').setInputFiles({ name: "album.pdf", mimeType: "application/pdf", buffer: original });
+    await expect(page.getByText("Images take")).toBeVisible();
+
+    await page.getByRole("radio", { name: "Smallest file" }).check({ force: true });
+    await expect(page.getByText("This removes selectable text")).toBeVisible();
+    await expect(page.getByText(/lose selectable and searchable text, copy and paste, links, fillable fields, bookmarks/)).toBeVisible();
+    await page.getByRole("radio", { name: "Strong" }).check({ force: true });
+
+    await page.getByRole("button", { name: "Flatten pages and compress" }).click();
+    await expect(page.getByText("Your smaller file is ready.")).toBeVisible({ timeout: 90_000 });
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download", exact: true }).click()]);
+    const bytes = await readFile((await download.path())!);
+    expect(bytes.length).toBeLessThan(original.length);
+
+    const doc = await PDFDocument.load(bytes);
+    expect(doc.getPages().map((p) => [p.getWidth(), p.getHeight()])).toEqual([
+      [612, 792],
+      [612, 792],
+    ]);
+    for (const index of [0, 1]) {
+      const content = pageContent(doc, index);
+      expect(content).not.toContain(hex(`Photo page ${index + 1}`));
+      expect(content).not.toContain("Tj");
+    }
+    expect(imageSizes(doc)).toHaveLength(2);
+
+    expect(tracker.external(baseURL!)).toEqual([]);
+    expect(tracker.all.filter((r) => r.method() !== "GET" && !r.url().includes("/_next/"))).toEqual([]);
+    expect(violations).toEqual([]);
+  });
+
+  test("Smallest file keeps a turned page the right way up", async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.goto("/tools/compress-pdf");
+    await page.locator('input[type="file"]').setInputFiles(join(PDF_FIXTURES, "rotated-photo.pdf"));
+    await page.getByRole("radio", { name: "Smallest file" }).check({ force: true });
+    await page.getByRole("radio", { name: "Strong" }).check({ force: true });
+    await page.getByRole("button", { name: "Flatten pages and compress" }).click();
+    await expect(page.getByText("Your smaller file is ready.")).toBeVisible({ timeout: 90_000 });
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download", exact: true }).click()]);
+    const doc = await PDFDocument.load(await readFile((await download.path())!));
+    // The source page is 612 x 792 turned 90 degrees, so it is shown landscape. The new page is landscape with no turn of its own.
+    expect([doc.getPage(0).getWidth(), doc.getPage(0).getHeight(), doc.getPage(0).getRotation().angle]).toEqual([792, 612, 0]);
+  });
+
+  test("a PDF with no images explains itself and offers the original", async ({ page }) => {
+    await page.goto("/tools/compress-pdf");
+    await page.locator('input[type="file"]').setInputFiles(join(PDF_FIXTURES, "text-only.pdf"));
+    await expect(page.getByText("This PDF has no images")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Compress PDF", exact: true })).toBeDisabled();
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download original" }).click()]);
+    expect(download.suggestedFilename()).toBe("text-only.pdf");
+  });
+
+  test("images that are already small give no smaller file, and the original is offered", async ({ page }) => {
+    await page.goto("/tools/compress-pdf");
+    const doc = await PDFDocument.create();
+    const image = await doc.embedJpg(await readFile(join(PDF_FIXTURES, "recompressed-rgb.jpg")));
+    doc.addPage([300, 300]).drawImage(image, { x: 20, y: 20, width: 250, height: 188 });
+    await page.locator('input[type="file"]').setInputFiles({ name: "tiny.pdf", mimeType: "application/pdf", buffer: Buffer.from(await doc.save()) });
+    await page.getByRole("button", { name: "Compress PDF", exact: true }).click();
+    await expect(page.getByText("This could not be made smaller")).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByText("Your smaller file is ready.")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Download original" })).toBeVisible();
+  });
+
+  test("encrypted, damaged and non-PDF files get a readable error", async ({ page }) => {
+    await page.goto("/tools/compress-pdf");
+    await page.locator('input[type="file"]').setInputFiles(join(PDF_FIXTURES, "encrypted.pdf"));
+    await expect(appAlert(page)).toContainText("password-protected");
+    await page.locator('input[type="file"]').setInputFiles(join(PDF_FIXTURES, "corrupt.pdf"));
+    await expect(appAlert(page)).toContainText("could not be read");
+    await page.locator('input[type="file"]').setInputFiles({ name: "notes.pdf", mimeType: "application/pdf", buffer: Buffer.from("this is not a pdf at all") });
+    await expect(appAlert(page)).toContainText("does not look like a PDF");
+  });
+
+  test("a file over the size limit is refused before it is read", async ({ page }) => {
+    const huge = join(tmpdir(), `toolwright-huge-${process.pid}.pdf`);
+    await writeFile(huge, Buffer.concat([Buffer.from("%PDF-1.7\n"), Buffer.alloc(201 * 1024 * 1024)]));
+    try {
+      await page.goto("/tools/compress-pdf");
+      await page.locator('input[type="file"]').setInputFiles(huge);
+      await expect(appAlert(page)).toContainText("up to 200 MB");
+      await expect(appAlert(page)).toContainText("Split PDF");
+      await expect(page.getByRole("button", { name: "Compress PDF", exact: true })).toHaveCount(0);
+    } finally {
+      await rm(huge, { force: true });
+    }
+  });
+
+  test("Cancel stops a long job and leaves the original alone", async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.goto("/tools/compress-pdf");
+    await page.locator('input[type="file"]').setInputFiles({ name: "long.pdf", mimeType: "application/pdf", buffer: await photoPdf(await makeJpeg(page), 80) });
+    await page.getByRole("radio", { name: "Smallest file" }).check({ force: true });
+    await page.getByRole("button", { name: "Flatten pages and compress" }).click();
+    await expect(page.getByRole("progressbar")).toBeVisible();
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(page.getByText("Cancelled. Your original file is untouched.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Flatten pages and compress" })).toBeEnabled();
+    await expect(page.getByText("Your smaller file is ready.")).toHaveCount(0);
   });
 });
 

@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["images to pdf", "jpg to pdf", "png to pdf", "photos to pdf", "convert image to pdf", "scan to pdf"],
   icon: FileInput,
   popular: true,
-  related: ["merge-pdf", "image-converter", "image-compressor"],
+  related: ["merge-pdf", "image-converter", "image-compressor", "compress-pdf"],
 });

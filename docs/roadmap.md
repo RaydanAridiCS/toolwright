@@ -4,7 +4,6 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 
 ## Tools people ask for
 
-- **PDF compression** — real recompression of embedded images (render pages with PDF.js, re-encode as JPEG, rebuild). Needs a careful bundle-size and memory plan; today `pdf-lib` can only re-save structure.
 - **Audio and video** — trim, convert and compress in the browser (WebAssembly FFmpeg). Must be bundled locally (the CSP forbids loading it from a CDN) and lazy-loaded.
 - **Image background remover** — a small on-device model.
 - **JSON merge** (three-way, key-order aware). JSON diff, the JSON Schema generator and the JSONPath tester are built.
@@ -14,7 +13,7 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 - **Text** — readability scores, text-to-speech preview using the Web Speech API. HTML → Markdown is built; Markdown → HTML is the Markdown Previewer's HTML tab.
 - **Developer** — GraphQL formatter, Dockerfile/YAML linting, fetch → cURL (the reverse of the built cURL → fetch converter).
 - **Calculators** — unit price comparison, BMI (with honest caveats), timezone meeting planner with shareable link. Mortgage affordability and the salary/hourly converter are built.
-- **PDF** — page thumbnails in the organizer (needs a PDF renderer, so it shares the PDF compression bundle plan).
+- **PDF** — page thumbnails in the organizer. The lazy PDF.js renderer built for Compress PDF (`packages/tools/src/shared/pdf-raster.ts`) can be reused. Compress PDF follow-ups: recompress lossless images that are clearly photographs, and let the Smallest file mode keep selectable text by adding an invisible text layer (needs OCR).
 
 ## Platform improvements
 

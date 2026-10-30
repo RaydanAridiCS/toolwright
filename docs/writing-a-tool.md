@@ -198,7 +198,12 @@
 `- **\`Alert\` has \`role="alert"\` only for \`tone="error"\`.** Tests that look for an alert need an error tone. Warnings and notes are plain status regions.
 `- **Playwright labels:** the tool plate and the how-to section also carry the tool name as an accessible label, so \`getByLabel("JSON")\` can match three elements. Prefer \`getByRole("textbox", { name, exact: true })\`.
 `- **Pipe-free test runs:** \`npx playwright test … | tail\` hides the exit code. Read the "failed" line or use \`--reporter=line\` and check \`$?\`.
-`- **Honest scope:** check \`docs/tools.md\` for an existing tool before you promise a new one fills a gap. The PDF organizer overlaps Extract and Rotate; its value is the visual list and the duplex collation.
+`- **Heavy libraries load on demand, in one file.** PDF.js (about 1.7 MB) is imported with `await import()` from `shared/pdf-raster.ts` only; `packages/tools/tests/bundle-isolation.test.ts` fails if anything else mentions it. Do the same for any large dependency.
+- **Bundlers rewrite worker entries.** Your own worker (`new Worker(new URL("./x.worker.ts", import.meta.url))`) works, but a third-party worker such as PDF.js's never finished its handshake inside Turbopack's wrapper. Copy it to `apps/web/public/` with a script (see `scripts/copy-pdfjs-assets.mjs`) and start it from a plain URL.
+- **The production CSP has no `'wasm-unsafe-eval'`.** Dev mode has `'unsafe-eval'`, which hides this. Anything that needs WebAssembly must be tested against `npm run build && npm start` (the e2e suite does) and needs a JavaScript fallback or a deliberate CSP change.
+- **Browsers apply the EXIF turn when decoding a JPEG, even with `imageOrientation: "none"`.** PDFs ignore EXIF, so strip the EXIF segment (`stripJpegExif` in core) before drawing the image to a canvas.
+- **Never offer a bigger file.** Run the result through `pickSmaller` and give the original back with an honest message when nothing was gained.
+- **Honest scope:** check \`docs/tools.md\` for an existing tool before you promise a new one fills a gap. The PDF organizer overlaps Extract and Rotate; its value is the visual list and the duplex collation.
 `
 `
 `## Conventions

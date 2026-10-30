@@ -99,6 +99,25 @@ export function RunButton({ busy, disabled, onClick, children }: { busy: boolean
   );
 }
 
+/** Progress for long jobs: a flat bar, a label such as "Page 3 of 12", and a polite spoken update every quarter. */
+export function RunProgress({ label, done, total }: { label: string; done: number; total: number }) {
+  const percent = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-baseline justify-between gap-3 text-sm">
+        <span>{label}</span>
+        <span className="font-mono tabular-nums text-muted-foreground">{percent}%</span>
+      </div>
+      <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} className="h-2.5 border border-foreground bg-card">
+        <div className="h-full bg-marker" style={{ width: `${percent}%` }} />
+      </div>
+      <p role="status" className="sr-only">
+        {Math.floor(percent / 25) * 25}% done
+      </p>
+    </div>
+  );
+}
+
 export function JobError({ error }: { error: string | null }) {
   return error ? <Alert tone="error">{error}</Alert> : null;
 }
