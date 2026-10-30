@@ -17,7 +17,7 @@ These are what make Toolwright *Toolwright*. Pull requests that break them can't
 ## Getting set up
 
 ```bash
-git clone https://github.com/toolwright/toolwright.git
+git clone https://github.com/RaydanAridiCS/toolwright.git
 cd toolwright
 npm install
 npm run dev                          # http://localhost:3000

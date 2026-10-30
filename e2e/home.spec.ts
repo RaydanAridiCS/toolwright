@@ -1,4 +1,13 @@
+import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
+import { PDFDocument } from "pdf-lib";
+import { trackRequests } from "./helpers";
+
+async function pdfWithPages(pages: number): Promise<Buffer> {
+  const doc = await PDFDocument.create();
+  for (let i = 0; i < pages; i++) doc.addPage([300, 400]);
+  return Buffer.from(await doc.save());
+}
 
 test.describe("home page", () => {
   test("shows the headline, the toolbox ledger and the drawers", async ({ page }) => {
@@ -32,16 +41,45 @@ test.describe("home page", () => {
     expect(offenders).toEqual([]);
   });
 
-  test("the bench is a working tool: it formats, switches tabs and hashes locally", async ({ page }) => {
+  test("the bench runs the real tools: merge two PDFs on the home page, switch tabs, upload nothing", async ({ page, baseURL }) => {
+    const tracker = trackRequests(page);
     await page.goto("/");
-    const input = page.getByLabel("Input", { exact: true });
-    const result = page.getByRole("group", { name: "Result" });
-    await expect(result).toContainText('"private": true');
-    await input.fill('{"a":[1,2]}');
-    await expect(result).toContainText('"a": [');
-    await page.getByText("Hash", { exact: true }).click();
-    await expect(result).toContainText("2ab96390c7dbe3439de74d0c9b0b1767");
-    await expect(result).toContainText("f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7");
+    await expect(page.getByRole("radio", { name: "Merge PDF" })).toBeChecked();
+    for (const name of ["Compress PDF", "Organize pages", "Images to PDF", "Compress images"]) await expect(page.getByRole("radio", { name })).toBeAttached();
+
+    // Merge PDF is the default tab; the file input appears once the tool has loaded.
+    const merge = page.locator('input[type="file"]').first();
+    await merge.setInputFiles([
+      { name: "first.pdf", mimeType: "application/pdf", buffer: await pdfWithPages(2) },
+      { name: "second.pdf", mimeType: "application/pdf", buffer: await pdfWithPages(3) },
+    ]);
+    await page.getByRole("button", { name: /Merge 2 PDFs \(5 pages\)/ }).click();
+    await expect(page.getByText("Done! Your file is ready.")).toBeVisible();
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download" }).click()]);
+    expect(download.suggestedFilename()).toBe("merged.pdf");
+    expect((await PDFDocument.load(await readFile((await download.path())!))).getPageCount()).toBe(5);
+
+    // Switching tabs loads the next tool and keeps the first one's result.
+    await page.getByRole("radio", { name: "Compress PDF" }).check({ force: true });
+    await expect(page.getByText("Drop a PDF here, or click to browse").first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Open the full Compress PDF page/ })).toHaveAttribute("href", "/tools/compress-pdf");
+    await page.getByRole("radio", { name: "Merge PDF" }).check({ force: true });
+    await expect(page.getByText("Done! Your file is ready.")).toBeVisible();
+
+    // Using the bench leaves no trace: nothing in the address bar, nothing in "recently used", nothing sent anywhere.
+    expect(new URL(page.url()).hash).toBe("");
+    expect(await page.evaluate(() => localStorage.getItem("tw-recents"))).toBeNull();
+    expect(tracker.external(baseURL!)).toEqual([]);
+    expect(tracker.all.filter((r) => r.method() !== "GET" && !r.url().includes("/_next/"))).toEqual([]);
+  });
+
+  test("the footer credits the maintainer, and the GitHub links point at the public repository", async ({ page }) => {
+    await page.goto("/");
+    const credit = page.getByRole("contentinfo").getByRole("link", { name: "raydan.dev" });
+    await expect(credit).toHaveAttribute("href", "https://raydan.dev");
+    await expect(page.getByRole("contentinfo")).toContainText("Developed and maintained by raydan.dev");
+    await expect(page.getByRole("contentinfo")).not.toContainText("Bricolage");
+    for (const link of await page.getByRole("link", { name: /GitHub/ }).all()) await expect(link).toHaveAttribute("href", "https://github.com/RaydanAridiCS/toolwright");
   });
 
   test("the network ledger reads 0 outside requests, in the hero bench and the footer", async ({ page }) => {

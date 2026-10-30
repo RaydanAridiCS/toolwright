@@ -25,7 +25,6 @@ And because the product's promise is *"your data never leaves your device"*, the
 | **Highlighter marker** (lime) | "Look here": the active, selected or hovered thing | Headline phrase, hovered rows, active tabs, selection |
 | **Hard offset shadow** | A thing you can press | Primary buttons, result slabs, the ticket |
 | **Network ledger** | The privacy promise, measured | Hero bench, tool plates, footer |
-| **Colophon** | Honesty about how the page is made | Footer |
 
 ## Principles
 
@@ -127,7 +126,7 @@ A tool's *page* is generated for you; you design only the tool inside the plate.
 
 ## Colophon
 
-Set in Bricolage Grotesque, Instrument Sans and Geist Mono, on paper the color of `#F4F0E6`. The footer says so, on purpose.
+Set in Bricolage Grotesque, Instrument Sans and Geist Mono, on paper the color of `#F4F0E6`. (The footer used to say so; it now credits the maintainer instead.)
 
 ## Decision log
 

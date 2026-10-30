@@ -36,7 +36,7 @@ COPY . .
 
 # NEXT_PUBLIC_* values are inlined into the browser bundle, so they must be known at build time.
 ARG NEXT_PUBLIC_SITE_URL=https://toolwright.com
-ARG NEXT_PUBLIC_REPO_URL=https://github.com/toolwright/toolwright
+ARG NEXT_PUBLIC_REPO_URL=https://github.com/RaydanAridiCS/toolwright
 # Build workers: lower this if the build is killed for lack of memory, raise it for faster builds.
 ARG NEXT_BUILD_CPUS=4
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \

@@ -59,12 +59,13 @@ function componentFor(slug: string): LazyExoticComponent<ComponentType> | null {
   return component;
 }
 
-export function ToolLoader({ slug }: { slug: string }) {
+/** `track={false}` keeps the tool out of the visitor's "recently used" list (used by the home page bench). */
+export function ToolLoader({ slug, track = true }: { slug: string; track?: boolean }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   useEffect(() => {
-    pushRecent(slug);
-  }, [slug]);
+    if (track) pushRecent(slug);
+  }, [slug, track]);
 
   const Tool = componentFor(slug);
   if (!Tool) return <Alert tone="error">This tool could not be found.</Alert>;

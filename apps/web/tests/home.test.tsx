@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -130,47 +130,32 @@ describe("NetworkLedger", () => {
 });
 
 describe("HeroBench", () => {
-  it("starts with a working JSON formatter on sample text", () => {
+  it("starts on Merge PDF and loads the real tool once the page is idle", async () => {
     render(<HeroBench />);
-    const result = screen.getByRole("group", { name: "Result" });
-    expect(result).toHaveTextContent('"private": true');
-    expect(result).toHaveTextContent('"uploads": 0');
-    expect(screen.getByLabelText("Input")).toHaveValue('{"tool":"formatter","private":true,"uploads":0}');
+    expect(screen.getByRole("radio", { name: "Merge PDF" })).toBeChecked();
+    expect(await screen.findByText(/Drop PDFs here/, undefined, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByTestId("outside-requests")).toHaveTextContent("0");
-  });
+  }, 20_000);
 
-  it("formats whatever you type and reports invalid JSON", async () => {
+  it("offers the most useful tools and links to the full page of the one you are on", async () => {
     render(<HeroBench />);
-    const input = screen.getByLabelText("Input");
-    fireEvent.change(input, { target: { value: '{"a":[1,2]}' } });
-    expect(screen.getByRole("group", { name: "Result" })).toHaveTextContent('"a": [');
-    fireEvent.change(input, { target: { value: '{"a":' } });
-    expect(await screen.findByRole("alert")).toBeInTheDocument();
-  });
+    for (const name of ["Merge PDF", "Compress PDF", "Organize pages", "Images to PDF", "Compress images"]) expect(screen.getByRole("radio", { name })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Open the full Merge PDF page/ })).toHaveAttribute("href", "/tools/merge-pdf");
+    await userEvent.click(screen.getByRole("radio", { name: "Compress PDF" }));
+    expect(screen.getByRole("link", { name: /Open the full Compress PDF page/ })).toHaveAttribute("href", "/tools/compress-pdf");
+    await userEvent.click(screen.getByRole("radio", { name: "Organize pages" }));
+    expect(screen.getByRole("link", { name: /Open the full PDF Page Organizer page/ })).toHaveAttribute("href", "/tools/pdf-organizer");
+  }, 20_000);
 
-  it("switches tools: Base64, Hash (with async SHA-256) and Case", async () => {
+  it("keeps a tab's tool mounted when you switch away, and loads each tab only when it is opened", async () => {
     render(<HeroBench />);
-    await userEvent.click(screen.getByText("Base64"));
-    expect(screen.getByRole("group", { name: "Result" })).toHaveTextContent("Tm90aGluZyBsZWF2ZXMgdGhpcyBwYWdlLg==");
-
-    await userEvent.click(screen.getByText("Hash"));
-    const result = screen.getByRole("group", { name: "Result" });
-    expect(result).toHaveTextContent("2ab96390c7dbe3439de74d0c9b0b1767"); // md5("hunter2")
-    await waitFor(() => expect(result).toHaveTextContent("f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7"));
-
-    await userEvent.click(screen.getByText("Case"));
-    const cased = screen.getByRole("group", { name: "Result" });
-    for (const expected of ["keepTheData", "keep_the_data", "keep-the-data", "KEEP_THE_DATA", "Keep The Data"]) expect(cased).toHaveTextContent(expected);
-  });
-
-  it("remembers what you typed in each tab and links to the full tool", async () => {
-    render(<HeroBench />);
-    fireEvent.change(screen.getByLabelText("Input"), { target: { value: '{"kept":true}' } });
-    await userEvent.click(screen.getByText("Case"));
-    await userEvent.click(screen.getByText("JSON"));
-    expect(screen.getByLabelText("Input")).toHaveValue('{"kept":true}');
-    expect(screen.getByRole("link", { name: /Open the full JSON formatter/ })).toHaveAttribute("href", "/tools/json-formatter");
-  });
+    const merge = await screen.findByText(/Drop PDFs here/, undefined, { timeout: 5000 });
+    expect(screen.queryByText(/Drop a PDF here/)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("radio", { name: "Compress PDF" }));
+    expect(await screen.findByText(/Drop a PDF here/, undefined, { timeout: 5000 })).toBeVisible();
+    expect(merge).toBeInTheDocument();
+    expect(merge).not.toBeVisible();
+  }, 20_000);
 });
 
 describe("ProofLog", () => {

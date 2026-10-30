@@ -21,7 +21,7 @@ export default function HomePage() {
   const categories = categoriesWithCounts();
   return (
     <>
-      <section className="mx-auto max-w-7xl px-4 pb-14 pt-10 sm:px-6 sm:pb-20 sm:pt-16 lg:grid lg:grid-cols-12 lg:items-center lg:gap-14">
+      <section className="mx-auto max-w-7xl px-4 pb-14 pt-10 sm:px-6 sm:pb-20 sm:pt-16 lg:grid lg:grid-cols-12 lg:items-start lg:gap-14">
         <div className="lg:col-span-7">
           <h1 className="font-display text-[clamp(2.9rem,8.2vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.03em]">
             <span className="rise block" style={{ "--i": 0 } as React.CSSProperties}>

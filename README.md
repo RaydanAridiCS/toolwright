@@ -46,7 +46,7 @@ See the [full catalogue](docs/tools.md). Missing something? [Request it](#reques
 Requirements: **Node.js 20+** and **npm 10+**.
 
 ```bash
-git clone https://github.com/toolwright/toolwright.git
+git clone https://github.com/RaydanAridiCS/toolwright.git
 cd toolwright
 npm install
 npm run dev          # http://localhost:3000

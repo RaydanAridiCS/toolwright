@@ -57,7 +57,7 @@ docker run -p 3000:3000 -e DATABASE_URL=postgres://… toolwright
 | Build argument | Default | Purpose |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | `https://toolwright.com` | Canonical URLs, sitemap, Open Graph. Baked into the build. |
-| `NEXT_PUBLIC_REPO_URL` | `https://github.com/toolwright/toolwright` | GitHub links. Baked into the build. |
+| `NEXT_PUBLIC_REPO_URL` | `https://github.com/RaydanAridiCS/toolwright` | GitHub links. Baked into the build. |
 | `NEXT_BUILD_CPUS` | `4` | Build parallelism. Lower it if the build is killed for lack of memory (a constrained Docker VM can run out of RAM with many workers). |
 | `NODE_VERSION` | `22` | Node.js major version for all stages. |
 

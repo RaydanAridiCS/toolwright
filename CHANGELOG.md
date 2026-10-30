@@ -4,6 +4,11 @@ All notable changes to Toolwright. The format follows [Keep a Changelog](https:/
 
 ## [Unreleased]
 
+### Changed
+
+- The footer line about fonts and paper colour is replaced by "Developed and maintained by raydan.dev".
+- The public repository is now https://github.com/RaydanAridiCS/toolwright (site links, README, CONTRIBUTING, Dockerfile, `.env.example`, issue template).
+
 ### Changed: the "Workshop Ledger" redesign
 
 The first version looked like a generic generated landing page. The whole interface was redesigned around one idea: a tool catalogue kept by a careful workshop. Read [docs/design-language.md](docs/design-language.md) for the why and [docs/design-system.md](docs/design-system.md) for the how.
@@ -40,6 +45,7 @@ The first version looked like a generic generated landing page. The whole interf
   - PDF.js (`pdfjs-dist` 6.4.299, which needs Node 22.13 or newer to install without a warning) is loaded only when Smallest file starts. Its worker, fonts and character maps are served from this site (`scripts/copy-pdfjs-assets.mjs` copies them into `apps/web/public/pdfjs/` before `dev` and `build`), so the Content Security Policy is unchanged. WebAssembly stays off because the policy has no `'wasm-unsafe-eval'`; PDF.js falls back to its JavaScript decoders.
   - New: `packages/core/src/pdf-compress.ts` with real PDF fixtures in `packages/core/tests/fixtures/pdf/` (made by `scripts/make-pdf-fixtures.mjs`), `RunProgress` in the shared PDF UI, a test that keeps PDF.js out of every other bundle, and the service worker now caches `/pdfjs/` files for offline use.
 - **Page previews in the PDF Page Organizer.** Every row now shows a picture of its page instead of a generic icon, and the picture turns when you turn the page. PDF.js is loaded only after a file is dropped, previews are drawn one at a time and only for rows that scroll into view (a 300-page file draws a few dozen), and everything is released when the file is removed. If a page cannot be drawn the row keeps its icon and the tool works as before. The renderer is shared with Compress PDF (`packages/tools/src/shared/pdf-raster.ts`).
+- **The home page bench now runs the real tools.** The four text demos (JSON, Base64, Hash, Case) are replaced by tabs for Merge PDF (the default), Compress PDF, Organize pages, Images to PDF and Compress images. Each tab is the same component as the full tool page, loaded after the page is idle and only for tabs you open, with the network counter underneath. Using the bench does not touch the address bar or the "recently used" list.
 - Dockerfile (multi-stage, optional standalone output, `migrate` target) for maintainers; documented only in [docs/maintainers.md](docs/maintainers.md).
 - `docs/design-language.md`, a rewritten `docs/design-system.md`, `docs/images/` screenshots and `npm run screenshots`.
 - Design guardrails as tests: `apps/web/tests/design-rules.test.ts` (no gradients, glows, blur, pills, purple or orange, marketing filler) and `tokens.test.ts` (WCAG AA for every text pair in both themes).

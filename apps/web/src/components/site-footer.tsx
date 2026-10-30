@@ -63,7 +63,11 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border">
         <p className="label-plate mx-auto max-w-7xl px-4 py-5 normal-case tracking-normal sm:px-6">
-          © {new Date().getFullYear()} Toolwright contributors. Set in Bricolage Grotesque, Instrument Sans and Geist Mono, on paper the color of #F4F0E6.
+          © {new Date().getFullYear()} Toolwright. Developed and maintained by{" "}
+          <a href={SITE.author.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-foreground underline decoration-2 underline-offset-4 hover:bg-marker hover:text-marker-foreground">
+            {SITE.author.name}
+          </a>
+          .
         </p>
       </div>
     </footer>
