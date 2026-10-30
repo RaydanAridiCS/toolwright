@@ -34,5 +34,5 @@ export default defineTool({
       answer: "No. It reads the bash-style command, which uses single quotes or $'…' strings. In Chrome, choose “Copy as cURL (bash)”.",
     },
   ],
-  related: ["json-formatter", "url-parser", "http-status-codes", "utm-builder"],
+  related: ["json-formatter", "url-parser", "http-status-codes", "utm-builder", "http-header-explainer"],
 });

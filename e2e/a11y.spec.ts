@@ -34,6 +34,11 @@ const PAGES = [
   "/tools/json-schema-generator",
   "/tools/pdf-organizer",
   "/tools/favicon-generator",
+  "/tools/jsonpath-tester",
+  "/tools/html-to-markdown",
+  "/tools/http-header-explainer",
+  "/tools/mortgage-affordability-calculator",
+  "/tools/salary-converter",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

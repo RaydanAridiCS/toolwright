@@ -20,6 +20,8 @@ import meta_find_and_replace from "./tools/find-and-replace/meta";
 import meta_hash_generator from "./tools/hash-generator/meta";
 import meta_hex_binary_converter from "./tools/hex-binary-converter/meta";
 import meta_html_entities from "./tools/html-entities/meta";
+import meta_html_to_markdown from "./tools/html-to-markdown/meta";
+import meta_http_header_explainer from "./tools/http-header-explainer/meta";
 import meta_http_status_codes from "./tools/http-status-codes/meta";
 import meta_image_color_picker from "./tools/image-color-picker/meta";
 import meta_image_compressor from "./tools/image-compressor/meta";
@@ -33,6 +35,7 @@ import meta_json_formatter from "./tools/json-formatter/meta";
 import meta_json_schema_generator from "./tools/json-schema-generator/meta";
 import meta_json_to_typescript from "./tools/json-to-typescript/meta";
 import meta_json_yaml_converter from "./tools/json-yaml-converter/meta";
+import meta_jsonpath_tester from "./tools/jsonpath-tester/meta";
 import meta_jwt_decoder from "./tools/jwt-decoder/meta";
 import meta_line_tools from "./tools/line-tools/meta";
 import meta_loan_calculator from "./tools/loan-calculator/meta";
@@ -40,6 +43,7 @@ import meta_lorem_ipsum from "./tools/lorem-ipsum/meta";
 import meta_markdown_preview from "./tools/markdown-preview/meta";
 import meta_merge_pdf from "./tools/merge-pdf/meta";
 import meta_mime_types from "./tools/mime-types/meta";
+import meta_mortgage_affordability_calculator from "./tools/mortgage-affordability-calculator/meta";
 import meta_number_base_converter from "./tools/number-base-converter/meta";
 import meta_number_to_words from "./tools/number-to-words/meta";
 import meta_palette_generator from "./tools/palette-generator/meta";
@@ -55,6 +59,7 @@ import meta_qr_code_generator from "./tools/qr-code-generator/meta";
 import meta_regex_tester from "./tools/regex-tester/meta";
 import meta_roman_numerals from "./tools/roman-numerals/meta";
 import meta_rotate_pdf from "./tools/rotate-pdf/meta";
+import meta_salary_converter from "./tools/salary-converter/meta";
 import meta_slug_generator from "./tools/slug-generator/meta";
 import meta_split_pdf from "./tools/split-pdf/meta";
 import meta_sql_formatter from "./tools/sql-formatter/meta";
@@ -98,6 +103,8 @@ export const tools: readonly ToolMeta[] = [
   meta_hash_generator,
   meta_hex_binary_converter,
   meta_html_entities,
+  meta_html_to_markdown,
+  meta_http_header_explainer,
   meta_http_status_codes,
   meta_image_color_picker,
   meta_image_compressor,
@@ -111,6 +118,7 @@ export const tools: readonly ToolMeta[] = [
   meta_json_schema_generator,
   meta_json_to_typescript,
   meta_json_yaml_converter,
+  meta_jsonpath_tester,
   meta_jwt_decoder,
   meta_line_tools,
   meta_loan_calculator,
@@ -118,6 +126,7 @@ export const tools: readonly ToolMeta[] = [
   meta_markdown_preview,
   meta_merge_pdf,
   meta_mime_types,
+  meta_mortgage_affordability_calculator,
   meta_number_base_converter,
   meta_number_to_words,
   meta_palette_generator,
@@ -133,6 +142,7 @@ export const tools: readonly ToolMeta[] = [
   meta_regex_tester,
   meta_roman_numerals,
   meta_rotate_pdf,
+  meta_salary_converter,
   meta_slug_generator,
   meta_split_pdf,
   meta_sql_formatter,

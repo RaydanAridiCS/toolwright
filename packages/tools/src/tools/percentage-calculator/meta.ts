@@ -10,5 +10,5 @@ export default defineTool({
   keywords: ["percentage calculator", "percent of", "percent change", "percent increase", "percent decrease", "discount calculator"],
   icon: Percent,
   popular: true,
-  related: ["tip-calculator", "unit-converter", "loan-calculator"],
+  related: ["tip-calculator", "unit-converter", "loan-calculator", "salary-converter"],
 });

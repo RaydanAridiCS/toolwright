@@ -11,5 +11,5 @@ export default defineTool({
   keywords: ["loan calculator", "mortgage calculator", "amortization schedule", "monthly payment", "car loan", "interest calculator"],
   icon: Landmark,
   popular: true,
-  related: ["compound-interest-calculator", "percentage-calculator", "tip-calculator"],
+  related: ["compound-interest-calculator", "percentage-calculator", "tip-calculator", "mortgage-affordability-calculator"],
 });

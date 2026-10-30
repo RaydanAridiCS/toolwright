@@ -152,6 +152,79 @@ test.describe("tool pages", () => {
     expect(schema.items.required).not.toContain("nickname");
   });
 
+  test("JSONPath tester lists matches with their paths and explains bad queries", async ({ page }) => {
+    await page.goto("/tools/jsonpath-tester");
+    await page.getByRole("button", { name: "Sample" }).click();
+    await expect(page.getByRole("cell", { name: '"Moby Dick"', exact: true })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "$['store']['book'][2]['title']", exact: true })).toBeVisible();
+    await expect(page.getByRole("cell", { name: '"The Lord of the Rings"' })).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Every price" }).click();
+    await expect(page.getByRole("cell", { name: "399", exact: true })).toBeVisible();
+
+    await page.getByRole("textbox", { name: "JSONPath", exact: true }).fill("$.store.nothing");
+    await expect(page.getByText("No matches.")).toBeVisible();
+
+    await page.getByRole("textbox", { name: "JSONPath", exact: true }).fill("store.book");
+    await expect(appAlert(page)).toContainText("must start with $");
+  });
+
+  test("HTML to Markdown converts the sample", async ({ page }) => {
+    await page.goto("/tools/html-to-markdown");
+    await page.getByRole("button", { name: "Sample" }).click();
+    const output = page.getByLabel("Markdown", { exact: true });
+    await expect(output).toHaveValue(/^# Release notes/);
+    await expect(output).toHaveValue(/\[full changelog\]\(https:\/\/example\.com\/changelog\)/);
+    await expect(output).toHaveValue(/\| Plan \| Price \|\n\| --- \| ---: \|/);
+    await expect(output).toHaveValue(/```bash\nnpm install toolwright\n```/);
+
+    await page.getByText("Keep links", { exact: true }).click();
+    await expect(output).not.toHaveValue(/\]\(https/);
+  });
+
+  test("HTTP header explainer explains headers, grades them and keeps them out of the URL", async ({ page }) => {
+    await page.goto("/tools/http-header-explainer");
+    await page.getByRole("button", { name: "Sample response" }).click();
+    await expect(page.getByText(/max-age=31536000: fresh for 1 year/)).toBeVisible();
+    const checks = page.getByRole("list", { name: "Security checks" });
+    await expect(checks).toContainText("Content-Security-Policy");
+    await expect(checks).toContainText("Weak");
+    await expect(checks).toContainText("Missing");
+    expect(page.url()).not.toContain("#s=");
+
+    await page.getByRole("button", { name: "Sample request" }).click();
+    await expect(page.getByText("2 cookies: session, theme.")).toBeVisible();
+    await expect(page.getByRole("list", { name: "Security checks" })).toHaveCount(0);
+  });
+
+  test("mortgage affordability finds a price and checks the inputs", async ({ page }) => {
+    await page.goto("/tools/mortgage-affordability-calculator");
+    const price = page.getByTestId("max-price");
+    await expect(price).toHaveText(/^\$[\d,]+$/);
+    const before = Number((await price.textContent())?.replace(/[^\d]/g, ""));
+    expect(before).toBeGreaterThan(100000);
+
+    await page.getByLabel("Gross income per year").fill("180000");
+    await expect(price).not.toHaveText(String(before));
+    await expect.poll(async () => Number((await price.textContent())?.replace(/[^\d]/g, ""))).toBeGreaterThan(before);
+
+    await page.getByLabel("Gross income per year").fill("0");
+    await expect(page.getByText("Enter a yearly income above zero.")).toBeVisible();
+  });
+
+  test("salary converter converts between hourly and yearly pay", async ({ page }) => {
+    await page.goto("/tools/salary-converter");
+    await expect(page.getByTestId("pay-yearly")).toHaveText("$52,000.00");
+    await expect(page.getByTestId("pay-monthly")).toHaveText("$4,333.33");
+    await expect(page.getByTestId("headline-pay")).toHaveText("$52,000.00");
+
+    await page.getByLabel("Paid", { exact: true }).selectOption("yearly");
+    await page.getByLabel("Pay before tax").fill("104000");
+    await expect(page.getByTestId("headline-pay")).toHaveText("$50.00");
+    await page.getByLabel("Paid weeks per year").fill("50");
+    await expect(page.getByTestId("pay-hourly")).toHaveText("$52.00");
+  });
+
   test("QR generator renders a code and downloads SVG and PNG", async ({ page }) => {
     await page.goto("/tools/qr-code-generator");
     await expect(page.getByRole("img", { name: "Generated QR code" })).toBeVisible();

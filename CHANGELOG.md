@@ -27,6 +27,12 @@ The first version looked like a generic generated landing page. The whole interf
   - **JSON Schema Generator** infers a schema from a sample, merging list items so keys missing from some become optional.
   - **PDF Page Organizer** reorders, turns, duplicates and removes pages from one list, and can collate a double-sided scan.
   - **Favicon Generator** makes `favicon.ico`, PNG icons for browsers, iOS and Android, a web app manifest and the HTML tags, as one ZIP.
+- Five more tools, bringing the catalogue to 81:
+  - **JSONPath Tester** runs a JSONPath query (filters, slices, wildcards, recursive search) against pasted JSON and lists each match with its path. Queries are parsed, never evaluated as code.
+  - **HTML to Markdown Converter** turns pasted HTML into GitHub-flavoured Markdown with headings, lists, links, code blocks and tables. Scripts, styles and `javascript:` links are dropped.
+  - **HTTP Header Explainer** explains request or response headers in plain English, breaks down cache, cookie, HSTS and CSP values, and adds a security checklist. It keeps pasted headers out of shareable links because they often hold cookies and tokens.
+  - **Mortgage Affordability Calculator** finds the highest home price that fits the 28/36 lender rules, with a monthly breakdown that includes tax, insurance, dues and mortgage insurance.
+  - **Salary and Hourly Pay Converter** converts pay between hourly, daily, weekly, every two weeks, twice a month, monthly, quarterly and yearly for a custom work schedule.
 - Dockerfile (multi-stage, optional standalone output, `migrate` target) for maintainers; documented only in [docs/maintainers.md](docs/maintainers.md).
 - `docs/design-language.md`, a rewritten `docs/design-system.md`, `docs/images/` screenshots and `npm run screenshots`.
 - Design guardrails as tests: `apps/web/tests/design-rules.test.ts` (no gradients, glows, blur, pills, purple or orange, marketing filler) and `tokens.test.ts` (WCAG AA for every text pair in both themes).

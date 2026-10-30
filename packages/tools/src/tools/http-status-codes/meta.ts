@@ -9,5 +9,5 @@ export default defineTool({
   category: "developer",
   keywords: ["http status codes", "http response codes", "404 meaning", "301 vs 302", "status code reference"],
   icon: Signal,
-  related: ["mime-types", "port-numbers", "url-parser"],
+  related: ["mime-types", "port-numbers", "url-parser", "http-header-explainer"],
 });

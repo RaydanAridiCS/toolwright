@@ -9,5 +9,5 @@ export default defineTool({
   category: "data",
   keywords: ["csv to markdown", "markdown table generator", "excel to markdown", "tsv to markdown", "table to markdown"],
   icon: Table2,
-  related: ["json-csv-converter", "markdown-preview", "csv-delimiter-converter"],
+  related: ["json-csv-converter", "markdown-preview", "csv-delimiter-converter", "html-to-markdown"],
 });

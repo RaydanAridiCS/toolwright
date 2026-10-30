@@ -30,5 +30,5 @@ export default defineTool({
       answer: "No. The schema is generated in your browser.",
     },
   ],
-  related: ["json-to-typescript", "json-formatter", "json-yaml-converter", "json-diff"],
+  related: ["json-to-typescript", "json-formatter", "json-yaml-converter", "json-diff", "jsonpath-tester"],
 });

@@ -29,5 +29,5 @@ export default defineTool({
       answer: "No. Both documents are compared in your browser and never sent to a server.",
     },
   ],
-  related: ["json-formatter", "text-diff", "json-to-typescript", "json-yaml-converter"],
+  related: ["json-formatter", "text-diff", "json-to-typescript", "json-yaml-converter", "jsonpath-tester"],
 });
