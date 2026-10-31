@@ -93,7 +93,7 @@ describe("RequestBoard", () => {
     expect(screen.getByRole("status", { name: "Loading ideas" })).toBeInTheDocument();
     expect(await screen.findByText("Image background remover")).toBeInTheDocument();
     expect(screen.getByText("Demo mode")).toBeInTheDocument();
-    expect(screen.getByText("Planned")).toBeInTheDocument();
+    expect(within(screen.getByRole("list")).getByText("Planned")).toBeInTheDocument();
   });
 
   it("shows a friendly message when nothing is there yet", async () => {
@@ -106,6 +106,30 @@ describe("RequestBoard", () => {
     mockFetch(() => ({ status: 500, body: { error: { code: "internal", message: "Something went wrong on our side." } } }));
     render(<RequestBoard />);
     expect(await screen.findByText("Something went wrong on our side.")).toBeInTheDocument();
+  });
+
+  it("shows a calm message and a retry button when the server's database is down", async () => {
+    let up = false;
+    mockFetch(() => (up ? { body: { requests: [item()], persistent: true } } : { status: 503, body: { error: { code: "unavailable", message: "The request board is taking a break. Please try again in a few minutes." } } }));
+    render(<RequestBoard />);
+    expect(await screen.findByText("The board is taking a break")).toBeInTheDocument();
+    expect(screen.getByText(/Your idea is not lost/)).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    up = true;
+    await userEvent.click(screen.getByRole("button", { name: /Try again/ }));
+    expect(await screen.findByText("Image background remover")).toBeInTheDocument();
+    expect(screen.queryByText("The board is taking a break")).not.toBeInTheDocument();
+  });
+
+  it("filters by status and says so when nothing matches", async () => {
+    const calls = mockFetch((url) => ({ body: { requests: url.includes("status=shipped") ? [] : [item()], persistent: true } }));
+    render(<RequestBoard />);
+    await screen.findByText("Image background remover");
+    await userEvent.click(screen.getByText("Shipped"));
+    await waitFor(() => expect(calls.some((c) => c.url === "/api/requests?sort=top&status=shipped")).toBe(true));
+    expect(await screen.findByText(/Nothing is marked/)).toBeInTheDocument();
+    await userEvent.click(screen.getByText("All"));
+    expect(await screen.findByText("Image background remover")).toBeInTheDocument();
   });
 
   it("re-fetches when the sort order changes", async () => {

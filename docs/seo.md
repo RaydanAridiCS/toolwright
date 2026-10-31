@@ -124,6 +124,23 @@ Prefer improving the title and copy. If a slug must change:
 
 Guides are bylined to the Toolwright team and say so; the policy ("every statement is checked against what the tool does; the date is the date of the last real edit") is on `/guides`.
 
+## Link previews (WhatsApp, Facebook, LinkedIn, X, Telegram, Slack, Discord)
+
+When someone pastes a Toolwright link into a chat or a post, the app reads the page's Open Graph tags (`og:title`, `og:description`, `og:image`) and shows a card. None of those apps run JavaScript or log in, so the tags have to be in the HTML the server sends.
+
+How it is built:
+
+- `pageMetadata()` in `apps/web/src/lib/seo.ts` is the only place that writes a page's social tags. Every page gets its own card at `<path>/opengraph-image`: `/opengraph-image`, `/tools/opengraph-image`, `/tools/<slug>/opengraph-image`, `/category/<id>/opengraph-image`, `/guides/opengraph-image`, `/guides/<slug>/opengraph-image`, `/requests/...`, `/about/...`, `/privacy/...` and `/contribute/...`. Before this, every page except the tools shared the home card, whose caption read "TOOL CATALOGUE".
+- Cards are drawn at build time by `renderOgCard()` in `apps/web/src/lib/og-card.tsx` (a printed plate with the name, a marker bar and one or two lines of text). Long names step down in size so they stay on two lines, and `shortLine()` ends a tagline at a whole sentence.
+- The image entry carries what crawlers read: an absolute `https://` URL, `og:image:type` (`image/png`), `og:image:width` and `height` (1200 by 630), `og:image:alt` and `og:image:secure_url`. Guides use `og:type` `article` with their real published and modified dates; everything else is `website`.
+- WhatsApp may skip images over about 300 KB. The cards are 55 to 80 KB.
+
+To add a card for a new kind of page, put an `opengraph-image.tsx` next to its `page.tsx` that returns `renderOgCard({ name, tagline, caption })` (copy `apps/web/src/app/requests/opengraph-image.tsx`), and `pageMetadata()` will point to it with no further change.
+
+Tests: `apps/web/tests/seo.test.ts` (tags, article dates, tagline shortening) and, in `e2e/seo.spec.ts`, a check that every page in the sitemap names a card, that every card answers 200 as a 1200x630 PNG under 300 KB, and that requests that identify themselves as WhatsApp, Facebook, X, LinkedIn, Telegram, Slack and Discord get the tags inside `<head>`, near the top of the HTML.
+
+What code cannot check: how each app draws the card, and whether bot protection in front of the server lets the crawlers in. `npm run check:deploy` makes a WhatsApp-style request against the live site and fetches the home card, which catches a block, but it is not WhatsApp. The apps also keep their own cache of a link's preview, often for days. To see a changed preview straight away: Facebook and Messenger have the [Sharing Debugger](https://developers.facebook.com/tools/debug/) with "Scrape Again"; LinkedIn has the [Post Inspector](https://www.linkedin.com/post-inspector/); Telegram refreshes through the `@WebpageBot` bot; for WhatsApp and the rest, sharing the link with a throwaway query string (`https://toolwright.com/tools/merge-pdf?v=2`) normally gets a fresh preview. Sharing a link to yourself is the quickest way to look.
+
 ## IndexNow
 
 `scripts/indexnow.mjs` tells Bing and other IndexNow engines about changed pages. It runs on your machine and is never called from the site or from a visitor's browser. `node scripts/indexnow.mjs init` makes a key file in `apps/web/public/`; deploy it so `https://toolwright.com/<key>.txt` is live; then `node scripts/indexnow.mjs submit` shows what it would send and `--send` sends it (`--since 2026-10-31` sends only pages changed since a date). Google does not use IndexNow.

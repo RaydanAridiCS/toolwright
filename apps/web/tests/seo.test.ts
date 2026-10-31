@@ -5,7 +5,8 @@ import { GUIDES } from "../src/content/guides";
 import { DISALLOWED_PATHS, SEARCH_AND_ANSWER_CRAWLERS, TRAINING_CRAWLERS, allowTrainingCrawlers } from "../src/lib/crawler-policy";
 import { HOME_FAQ } from "../src/lib/home-faq";
 import { buildLlmsFullTxt, buildLlmsTxt } from "../src/lib/llms";
-import { pageMetadata } from "../src/lib/seo";
+import { cardPath, pageMetadata } from "../src/lib/seo";
+import { shortLine } from "../src/lib/og-card";
 import { SITE, absoluteUrl } from "../src/lib/site";
 import { articleLd, breadcrumbLd, categoryLd, faqLd, howToLd, organizationLd, toolLd, websiteLd } from "../src/lib/structured-data";
 
@@ -33,6 +34,33 @@ describe("site metadata", () => {
     expect((m.openGraph as any).images[0]).toMatchObject({ url: absoluteUrl("/x/opengraph-image"), width: 1200, height: 630, alt: "About card" });
     expect((m.twitter as any).images[0].alt).toBe("About card");
     expect(pageMetadata({ title: "t", description: "d", path: "/", noindex: true }).robots).toMatchObject({ index: false });
+  });
+
+  it("gives every page its own card at <path>/opengraph-image, with the type and size link-preview crawlers read", () => {
+    const m = pageMetadata({ title: "Request a Tool", description: "A description long enough to be useful here.", path: "/requests" });
+    expect((m.openGraph as any).images).toEqual([{ url: absoluteUrl("/requests/opengraph-image"), type: "image/png", width: 1200, height: 630, alt: "Toolwright: Request a Tool", ...(SITE.url.startsWith("https://") ? { secureUrl: absoluteUrl("/requests/opengraph-image") } : {}) }]);
+    expect((m.twitter as any).card).toBe("summary_large_image");
+    expect((m.twitter as any).images[0].url).toBe(absoluteUrl("/requests/opengraph-image"));
+    expect(cardPath("/")).toBe("/opengraph-image");
+    expect(cardPath("/guides/merge-pdf-files")).toBe("/guides/merge-pdf-files/opengraph-image");
+  });
+
+  it("marks guides as articles with their real dates, and everything else as a website", () => {
+    const g = pageMetadata({ title: "Guide", description: "A description long enough to be useful here.", path: "/guides/x", article: { published: "2026-10-01", updated: "2026-10-20" } });
+    expect(g.openGraph).toMatchObject({ type: "article", publishedTime: "2026-10-01", modifiedTime: "2026-10-20" });
+    expect(pageMetadata({ title: "t", description: "d", path: "/about" }).openGraph).toMatchObject({ type: "website" });
+  });
+
+  it("shortens a card tagline at a word and never past the limit", () => {
+    expect(shortLine("short enough")).toBe("short enough");
+    const long = "word ".repeat(60);
+    const out = shortLine(long, 50);
+    expect(out.length).toBeLessThanOrEqual(50);
+    expect(out.endsWith("…")).toBe(true);
+    expect(out).not.toMatch(/wor…$/);
+    // With a sentence that fits, it ends there instead of mid-thought.
+    const two = "Merge, split and compress PDFs in your browser. No upload and no sign-up. Files never leave your device at all.";
+    expect(shortLine(two, 90)).toBe("Merge, split and compress PDFs in your browser. No upload and no sign-up.");
   });
 });
 

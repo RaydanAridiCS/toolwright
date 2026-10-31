@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) return {};
-  return pageMetadata({ title: guide.seoTitle, description: guide.seoDescription, path: `/guides/${guide.slug}` });
+  return pageMetadata({ title: guide.seoTitle, description: guide.seoDescription, path: `/guides/${guide.slug}`, article: { published: guide.published, updated: guide.updated } });
 }
 
 const date = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });

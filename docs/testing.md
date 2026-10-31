@@ -54,6 +54,8 @@ These are the most numerous and the cheapest. Principles:
 
 `service.test.ts` covers validation, duplicate handling, rate limiting (with an injected clock) and anonymous-identity hashing.
 
+`health.test.ts` covers how a database failure is classified (unreachable, rejected, not migrated, unknown; including errors wrapped by Drizzle and Node's lists of failed attempts) and that `checkDatabase` never throws or leaks the connection string.
+
 ## Layer 3: UI tests
 
 - `packages/ui/tests` — primitives and `TransformTool` (typing, async transforms, errors, options, share links, file input, generators); `design-primitives.test.tsx` covers `Plate`, `StatusLine`, `ResultSlab`, `Alert`, `Badge`, `Stat` and the marker states.
@@ -64,6 +66,8 @@ These are the most numerous and the cheapest. Principles:
 - `packages/tools/tests/seo.test.ts` — the search copy of all 110 tools: title 25-47 characters without the brand and with the primary keyword, description 110-160, answer 80-320 with the keyword, unique primary keywords, titles and descriptions, a FAQ and 3 steps everywhere, valid next steps, no banned design words, self-hosting copy or invented ratings; and the category intros (100-200 words).
 - `packages/tools/tests/keyword-map.test.ts` — the keyword map covers every tool, its primary matches the tool's, 5-15 unique secondary queries, and no tool lists another tool's primary query (no cannibalisation).
 - `apps/web/tests/seo.test.ts` — parses the JSON-LD builders (required WebApplication fields, price 0, FAQ and HowTo equal to the visible text, breadcrumbs, ItemList, Organization, WebSite, Article dates), the guides (length bands, true dates, real tools, 350+ words), the crawler policy and its switch, `robots.txt`, and `llms.txt` / `llms-full.txt`. `indexnow.test.ts` covers the IndexNow script's pure parts.
+- `apps/web/tests/health.test.ts` — `/api/health` in demo mode and against a dead database (503, named state, no secrets), and that a database outage on `/api/requests` is a 503 `unavailable` with `Retry-After`, not a 500.
+- `apps/web/tests/check-deploy.test.ts` — the helpers behind `npm run check:deploy`: meta-tag and PNG parsing, outside-script detection, and that the policy next.config.ts really sends passes the script's own policy check.
 - `packages/tools/tests/smoke.test.tsx` — **every tool mounts** without errors, plus behaviour tests for representative tools (calculators, formatters, chmod, reference tables).
 
 Tips:
@@ -79,14 +83,14 @@ Tips:
 | `privacy.spec.ts` | CSP and security headers present; the browser **blocks** a real cross-origin `fetch`; visiting **all tools** makes zero third-party requests; typed canary text never appears in any request; the URL hash is never sent; no cookies are set. |
 | `files.spec.ts` | Real browser workflows with downloads: merge/split/extract/delete/rotate/number/watermark PDFs, images → PDF, metadata stripping, image compress/resize/convert (+ZIP), lossless EXIF removal, with no uploads. |
 | `tools.spec.ts` | Catalogue search/filter/deep links, SEO metadata and JSON-LD, shareable hash state restored in a second tab, clipboard, generators, calculators, QR downloads, favorites and recents. |
-| `requests.spec.ts` | Request board end to end: submit, vote, un-vote, duplicates, validation, API errors, honeypot. |
+| `requests.spec.ts` | Request board end to end: submit, vote, un-vote, duplicates, validation, API errors, honeypot, the status filter and `/api/health`. The home page ticket (`home.spec.ts`) is checked to really add an idea. |
 | `a11y.spec.ts` | axe-core (WCAG 2.0/2.1 A + AA) on ~22 pages in **light and dark** themes, the command palette, focus visibility, reduced motion. |
 | `responsive.spec.ts` | No horizontal scroll on key pages at desktop and phone widths; mobile menu; tap-target size. |
 | `offline.spec.ts` | After a tool is opened, it keeps working with the network off; unvisited pages fall back to the offline page. |
 | `visual.spec.ts` | Optional `@visual` snapshots (home, catalogue, two tools, request board, light and dark). Baselines are per-OS, so they are excluded from the default run and from CI: `npm run e2e:visual -- --update-snapshots`, then `npm run e2e:visual`. |
 | `home.spec.ts` | Home page (headline, working bench, network ledger reads 0, "Try to make it leak" is blocked, no gradient/blur in computed styles), command palette (keyboard and pointer), theme switching, static pages, 404, sitemap/robots/manifest. |
 | `more-tools.spec.ts` | Crop, Rotate & Flip, PDF to Images, PDF to Text, XML Formatter, IP & Subnet Calculator and Barcode Generator in the production build: downloads with correct bytes and sizes, the EXIF turn of a photo, ZIP contents read back with fflate, keyboard use of the crop box, errors in words, no outside requests, and an axe scan of each tool with content on screen. |
-| `seo.spec.ts` | Fetches raw HTML **without running JavaScript** for a sample of tool pages, a category, `/tools`, the home page and a guide, and checks the title (60 characters or fewer, brand once), description, canonical, one H1, the answer paragraph, FAQ and JSON-LD (FAQ and steps in the markup equal the markup's data, no ratings); that every URL in the sitemap answers 200 with a self-canonical and one H1; `robots.txt`, `llms.txt`, `llms-full.txt` and the sitemap dates; the 308 for a trailing slash and for the www host; a real 404; noindex on the API and the offline page; and that the CSP is intact. |
+| `seo.spec.ts` | Fetches raw HTML **without running JavaScript** for a sample of tool pages, a category, `/tools`, the home page and a guide, and checks the title (60 characters or fewer, brand once), description, canonical, one H1, the answer paragraph, FAQ and JSON-LD (FAQ and steps in the markup equal the markup's data, no ratings); that every URL in the sitemap answers 200 with a self-canonical and one H1; `robots.txt`, `llms.txt`, `llms-full.txt` and the sitemap dates; the 308 for a trailing slash and for the www host; a real 404; noindex on the API and the offline page; and that the CSP is intact. Also checks link previews: every page in the sitemap names a card that answers 200 as a 1200x630 PNG under 300 KB, and requests that identify as WhatsApp, Facebook, X, LinkedIn, Telegram, Slack and Discord get the tags inside `<head>`, near the top. |
 
 Helpers in `e2e/helpers.ts`: `trackRequests(page)` records every request (to assert none leave the origin or contain a canary), `makePng(page)` builds a PNG in the browser, `appAlert(page)` selects app alerts while ignoring Next's route announcer.
 

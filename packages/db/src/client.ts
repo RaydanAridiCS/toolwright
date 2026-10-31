@@ -8,7 +8,8 @@ import * as schema from "./schema";
 
 export function createDatabase(connectionString: string) {
   // One connection per serverless instance keeps connection counts low on pooled Postgres.
-  const client = postgres(connectionString, { max: 1, prepare: false, idle_timeout: 20 });
+  // The connect timeout makes an unreachable database fail in seconds, so visitors see an error instead of a hung page.
+  const client = postgres(connectionString, { max: 1, prepare: false, idle_timeout: 20, connect_timeout: 10 });
   return { db: drizzle(client, { schema }), close: () => client.end() };
 }
 

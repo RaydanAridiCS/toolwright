@@ -219,3 +219,75 @@ test.describe("redirects and errors", () => {
     expect(csp).not.toContain("wasm-unsafe-eval");
   });
 });
+
+/** Width and height from a PNG: an 8-byte signature, then the IHDR chunk with two big-endian numbers. */
+function pngSize(png: Buffer) {
+  const signature = png.subarray(0, 8).toString("hex");
+  return { signature, width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
+}
+
+test.describe("link previews (WhatsApp, Facebook, LinkedIn, X, Telegram, Slack, Discord)", () => {
+  test("every page in the sitemap has a card that resolves: a 1200x630 PNG under 300 KB", async ({ request }) => {
+    test.setTimeout(240_000);
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+    const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname);
+    expect(paths.length).toBeGreaterThan(100);
+
+    const cards = new Map<string, string>();
+    for (const path of paths) {
+      const page = await html(request, path);
+      const h = head(page);
+      expect(h.ogImage, path).toMatch(/^https:\/\/toolwright\.com\/(.*\/)?opengraph-image/);
+      expect(h.twitterImage, path).toBe(h.ogImage);
+      expect(h.ogImageAlt.length, path).toBeGreaterThan(10);
+      expect(page, path).toContain('<meta property="og:image:type" content="image/png"/>');
+      expect(page, path).toContain('<meta property="og:image:width" content="1200"/>');
+      expect(page, path).toContain('<meta property="og:image:height" content="630"/>');
+      expect(page, path).toContain('<meta name="twitter:card" content="summary_large_image"/>');
+      cards.set(new URL(h.ogImage).pathname, path);
+    }
+
+    // Pages should not all share one card: the home page, a tool, a category and a guide each have their own.
+    expect(cards.size).toBeGreaterThan(100);
+    for (const [cardPath, page] of cards) {
+      const res = await request.get(cardPath);
+      expect(res.status(), `${cardPath} (from ${page})`).toBe(200);
+      expect(res.headers()["content-type"], cardPath).toBe("image/png");
+      const body = await res.body();
+      expect(body.length, `${cardPath} is ${Math.round(body.length / 1024)} KB`).toBeLessThan(300 * 1024);
+      expect(pngSize(body), cardPath).toEqual({ signature: "89504e470d0a1a0a", width: 1200, height: 630 });
+    }
+  });
+
+  test("link-preview crawlers get the tags in the head, near the top, without running any JavaScript", async ({ request }) => {
+    const crawlers = ["WhatsApp/2.24.10.80 A", "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)", "Twitterbot/1.0", "LinkedInBot/1.0", "TelegramBot (like TwitterBot)", "Slackbot-LinkExpanding 1.0", "Discordbot/2.0"];
+    for (const ua of crawlers) {
+      for (const path of ["/", "/tools/merge-pdf", "/guides", "/category/pdf", "/requests"]) {
+        const res = await request.get(path, { headers: { "user-agent": ua } });
+        expect(res.status(), `${ua} ${path}`).toBe(200);
+        const page = await res.text();
+        const where = page.indexOf('property="og:image"');
+        expect(where, `${ua} ${path}: og:image`).toBeGreaterThan(0);
+        expect(where, `${ua} ${path}: og:image must sit inside <head>`).toBeLessThan(page.indexOf("</head>"));
+        expect(where, `${ua} ${path}: og:image must be near the top of the HTML`).toBeLessThan(16_000);
+        for (const tag of ['property="og:title"', 'property="og:description"', 'property="og:url"', 'property="og:type"']) expect(page, `${ua} ${path}`).toContain(tag);
+      }
+    }
+  });
+
+  test("a guide is an article with real dates, and the other pages are websites", async ({ request }) => {
+    const guide = await html(request, "/guides/compress-pdf-without-uploading");
+    expect(guide).toContain('<meta property="og:type" content="article"/>');
+    expect(guide).toMatch(/<meta property="article:published_time" content="\d{4}-\d{2}-\d{2}/);
+    expect(guide).toMatch(/<meta property="article:modified_time" content="\d{4}-\d{2}-\d{2}/);
+    expect(await html(request, "/tools/merge-pdf")).toContain('<meta property="og:type" content="website"/>');
+  });
+
+  test("the cards differ by page and say the right thing", async ({ request }) => {
+    const sizes = new Set<number>();
+    for (const path of ["/opengraph-image", "/tools/opengraph-image", "/guides/opengraph-image", "/category/pdf/opengraph-image", "/requests/opengraph-image", "/about/opengraph-image", "/privacy/opengraph-image", "/contribute/opengraph-image"]) {
+      sizes.add((await (await request.get(path)).body()).length);
+    }
+    expect(sizes.size).toBe(8);
+  });
+});

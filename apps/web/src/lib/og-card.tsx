@@ -22,6 +22,28 @@ interface OgCardProps {
   caption: string;
 }
 
+/** Headline size by length, so a long guide title still sits on two lines instead of pushing the card's text off it. */
+function nameSize(name: string): number {
+  if (name.length <= 26) return 100;
+  if (name.length <= 44) return 84;
+  if (name.length <= 56) return 68;
+  return 56;
+}
+
+/**
+ * One or two readable lines for the tagline. Over the limit it stops at the last whole sentence that fits, and only
+ * when there is none does it cut at a word with an ellipsis, so it never runs off the card.
+ */
+export function shortLine(text: string, max = 118): string {
+  const clean = text.split(/[ \t\r\n]+/).join(" ").trim();
+  if (clean.length <= max) return clean;
+  const window = clean.slice(0, max);
+  const sentenceEnd = Math.max(window.lastIndexOf(". "), window.lastIndexOf("? "), window.lastIndexOf("! "));
+  if (sentenceEnd >= 40) return window.slice(0, sentenceEnd + 1);
+  const cut = clean.slice(0, max - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), 1))}…`;
+}
+
 /** The 1200x630 social card: a printed plate with a marker bar under the name. */
 export function renderOgCard({ name, tagline, caption }: OgCardProps) {
   return new ImageResponse(
@@ -40,9 +62,9 @@ export function renderOgCard({ name, tagline, caption }: OgCardProps) {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: name.length > 26 ? 84 : 100, fontWeight: 800, color: INK, lineHeight: 0.98, letterSpacing: -3 }}>{name}</div>
+            <div style={{ fontSize: nameSize(name), fontWeight: 800, color: INK, lineHeight: 0.98, letterSpacing: -3 }}>{name}</div>
             <div style={{ width: 280, height: 16, background: MARKER, marginTop: 14, marginBottom: 26 }} />
-            <div style={{ fontSize: 34, fontWeight: 700, color: MUTED, lineHeight: 1.3, maxWidth: 940 }}>{tagline}</div>
+            <div style={{ fontSize: tagline.length > 100 ? 29 : 34, fontWeight: 700, color: MUTED, lineHeight: 1.3, maxWidth: 940 }}>{tagline}</div>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 24, fontWeight: 700, letterSpacing: 2, color: INK, borderTop: `2px solid ${INK}`, paddingTop: 22 }}>

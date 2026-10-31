@@ -149,6 +149,6 @@ export function articleLd({ title, description, path, published, updated }: Arti
     inLanguage: "en",
     author: PUBLISHER,
     publisher: PUBLISHER,
-    image: absoluteUrl("/opengraph-image"),
+    image: absoluteUrl(`${path}/opengraph-image`),
   };
 }

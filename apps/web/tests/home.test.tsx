@@ -196,19 +196,62 @@ describe("ProofLog", () => {
   });
 });
 
+/** Answers /api/requests with the given status and body, and records what was sent. */
+function stubRequestsApi(status: number, body: unknown) {
+  const fetchMock = vi.fn(async () => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } }));
+  vi.stubGlobal("fetch", fetchMock);
+  return fetchMock;
+}
+
 describe("Ticket", () => {
-  it("is numbered with the next free catalogue number and prefills the request board", async () => {
+  it("is numbered with the next free catalogue number", () => {
     render(<Ticket nextNumber={72} />);
     expect(screen.getByRole("heading", { name: "Tool 072 is yours to name." })).toBeInTheDocument();
-    await userEvent.type(screen.getByLabelText("What should we build?"), "Compare JSON & YAML");
-    await userEvent.click(screen.getByRole("button", { name: "Add to the board" }));
-    expect(push).toHaveBeenCalledWith("/requests?title=Compare%20JSON%20%26%20YAML");
   });
 
-  it("goes to the board without a query when the field is empty", async () => {
+  it("sends a real idea to the request board and confirms it, without leaving the page", async () => {
+    const fetchMock = stubRequestsApi(201, { request: { id: "1", title: "Compare JSON & YAML", description: "", status: "open", createdAt: "2026-10-31T00:00:00.000Z", votes: 1, hasVoted: true } });
+    render(<Ticket nextNumber={72} />);
+    await userEvent.type(screen.getByLabelText("What should we build?"), "Compare JSON & YAML");
+    await userEvent.click(screen.getByRole("button", { name: "Add to the board" }));
+    expect(await screen.findByText(/Added .Compare JSON & YAML. to the board/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See the board" })).toHaveAttribute("href", "/requests");
+    expect(screen.getByLabelText("What should we build?")).toHaveValue("");
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("/api/requests");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body as string)).toEqual({ title: "Compare JSON & YAML", description: "", website: "" });
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("explains a duplicate and links to the board with the idea carried over", async () => {
+    stubRequestsApi(409, { error: { code: "duplicate", message: "Someone already suggested this. Find it in the list and give it a vote!" } });
+    render(<Ticket nextNumber={72} />);
+    await userEvent.type(screen.getByLabelText("What should we build?"), "JSON diff and merge");
+    await userEvent.click(screen.getByRole("button", { name: "Add to the board" }));
+    expect(await screen.findByText(/already suggested this/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open the board" })).toHaveAttribute("href", "/requests?title=JSON%20diff%20and%20merge");
+    expect(screen.getByLabelText("What should we build?")).toHaveValue("JSON diff and merge");
+  });
+
+  it("keeps what was typed and points to the board when the server is down", async () => {
+    stubRequestsApi(503, { error: { code: "unavailable", message: "The request board is taking a break. Please try again in a few minutes." } });
+    render(<Ticket nextNumber={72} />);
+    await userEvent.type(screen.getByLabelText("What should we build?"), "Audio trimmer");
+    await userEvent.click(screen.getByRole("button", { name: "Add to the board" }));
+    expect(await screen.findByText(/taking a break/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open the board" })).toHaveAttribute("href", "/requests?title=Audio%20trimmer");
+  });
+
+  it("opens the board instead of sending when the field is empty or too short to be an idea", async () => {
+    const fetchMock = stubRequestsApi(201, {});
     render(<Ticket nextNumber={72} />);
     await userEvent.click(screen.getByRole("button", { name: "Add to the board" }));
-    expect(push).toHaveBeenCalledWith("/requests");
+    expect(push).toHaveBeenLastCalledWith("/requests");
+    await userEvent.type(screen.getByLabelText("What should we build?"), "abc");
+    await userEvent.click(screen.getByRole("button", { name: "Add to the board" }));
+    expect(push).toHaveBeenLastCalledWith("/requests?title=abc");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 

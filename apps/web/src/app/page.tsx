@@ -17,7 +17,7 @@ import { SITE } from "../lib/site";
 import { faqLd, organizationLd, websiteLd } from "../lib/structured-data";
 
 export const metadata: Metadata = {
-  ...pageMetadata({ title: SITE.homeTitle, description: SITE.metaDescription, path: "/", ogTitle: SITE.homeTitle }),
+  ...pageMetadata({ title: SITE.homeTitle, description: SITE.metaDescription, path: "/", ogTitle: SITE.homeTitle, image: { path: "/opengraph-image", alt: "Toolwright: free, private online tools that run in your browser" } }),
   title: { absolute: SITE.homeTitle },
 };
 

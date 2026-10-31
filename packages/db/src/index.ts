@@ -1,4 +1,5 @@
 export { createDatabase, getRequestService } from "./client";
+export { checkDatabase, classifyDatabaseError, type DatabaseProblem, type DatabaseState, type DatabaseStatus } from "./health";
 export { DrizzleToolRequestRepository, type AnyPgDatabase } from "./drizzle-repository";
 export { InMemoryToolRequestRepository } from "./memory-repository";
 export {

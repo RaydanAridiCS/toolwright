@@ -27,7 +27,7 @@ export type CreateRequestInput = z.input<typeof createRequestSchema>;
 
 export class ServiceError extends Error {
   constructor(
-    readonly code: "invalid" | "duplicate" | "rate_limited" | "not_found",
+    readonly code: "invalid" | "duplicate" | "rate_limited" | "not_found" | "unavailable",
     message: string,
     readonly status: number,
     readonly details?: Record<string, unknown>,

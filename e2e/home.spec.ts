@@ -105,12 +105,22 @@ test.describe("home page", () => {
     await expect(log.getByText("outside")).toHaveCount(0);
   });
 
-  test("the ticket carries your idea to the request board", async ({ page }) => {
+  test("the ticket really adds your idea to the request board", async ({ page }) => {
+    const idea = `Compare two JSON files ${Date.now()}`;
     await page.goto("/");
-    await page.getByLabel("What should we build?").fill("Compare two JSON files");
+    await page.getByLabel("What should we build?").fill(idea);
     await page.getByRole("button", { name: "Add to the board" }).click();
-    await expect(page).toHaveURL(/\/requests\?title=Compare%20two%20JSON%20files$/);
-    await expect(page.getByLabel("What should we build?")).toHaveValue("Compare two JSON files");
+    await expect(page.getByText("to the board, with your vote")).toBeVisible();
+    await expect(page).toHaveURL(/[/]$/);
+    await page.getByRole("link", { name: "See the board" }).click();
+    await expect(page).toHaveURL(/[/]requests$/);
+    await expect(page.getByRole("listitem").filter({ hasText: idea })).toBeVisible();
+  });
+
+  test("an empty ticket just opens the request board", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Add to the board" }).click();
+    await expect(page).toHaveURL(/[/]requests$/);
   });
 
   test("has structured data and a canonical URL", async ({ page }) => {

@@ -4,6 +4,20 @@ All notable changes to Toolwright. The format follows [Keep a Changelog](https:/
 
 ## [Unreleased]
 
+### Fixed: the request board
+
+- **A database outage no longer looks like a bug.** On the live site `GET /api/requests` answered `500 Something went wrong on our side` and the board gave visitors no way forward. A database that cannot be reached, refuses the login or has no tables now gives `503` with `Retry-After: 60` and the code `unavailable`; the board shows "The board is taking a break" with a *Try again* button, and nothing a visitor typed is lost. The app also stops waiting for an unreachable database after 10 seconds.
+- **The home page ticket now does what its button says.** "Add to the board" used to open the request page with the text prefilled, which read as a failed submit. It now sends a real idea to the board and confirms it in place; a duplicate, a rate limit or an outage keeps the typed text and links to the board.
+- **Status filter** on the board (All, Open, Planned, In progress, Shipped) and a link to the contribution guide for anyone who wants to build an idea.
+
+### Added: deploy checks and link previews
+
+- **`GET /api/health`** reports whether the server is up and whether the board's database answers (`ok`, `unreachable`, `rejected`, `not_migrated` or `error`), with no connection string or error text. 200 when healthy, 503 otherwise.
+- **`npm run check:deploy`** (`scripts/check-deploy.mjs`) reads a live site and prints PASS, WARN or FAIL with a fix for each: HTTPS and the http redirect, the `www` redirect, the security headers, injected scripts, service-worker caching, `robots.txt`, the sitemap, `llms.txt`, the social card, a WhatsApp-style request, the database and the IndexNow key. Read-only; exits 1 on a failure.
+- **A go-live checklist** in [docs/maintainers.md](docs/maintainers.md), a database troubleshooting table, Cloudflare settings to review, and `.env.example` now lists `TOOLWRIGHT_AI_TRAINING` and the SSL note for `DATABASE_URL`.
+- **A social card for every page.** Guides, categories, `/tools`, `/requests`, `/about`, `/privacy` and `/contribute` had shared the home card (captioned "TOOL CATALOGUE"); each now has its own. Image tags gained `og:image:type` and `secure_url`, guides are `og:type` article with their real dates, and the article structured data points at the guide's own card. Details in [docs/seo.md](docs/seo.md#link-previews-whatsapp-facebook-linkedin-x-telegram-slack-discord).
+- **Tests:** `packages/db/tests/health.test.ts`, `apps/web/tests/health.test.ts`, `check-deploy.test.ts`, ticket and board cases in `home.test.tsx` and `request-board.test.tsx`, and in `e2e/seo.spec.ts` a check that every sitemap page has a card that resolves as a 1200x630 PNG under 300 KB and that WhatsApp, Facebook, X, LinkedIn, Telegram, Slack and Discord requests get the tags in the head.
+
 ### Added: search and answer-engine optimisation
 
 Details and rationale in [docs/seo.md](docs/seo.md). Nothing here adds analytics, a third-party script or a network call from a tool.

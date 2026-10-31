@@ -82,7 +82,7 @@ See [request-board.md](request-board.md).
 
 Next.js App Router. Key points:
 
-- **Static by default.** Home, catalogue, category and every tool page are prerendered (`generateStaticParams`). Only the two `/api/requests` routes are dynamic.
+- **Static by default.** Home, catalogue, category and every tool page are prerendered (`generateStaticParams`). Only the `/api/requests` routes and `/api/health` (the database check used by `npm run check:deploy`) are dynamic; both are `noindex`, `no-store` and disallowed in `robots.txt`.
 - **Tool pages** render server-side metadata, description, FAQ, JSON-LD and related tools. The interactive tool itself mounts on the client (`ToolLoader`), because tools read the URL hash, localStorage and other browser-only APIs. It is wrapped in a Suspense boundary and an error boundary (for a friendly message if a chunk can't load offline).
 - **Security headers** (`next.config.ts`): a Content Security Policy that restricts connections to the site's own origin, plus `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and framing protection. See [privacy-model.md](privacy-model.md).
 - **Design layer.** All tokens live in `app/globals.css` (light "paper" and dark "ink"; Tailwind's `--radius-*` and `--shadow-*` are remapped there, so every tool inherits sharp corners and flat, hard shadows). Fonts (Bricolage Grotesque, Instrument Sans, Geist Mono) are self-hosted through `next/font/local` in `layout.tsx`. The default theme is light for everyone; `THEME_INIT_SCRIPT` sets it before paint. Site components: `Ledger` (numbered rows that replace card grids), `ToolGlyph`, `Ruler`, `Logo`, and the home page's `HeroBench`, `ProofLog` and `Ticket`.

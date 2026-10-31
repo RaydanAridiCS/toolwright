@@ -1,19 +1,30 @@
 "use client";
 
 import { useCallback, useEffect, useId, useState } from "react";
-import { ChevronUp, Loader2, Send } from "lucide-react";
+import { ChevronUp, Loader2, RotateCw, Send } from "lucide-react";
 import { Alert, Badge, Button, Field, Input, SegmentedControl, Textarea, cn, type BadgeTone } from "@toolwright/ui";
 import { ApiError, requestsApi, type RequestItem, type Status } from "../lib/request-client";
 
 const STATUS_LABEL: Record<Status, string> = { open: "Open", planned: "Planned", building: "In progress", shipped: "Shipped", declined: "Not planned" };
+type StatusFilter = "all" | "open" | "planned" | "building" | "shipped";
+const FILTERS: { value: StatusFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "open", label: "Open" },
+  { value: "planned", label: "Planned" },
+  { value: "building", label: "In progress" },
+  { value: "shipped", label: "Shipped" },
+];
 const STATUS_TONE: Record<Status, BadgeTone> = { open: "neutral", planned: "primary", building: "accent", shipped: "success", declined: "danger" };
 
 export function RequestBoard() {
   const formId = useId();
   const [sort, setSort] = useState<"top" | "new">("top");
+  const [filter, setFilter] = useState<StatusFilter>("all");
   const [items, setItems] = useState<RequestItem[] | null>(null);
   const [persistent, setPersistent] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  // "unavailable" means the server's database is down: say so calmly and offer a retry, rather than a bug-style error.
+  const [unavailable, setUnavailable] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
@@ -24,14 +35,16 @@ export function RequestBoard() {
 
   const load = useCallback(async () => {
     try {
-      const { requests, persistent: p } = await requestsApi.list(sort);
+      const { requests, persistent: p } = await requestsApi.list(sort, filter === "all" ? undefined : filter);
       setItems(requests);
       setPersistent(p);
       setLoadError(null);
+      setUnavailable(false);
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : "Could not load requests.");
+      setUnavailable(err instanceof ApiError && err.code === "unavailable");
     }
-  }, [sort]);
+  }, [sort, filter]);
 
   useEffect(() => {
     void load();
@@ -77,6 +90,7 @@ export function RequestBoard() {
     } catch (err) {
       apply(item.hasVoted, item.votes);
       setLoadError(err instanceof Error ? err.message : "Your vote could not be saved.");
+      setUnavailable(err instanceof ApiError && err.code === "unavailable");
     } finally {
       setPending((p) => {
         const next = new Set(p);
@@ -128,13 +142,33 @@ export function RequestBoard() {
             ]}
           />
         </div>
+        <div className="mb-4">
+          <SegmentedControl label="Show ideas that are" value={filter} onValueChange={setFilter} options={FILTERS} />
+        </div>
 
         {!persistent ? (
           <Alert tone="info" title="Demo mode" className="mb-4">
             No database is connected, so ideas are kept in memory and reset when the server restarts.
           </Alert>
         ) : null}
-        {loadError ? <Alert tone="error" className="mb-4">{loadError}</Alert> : null}
+        {loadError ? (
+          <div className="mb-4 flex flex-col items-start gap-3">
+            {unavailable ? (
+              <Alert tone="warning" title="The board is taking a break" className="w-full">
+                {loadError} Your idea is not lost: it stays in the form until it is sent.
+              </Alert>
+            ) : (
+              <Alert tone="error" className="w-full">
+                {loadError}
+              </Alert>
+            )}
+            {items === null ? (
+              <Button variant="outline" size="sm" onClick={() => void load()}>
+                <RotateCw /> Try again
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
 
         {items === null && !loadError ? (
           <div className="flex flex-col gap-3" role="status" aria-label="Loading ideas">
@@ -143,7 +177,8 @@ export function RequestBoard() {
             ))}
           </div>
         ) : null}
-        {items?.length === 0 ? <p className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">No ideas yet. Be the first to suggest one!</p> : null}
+        {items?.length === 0 && filter === "all" ? <p className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">No ideas yet. Be the first to suggest one!</p> : null}
+        {items?.length === 0 && filter !== "all" ? <p className="border border-dashed border-border p-10 text-center text-muted-foreground">Nothing is marked &ldquo;{FILTERS.find((f) => f.value === filter)?.label}&rdquo; yet.</p> : null}
 
         <ul className="border-t border-foreground">
           {items?.map((item) => (

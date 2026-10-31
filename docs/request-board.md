@@ -9,7 +9,9 @@ The request board (`/requests`) lets visitors suggest tools and vote on ideas. I
 - Duplicate titles (case- and whitespace-insensitive) are rejected with a pointer to the existing idea.
 - Each browser token may create **3 ideas per 24 hours**. Titles containing links are rejected. A hidden **honeypot** field catches simple bots.
 - A creator's own idea starts with their vote.
-- Statuses: `open`, `planned`, `building`, `shipped`, `declined`. Maintainers change status directly in the database (or via `RequestService.setStatus`).
+- Statuses: `open`, `planned`, `building`, `shipped`, `declined`. Maintainers change status directly in the database (or via `RequestService.setStatus`). The board can be filtered to Open, Planned, In progress or Shipped, so visitors can see what got built.
+- Ideas can also be added from the home page: the "Tool 111 is yours to name" ticket sends a real idea (4 characters or more) straight to this API and confirms it in place. With an empty or too-short field it just opens the board. If the server cannot take the idea, the ticket keeps what was typed and links to the board with it prefilled.
+- If the database is down the board says so calmly with a *Try again* button (see `unavailable` below), and the rest of the site keeps working.
 
 ## HTTP API
 
@@ -51,7 +53,18 @@ Add or remove the caller's vote. Both are idempotent and return `{ "votes": numb
 | `duplicate` | 409 | Same normalized title already exists |
 | `rate_limited` | 429 | Too many new ideas from this browser in 24 h |
 | `not_found` | 404 | Unknown request id |
+| `unavailable` | 503 | The database cannot be reached or has no tables yet. Sent with `Retry-After: 60`. The cause is logged (`Request board database problem (...)`), never returned |
 | `internal` | 500 | Unexpected error (details are logged, not returned) |
+
+### `GET /api/health`
+
+For deploy checks and uptime monitors (`npm run check:deploy` reads it). It never contains a connection string, host or error text.
+
+```json
+{ "ok": true, "database": { "mode": "postgres", "state": "ok", "persistent": true } }
+```
+
+`mode` is `memory` when `DATABASE_URL` is unset, `postgres` otherwise. `state` is `ok`, `unreachable`, `rejected`, `not_migrated` or `error`. The status is 200 when `ok` is true and 503 otherwise. What each state means and how to fix it is in [maintainers.md](maintainers.md#the-request-boards-database).
 
 ## Data model
 

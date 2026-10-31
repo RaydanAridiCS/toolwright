@@ -26,6 +26,25 @@ test.describe("tool request board", () => {
     await expect(page.getByRole("alert").filter({ hasText: "already suggested" })).toBeVisible();
   });
 
+  test("the status filter narrows the list", async ({ page }) => {
+    await page.goto("/requests");
+    await expect(page.getByText("Image background remover")).toBeVisible();
+    await page.getByText("Shipped", { exact: true }).click();
+    await expect(page.getByText(/Nothing is marked/)).toBeVisible();
+    await page.getByText("All", { exact: true }).click();
+    await expect(page.getByText("Image background remover")).toBeVisible();
+  });
+
+  test("the health endpoint answers without secrets", async ({ request }) => {
+    const res = await request.get("/api/health");
+    expect(res.status()).toBe(200);
+    expect(res.headers()["cache-control"]).toBe("no-store");
+    expect(res.headers()["x-robots-tag"]).toContain("noindex");
+    const body = await res.json();
+    expect(body.ok).toBe(true);
+    expect(Object.keys(body.database).sort()).toEqual(["mode", "persistent", "state"]);
+  });
+
   test("voting toggles and updates the count", async ({ page }) => {
     await page.goto("/requests");
     const card = page.getByRole("listitem").filter({ hasText: "JSON diff and merge" });
