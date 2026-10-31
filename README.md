@@ -18,7 +18,7 @@ Toolwright is a collection of 110 everyday online tools — format JSON, merge P
 Most "free online tools" quietly upload your files to a server, wrap them in ads or trials, and tell you to trust them. Modern browsers are powerful enough to do the work locally, so Toolwright does — and makes that **verifiable** instead of just promised.
 
 - **Private by construction.** Tools run client-side. A Content Security Policy (`connect-src 'self'`) enforces it, and end-to-end tests fail if a tool makes an outside request or transmits its input.
-- **Free without catches.** No sign-up, watermarks, file-size limits or daily quotas.
+- **Free without catches.** No sign-up, watermarks or daily quotas. The only size limits are your device's memory and a few explicit caps that each tool page states.
 - **Open source (MIT).** Read the code, fix a bug, or add the tool you wish existed. Each tool is one folder.
 - **Accessible and fast.** Keyboard friendly, screen-reader labelled, light and dark themes, WCAG A/AA audited in CI, installable as an app, and usable offline once opened.
 
@@ -65,6 +65,7 @@ npm run dev          # http://localhost:3000
 | `npm run lint` / `npm run typecheck` | ESLint and TypeScript |
 | `npm run new-tool <slug>` | Scaffold a new tool |
 | `npm run docs:tools` | Regenerate [docs/tools.md](docs/tools.md) |
+| `npm run docs:seo` | Regenerate [docs/keyword-map.md](docs/keyword-map.md), the keyword and intent map |
 | `npm run screenshots` | Regenerate the images in `docs/images` (needs a running production server) |
 | `npm run e2e:visual` | Optional visual snapshots (per-OS baselines, not run in CI) |
 | `npm run db:generate` | Generate a SQL migration after changing the database schema |
@@ -84,7 +85,7 @@ e2e/                  Playwright tests: privacy guarantees, real file workflows,
 docs/                 Architecture, design language, guides and reference (docs/images holds the screenshots)
 ```
 
-Read [docs/architecture.md](docs/architecture.md) for how the pieces fit together.
+Read [docs/architecture.md](docs/architecture.md) for how the pieces fit together. How the site is made findable in search and answer engines, honestly and without any tracking, is in [docs/seo.md](docs/seo.md).
 
 ## Adding a tool
 

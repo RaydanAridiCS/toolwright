@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import { RequestBoard } from "../../components/request-board";
 
-export const metadata: Metadata = {
-  title: "Request a tool",
-  description: "Suggest the next Toolwright tool and vote on ideas from the community. No account needed.",
-  alternates: { canonical: "/requests" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Request a Tool", description: "Suggest the next Toolwright tool and vote on ideas from the community. No account needed.", path: "/requests" });
 
 export default function RequestsPage() {
   return (

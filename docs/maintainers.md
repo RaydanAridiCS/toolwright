@@ -60,6 +60,7 @@ docker run -p 3000:3000 -e DATABASE_URL=postgres://… toolwright
 | `NEXT_PUBLIC_REPO_URL` | `https://github.com/RaydanAridiCS/toolwright` | GitHub links. Baked into the build. |
 | `NEXT_BUILD_CPUS` | `4` | Build parallelism. Lower it if the build is killed for lack of memory (a constrained Docker VM can run out of RAM with many workers). |
 | `NODE_VERSION` | `22` | Node.js major version for all stages. |
+| `TOOLWRIGHT_AI_TRAINING` | unset (allow) | Set to `block` to tell AI *training* crawlers (GPTBot, ClaudeBot, Google-Extended, CCBot, Applebot-Extended) not to crawl. Search and answer crawlers stay allowed. Read at build time. See [seo.md](seo.md). |
 
 Runtime environment: `DATABASE_URL` (optional; without it the request board uses its in-memory demo store), `PORT` (default `3000`).
 
@@ -89,9 +90,11 @@ Remember to place a TLS-terminating reverse proxy or platform load balancer in f
 
 1. Make sure `main` is green: lint, typecheck, unit tests, e2e (including accessibility).
 2. `npm run docs:tools` and commit if `docs/tools.md` changed.
+   Also `npm run docs:seo` (the keyword map) and `node scripts/gen-lastmod.mjs` (sitemap dates; commit `apps/web/src/lib/lastmod.generated.json` if it changed).
 3. Bump `CACHE_VERSION` in `apps/web/public/sw.js` **only** if the caching strategy changed (build assets are content-hashed, so normal releases don't need it).
 4. Tag the release (`vX.Y.Z`) and publish release notes grouped as *New tools · Improvements · Fixes*.
 5. After deploy, spot-check: `/`, a tool page, `/requests`, `/sitemap.xml`, and the response headers (`curl -I https://toolwright.com/`).
+6. Optional: tell Bing about the changes with `node scripts/indexnow.mjs submit --since <date>` (see [seo.md](seo.md#indexnow)), and request indexing of new pages in Google Search Console.
 
 ## Dependency hygiene
 

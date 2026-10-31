@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Find the cheapest buy per gram, litre, item or metre, whatever the pack size.",
   description:
     "Enter the price and size of two or more products, in any mix of metric and US units, and see which is cheapest per 100 g, litre, item or metre. Handles multipacks and shows how much more the others cost. Calculated in your browser.",
+  primaryKeyword: "unit price calculator",
+  seoTitle: "Unit Price Calculator: Which Is Cheaper?",
+  seoDescription:
+    "Compare the price per 100 g, litre, item or metre of two or more products in any mix of units, including multipacks. Free, in your browser.",
+  answer:
+    "Unit Price Comparison is a unit price calculator that finds the cheapest buy per 100 g, litre, item or metre whatever the pack size. Enter the price and size of two or more products in any mix of metric and US units; it handles multipacks and shows how much more the others cost.",
   category: "calculators",
   keywords: ["unit price calculator", "price per ounce", "price per 100g", "compare prices", "cheapest per unit", "grocery price comparison", "which is cheaper"],
   icon: Tags,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "No. Everything is calculated in your browser. The numbers are saved in the page address only if you copy the link to share.",
     },
   ],
+  nextStep: { slug: "percentage-calculator", text: "Working out a discount? Calculate the percentage." },
   related: ["percentage-calculator", "unit-converter", "tip-calculator", "bmi-calculator", "compound-interest-calculator"],
 });

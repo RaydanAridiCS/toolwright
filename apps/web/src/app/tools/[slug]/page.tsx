@@ -3,12 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Plate, StatusLine } from "@toolwright/ui";
 import { CATEGORY_BY_ID, getTool, relatedTools, tools } from "@toolwright/tools";
+import { GUIDES } from "../../../content/guides";
 import { FavoriteButton } from "../../../components/favorite-button";
 import { JsonLd } from "../../../components/json-ld";
 import { Ledger, catalogueNumber } from "../../../components/ledger";
 import { NetworkLedger } from "../../../components/network-ledger";
 import { ToolLoader } from "../../../components/tool-loader";
-import { SITE, absoluteUrl } from "../../../lib/site";
+import { pageMetadata } from "../../../lib/seo";
+import { breadcrumbLd, faqLd, howToLd, toolLd } from "../../../lib/structured-data";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -24,15 +26,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const tool = getTool(slug);
   if (!tool) return {};
-  const title = `${tool.name}: Free & Private Online Tool`;
-  return {
-    title,
-    description: tool.description,
-    keywords: tool.keywords,
-    alternates: { canonical: `/tools/${tool.slug}` },
-    openGraph: { type: "website", title, description: tool.description, url: absoluteUrl(`/tools/${tool.slug}`), siteName: SITE.name },
-    twitter: { card: "summary_large_image", title, description: tool.description },
-  };
+  return pageMetadata({
+    title: tool.seoTitle ?? `${tool.name}: Free Online Tool`,
+    description: tool.seoDescription ?? tool.description,
+    path: `/tools/${tool.slug}`,
+    image: { path: `/tools/${tool.slug}/opengraph-image`, alt: `${tool.name} on Toolwright: ${tool.tagline}` },
+  });
 }
 
 const crumb = "hover:bg-marker hover:text-marker-foreground";
@@ -43,48 +42,19 @@ export default async function ToolPage({ params }: Props) {
   if (!tool) notFound();
   const category = CATEGORY_BY_ID[tool.category];
   const related = relatedTools(tool.slug, 4);
-  const url = absoluteUrl(`/tools/${tool.slug}`);
+  const next = tool.nextStep ? getTool(tool.nextStep.slug) : undefined;
+  const guides = GUIDES.filter((g) => g.tools.includes(tool.slug));
 
   const structured: Record<string, unknown>[] = [
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      name: tool.name,
-      url,
-      description: tool.description,
-      applicationCategory: "UtilitiesApplication",
-      operatingSystem: "Any (runs in a web browser)",
-      isAccessibleForFree: true,
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      browserRequirements: "Requires a modern web browser with JavaScript",
-      license: "https://opensource.org/licenses/MIT",
-      publisher: { "@type": "Organization", name: SITE.name, url: SITE.url },
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-        { "@type": "ListItem", position: 2, name: category.name, item: absoluteUrl(`/category/${category.id}`) },
-        { "@type": "ListItem", position: 3, name: tool.name, item: url },
-      ],
-    },
+    toolLd(tool),
+    breadcrumbLd([
+      { name: "Home", path: "/" },
+      { name: category.name, path: `/category/${category.id}` },
+      { name: tool.name, path: `/tools/${tool.slug}` },
+    ]),
   ];
-  if (tool.faq?.length) {
-    structured.push({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: tool.faq.map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer } })),
-    });
-  }
-  if (tool.howTo?.length) {
-    structured.push({
-      "@context": "https://schema.org",
-      "@type": "HowTo",
-      name: `How to use ${tool.name}`,
-      step: tool.howTo.map((text, i) => ({ "@type": "HowToStep", position: i + 1, text })),
-    });
-  }
+  if (tool.faq?.length) structured.push(faqLd(tool.faq));
+  if (tool.howTo?.length) structured.push(howToLd(`How to use ${tool.name}`, tool.howTo));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
@@ -107,7 +77,7 @@ export default async function ToolPage({ params }: Props) {
       <header className="mt-6 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
         <div className="min-w-0 max-w-4xl">
           <h1 className="font-display text-[clamp(2.4rem,5.6vw,4.6rem)] font-extrabold leading-[0.95] tracking-[-0.028em]">{tool.name}</h1>
-          <p className="mt-5 max-w-[62ch] text-lg leading-relaxed">{tool.description}</p>
+          <p className="mt-5 max-w-[62ch] text-lg leading-relaxed">{tool.answer ?? tool.description}</p>
         </div>
         <FavoriteButton slug={tool.slug} name={tool.name} withLabel />
       </header>
@@ -130,8 +100,8 @@ export default async function ToolPage({ params }: Props) {
         </noscript>
       </Plate>
 
-      <div className="mt-20 grid gap-14 lg:grid-cols-[1fr_20rem]">
-        <div className="flex flex-col gap-16">
+      <div className="mt-20">
+        <div className="flex max-w-3xl flex-col gap-16">
           {tool.howTo?.length ? (
             <section aria-labelledby="how-to">
               <h2 id="how-to" className="font-display text-3xl font-extrabold tracking-tight">
@@ -171,14 +141,39 @@ export default async function ToolPage({ params }: Props) {
               </div>
             </section>
           ) : null}
-        </div>
 
-        <aside aria-labelledby="keywords">
-          <h2 id="keywords" className="label-plate text-foreground">
-            Also searched as
-          </h2>
-          <p className="mt-3 border-t border-foreground pt-3 text-sm leading-relaxed text-muted-foreground">{tool.keywords.join(" · ")}</p>
-        </aside>
+          {guides.length > 0 ? (
+            <section aria-labelledby="guides">
+              <h2 id="guides" className="font-display text-3xl font-extrabold tracking-tight">
+                Guides
+              </h2>
+              <ul className="mt-4 border-t border-foreground">
+                {guides.map((g) => (
+                  <li key={g.slug} className="border-b border-border py-3">
+                    <Link href={`/guides/${g.slug}`} className="text-lg font-semibold underline decoration-2 underline-offset-4 hover:bg-marker hover:text-marker-foreground">
+                      {g.h1}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {next && tool.nextStep ? (
+            <section aria-labelledby="next-step">
+              <h2 id="next-step" className="font-display text-3xl font-extrabold tracking-tight">
+                Next step
+              </h2>
+              <p className="mt-4 max-w-[62ch] border-t border-foreground pt-4 text-lg">
+                {tool.nextStep.text}{" "}
+                <Link href={`/tools/${next.slug}`} className="font-semibold underline decoration-2 underline-offset-4 hover:bg-marker hover:text-marker-foreground">
+                  Open {next.name}
+                </Link>
+                .
+              </p>
+            </section>
+          ) : null}
+        </div>
       </div>
 
       {related.length > 0 ? (

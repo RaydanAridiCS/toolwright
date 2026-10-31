@@ -1,13 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Kbd, buttonClasses } from "@toolwright/ui";
 import { categoriesWithCounts, popularTools, tools } from "@toolwright/tools";
+import { FaqList } from "../components/faq-list";
+import { JsonLd } from "../components/json-ld";
 import { HeroBench } from "../components/home/hero-bench";
 import { ProofLog } from "../components/home/proof-log";
 import { Ticket } from "../components/home/ticket";
 import { Ledger } from "../components/ledger";
 import { Ruler } from "../components/ruler";
 import { YourTools } from "../components/your-tools";
+import { HOME_FAQ } from "../lib/home-faq";
+import { pageMetadata } from "../lib/seo";
+import { SITE } from "../lib/site";
+import { faqLd, organizationLd, websiteLd } from "../lib/structured-data";
+
+export const metadata: Metadata = {
+  ...pageMetadata({ title: SITE.homeTitle, description: SITE.metaDescription, path: "/", ogTitle: SITE.homeTitle }),
+  title: { absolute: SITE.homeTitle },
+};
 
 const STEPS = [
   { title: "Open the developer tools.", body: "Press F12 (or Ctrl/Cmd + Shift + I) and click the Network tab." },
@@ -21,6 +33,7 @@ export default function HomePage() {
   const categories = categoriesWithCounts();
   return (
     <>
+      <JsonLd data={[organizationLd(), websiteLd(), faqLd(HOME_FAQ)]} />
       <section className="mx-auto max-w-7xl px-4 pb-14 pt-10 sm:px-6 sm:pb-20 sm:pt-16 lg:grid lg:grid-cols-12 lg:items-start lg:gap-14">
         <div className="lg:col-span-7">
           <h1 className="font-display text-[clamp(2.9rem,8.2vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.03em]">
@@ -32,7 +45,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="rise mt-8 max-w-[34rem] text-lg leading-relaxed sm:text-xl" style={{ "--i": 3 } as React.CSSProperties}>
-            {tools.length} everyday tools for PDFs, images, code and text. They run on your device, so nothing is uploaded and there is nothing to sign up for.
+            {tools.length} free everyday tools for PDFs, images, code and text: compress or merge a PDF, shrink images, format JSON. They run on your device, so nothing is uploaded and there is nothing to sign up for.
           </p>
           <div className="rise mt-9 flex flex-wrap items-center gap-x-8 gap-y-4" style={{ "--i": 4 } as React.CSSProperties}>
             <Link href="/tools" className={buttonClasses("primary", "lg")}>
@@ -69,7 +82,7 @@ export default function HomePage() {
             All {tools.length} tools →
           </Link>
         </div>
-        <Ledger tools={popularTools(12)} glyphs />
+        <Ledger tools={popularTools(14)} glyphs />
       </section>
 
       <section id="drawers" aria-labelledby="drawers-title" className="mx-auto mt-20 max-w-7xl px-4 sm:mt-28 sm:px-6">
@@ -127,6 +140,16 @@ export default function HomePage() {
           <div className="min-w-0 lg:pt-10">
             <ProofLog />
           </div>
+        </div>
+      </section>
+
+      <section id="faq" aria-labelledby="faq-title" className="mx-auto mt-20 max-w-7xl px-4 sm:mt-28 sm:px-6">
+        <p className="label-plate mb-3">04 — Questions</p>
+        <h2 id="faq-title" className={h2}>
+          Common questions
+        </h2>
+        <div className="mt-8 max-w-3xl">
+          <FaqList items={HOME_FAQ} />
         </div>
       </section>
 

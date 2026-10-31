@@ -25,6 +25,7 @@
     "screenshots": "node scripts/screenshots.mjs",
     "new-tool": "node scripts/new-tool.mjs",
     "docs:tools": "node scripts/gen-tool-docs.mjs",
+    "docs:seo": "node scripts/gen-seo-docs.mjs",
     "db:generate": "npm run generate -w @toolwright/db",
     "db:migrate": "npm run migrate -w @toolwright/db"
   },

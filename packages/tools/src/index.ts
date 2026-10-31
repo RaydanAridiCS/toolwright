@@ -19,6 +19,7 @@ export function toolsByCategory(category: CategoryId): ToolMeta[] {
 /** Hand-picked order for the home page and search suggestions: the tools people reach for most. */
 export const FEATURED_SLUGS = [
   "merge-pdf",
+  "compress-pdf",
   "image-compressor",
   "json-formatter",
   "qr-code-generator",
@@ -96,3 +97,5 @@ export function searchTools(query: string, limit = 20): SearchHit[] {
 export function categoriesWithCounts() {
   return CATEGORIES.map((category) => ({ ...category, count: tools.filter((t) => t.category === category.id).length })).filter((c) => c.count > 0);
 }
+
+export { CATEGORY_CONTENT, type CategoryContent } from "./seo/category-content";

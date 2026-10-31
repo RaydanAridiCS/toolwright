@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Find the most expensive home your income, debts and down payment can carry.",
   description:
     "Enter your income, debts and down payment to see the highest home price that fits the common 28/36 lender rules, with a monthly breakdown of loan, tax, insurance and dues. Calculated locally; your numbers are never stored.",
+  primaryKeyword: "mortgage affordability calculator",
+  seoTitle: "Mortgage Affordability Calculator: 28/36 Rule",
+  seoDescription:
+    "See the highest home price your income, debts and down payment can carry under the common 28/36 rules. Calculated in your browser.",
+  answer:
+    "Mortgage Affordability Calculator finds the highest home price your income, debts and down payment fit under the common 28/36 lender rules, with a monthly breakdown of loan, tax, insurance and dues. It is calculated in your browser and your numbers are not stored.",
   category: "calculators",
   keywords: ["mortgage affordability", "how much house can i afford", "home affordability calculator", "28/36 rule", "debt to income ratio", "house budget"],
   icon: House,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "Closing costs, moving costs, repairs, utilities and the cost of owning in a particular area are not included. Keep a cushion for them.",
     },
   ],
+  nextStep: { slug: "loan-calculator", text: "Have a price in mind? See the monthly payment and amortization table." },
   related: ["loan-calculator", "compound-interest-calculator", "percentage-calculator", "salary-converter"],
 });

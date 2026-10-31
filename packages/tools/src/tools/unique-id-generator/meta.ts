@@ -7,13 +7,21 @@ export default defineTool({
   tagline: "Generate UUID v4, UUID v7, ULID and NanoID values in bulk.",
   description:
     "Generate random unique identifiers: UUID v4, time-ordered UUID v7, sortable ULIDs and compact NanoIDs. Create up to 1,000 at once with your browser's cryptographic random number generator.",
+  primaryKeyword: "uuid generator",
+  seoTitle: "UUID Generator: v4, v7, ULID and NanoID",
+  seoDescription:
+    "Generate UUID v4, time-ordered UUID v7, sortable ULIDs and NanoIDs in bulk, up to 1,000 at once. Free, in your browser.",
+  answer:
+    "UUID, ULID & NanoID Generator creates random unique identifiers in your browser: UUID v4, time-ordered UUID v7, sortable ULIDs and compact NanoIDs, up to 1,000 at once, using your browser's cryptographic random number generator.",
   category: "generators",
   keywords: ["uuid generator", "guid generator", "uuid v4", "uuid v7", "ulid generator", "nanoid", "random id"],
   icon: Fingerprint,
   popular: true,
+  howTo: ["Choose UUID v4, UUID v7, ULID or NanoID.", "Set how many you need.", "Copy the list."],
   faq: [
     { question: "Which should I use, UUID v4 or v7?", answer: "v4 is fully random. v7 starts with a timestamp so values sort by creation time, which is friendlier to database indexes. Both are fine for uniqueness." },
     { question: "How random are these IDs?", answer: "They use crypto.getRandomValues, the same cryptographically secure source browsers use for TLS keys." },
   ],
+  nextStep: { slug: "hash-generator", text: "Need a hash rather than an ID? Generate SHA-256, MD5 and more." },
   related: ["password-generator", "hash-generator", "lorem-ipsum", "barcode-generator"],
 });

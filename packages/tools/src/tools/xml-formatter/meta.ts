@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Check, format and shrink XML, or convert it to and from JSON.",
   description:
     "Paste XML to check that it is well-formed, with the line and column of the first problem, then format it with the indent you like, shrink it to one line, or convert it to JSON and back. Everything runs in your browser, so your XML is never uploaded.",
+  primaryKeyword: "xml formatter",
+  seoTitle: "XML Formatter and Validator, XML to JSON",
+  seoDescription:
+    "Check that XML is well-formed, format it with your indent, shrink it or convert it to JSON and back. Free, and runs in your browser.",
+  answer:
+    "XML Formatter & Converter checks that XML is well-formed, with the line and column of the first problem, then formats it, shrinks it to one line or converts it to JSON and back. It checks well-formedness only, not XSD or DTD validity, and everything runs in your browser.",
   category: "developer",
   keywords: ["xml formatter", "xml validator", "xml beautifier", "xml minifier", "xml to json", "json to xml", "pretty print xml", "format xml online", "xml checker"],
   icon: FileCode,
@@ -41,5 +47,6 @@ export default defineTool({
       answer: "HTML allows things XML does not, like tags that are never closed (<br>), unquoted attributes and &nbsp;. Use an HTML tool for HTML.",
     },
   ],
+  nextStep: { slug: "json-formatter", text: "Converted to JSON? Format and validate it next." },
   related: ["json-formatter", "json-yaml-converter", "yaml-validator", "svg-editor", "json-csv-converter", "html-entities"],
 });

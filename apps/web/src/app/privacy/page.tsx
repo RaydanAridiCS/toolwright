@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { ProsePage } from "../../components/prose-page";
 import { SITE } from "../../lib/site";
 
-export const metadata: Metadata = {
-  title: "How privacy works",
-  description: "Toolwright tools run entirely in your browser. Here is exactly what that means, what is stored, and how you can verify it yourself.",
-  alternates: { canonical: "/privacy" },
-};
+export const metadata: Metadata = pageMetadata({ title: "How Toolwright Keeps Your Files Private", description: "Toolwright tools run entirely in your browser. Here is exactly what that means, what is stored, and how you can verify it yourself.", path: "/privacy" });
 
 export default function PrivacyPage() {
   return (

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Work out CIDR ranges, netmasks and host counts for IPv4 and IPv6.",
   description:
     "Enter a network such as 192.168.1.0/24 or 2001:db8::/32 to see its netmask, range and number of hosts. Split it into smaller subnets, turn an address range into CIDR blocks, check whether an address belongs to a network, or merge a list. It runs in your browser; nothing is sent anywhere.",
+  primaryKeyword: "subnet calculator",
+  seoTitle: "Subnet Calculator: IPv4 and IPv6 CIDR Ranges",
+  seoDescription:
+    "Work out the netmask, range and host count of a subnet. Split networks, turn ranges into CIDR blocks and merge lists. Free, in your browser.",
+  answer:
+    "IP & Subnet Calculator shows the netmask, address range and host count for an IPv4 or IPv6 network such as 192.168.1.0/24. It can split a network into subnets, turn an address range into CIDR blocks, check whether an address belongs to a network and merge a list. It runs in your browser.",
   category: "developer",
   keywords: ["subnet calculator", "cidr calculator", "ip calculator", "ipv4 subnet", "ipv6 subnet", "netmask", "wildcard mask", "ip range to cidr", "split subnet", "summarize cidr"],
   icon: Network,
@@ -37,5 +43,6 @@ export default defineTool({
       answer: "It uses the fewest CIDR blocks that cover exactly the addresses from the start to the end, never more. Merging a list does the same after joining blocks that overlap or touch.",
     },
   ],
+  nextStep: { slug: "port-numbers", text: "Writing firewall rules? Look up common port numbers." },
   related: ["port-numbers", "url-parser", "http-header-explainer", "chmod-calculator", "number-base-converter"],
 });

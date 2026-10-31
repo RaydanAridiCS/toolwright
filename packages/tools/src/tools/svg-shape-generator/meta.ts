@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Make blobs, waves, polygons and stars as clean SVG.",
   description:
     "Generate organic blobs, layered waves, regular polygons and stars with the sliders you choose, then copy the SVG or download SVG or PNG. The same seed always gives the same shape. Everything is made in your browser; nothing is uploaded.",
+  primaryKeyword: "svg blob generator",
+  seoTitle: "SVG Blob Generator: Blobs, Waves, Shapes",
+  seoDescription:
+    "Make organic blobs, layered waves, polygons and stars as clean SVG with sliders. Copy the code or download SVG or PNG. Free.",
+  answer:
+    "SVG Shape Generator is an SVG blob generator that also makes layered waves, regular polygons and stars with sliders, then lets you copy the SVG or download SVG or PNG. The same seed always gives the same shape, and everything is made in your browser.",
   category: "design",
   keywords: ["svg blob generator", "svg wave generator", "svg shape generator", "random blob svg", "svg polygon", "svg star generator", "section divider svg", "wave divider"],
   icon: Shapes,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "Yes. Open the SVG in SVG Recolor, or change the fill value in the code.",
     },
   ],
+  nextStep: { slug: "svg-recolor", text: "Want different colors? Recolor the shape." },
   related: ["svg-editor", "svg-recolor", "svg-optimizer", "svg-path-tools"],
 });

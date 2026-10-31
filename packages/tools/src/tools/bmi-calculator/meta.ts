@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Work out your BMI, with the healthy weight range for your height.",
   description:
     "Calculate body mass index in metric or imperial units, see where it falls on the WHO adult scale and what weight range is healthy for your height. It says plainly what BMI cannot tell you. Calculated in your browser; your height and weight are never uploaded or put in the link.",
+  primaryKeyword: "bmi calculator",
+  seoTitle: "BMI Calculator: Metric and Imperial Units",
+  seoDescription:
+    "Work out your BMI from kg and cm or pounds and feet, see the WHO adult category and a healthy weight range. Nothing is uploaded or saved.",
+  answer:
+    "BMI Calculator works out body mass index from your height and weight in metric or imperial units, shows the WHO adult category and the weight range for your height, and says plainly what BMI cannot tell you. Nothing is uploaded or put in the link.",
   category: "calculators",
   keywords: ["bmi calculator", "body mass index", "bmi chart", "healthy weight calculator", "bmi in kg and cm", "bmi pounds and feet"],
   icon: Scale,

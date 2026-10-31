@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Try a JSONPath query on your JSON and see every match with its path.",
   description:
     "Paste JSON, type a JSONPath such as $.store.book[?(@.price < 10)].title and see the matching values and their paths. Supports filters, slices, wildcards and recursive search. Runs in your browser; nothing is uploaded.",
+  primaryKeyword: "jsonpath tester",
+  seoTitle: "JSONPath Tester: Evaluate Queries Online",
+  seoDescription:
+    "Paste JSON, type a JSONPath and see every match with its path. Filters, slices, wildcards and recursive search. Free, in your browser.",
+  answer:
+    "JSONPath Tester runs a JSONPath query against your JSON and lists every match with its path. It supports filters, slices, wildcards and recursive search, and runs in your browser, so nothing is uploaded.",
   category: "developer",
   keywords: ["jsonpath", "jsonpath tester", "jsonpath evaluator", "json query", "json path finder", "jq alternative", "query json"],
   icon: Crosshair,
@@ -30,5 +36,6 @@ export default defineTool({
       answer: "No. The query is parsed into a small tree and walked, and it never goes through eval. Your JSON is not uploaded either.",
     },
   ],
+  nextStep: { slug: "json-formatter", text: "Need the JSON tidied first? Format and validate it." },
   related: ["json-formatter", "json-diff", "json-schema-generator", "regex-tester"],
 });

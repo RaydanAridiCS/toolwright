@@ -4,6 +4,31 @@ All notable changes to Toolwright. The format follows [Keep a Changelog](https:/
 
 ## [Unreleased]
 
+### Added: search and answer-engine optimisation
+
+Details and rationale in [docs/seo.md](docs/seo.md). Nothing here adds analytics, a third-party script or a network call from a tool.
+
+- **Search copy for all 110 tools** (new optional `ToolMeta` fields, each with tests): `primaryKeyword` (unique), `seoTitle` (25-47 characters, no brand; the full title is 60 or fewer), `seoDescription` (110-160), `answer` (an answer-first first paragraph) and `nextStep`. Every tool now has a FAQ and at least three steps (58 gained a FAQ, 65 gained steps).
+- **Keyword and intent map** (`packages/tools/src/seo/keyword-map.ts`, generated [docs/keyword-map.md](docs/keyword-map.md), `npm run docs:seo`). Volume and difficulty are marked as estimates.
+- **Category landing pages** have their own H1, title, description and a 100-200 word introduction.
+- **Guides** (`/guides`, 7 guides): compress a PDF without uploading it, reduce a PDF under 1 MB, merge PDFs without uploading, what EXIF data is, JPG vs PNG vs WebP, how to tell whether a tool uploads your files, and CIDR notation. Each has a byline, true dates, an FAQ and Article markup.
+- **Structured data** moved into `lib/structured-data.ts` and extended: WebApplication with `featureList` and an inline publisher, Organization and WebSite (with a working SearchAction) on the home page, ItemList for the catalogue and categories, BreadcrumbList everywhere, Article for guides. A visible FAQ on the home page.
+- **`/llms.txt` and `/llms-full.txt`**, generated from the registry.
+- **`robots.txt` policy** for search and answer crawlers (always allowed) and AI training crawlers (allowed by default, `TOOLWRIGHT_AI_TRAINING=block` turns them off).
+- **Sitemap** with real `lastmod` dates (`scripts/gen-lastmod.mjs`) instead of the build time, and no `priority` or `changefreq`; guides added (133 URLs).
+- **`www` to apex redirect** (308), `X-Robots-Tag: noindex` on the API and the offline page, a one-day cache for the PDF.js files, a default social card, per-page titles, descriptions and social cards (the home page and static pages used to share the home page's), and per-tool image alt text.
+- **`scripts/indexnow.mjs`** for submitting changed URLs to Bing and other IndexNow engines from your own machine.
+- **Tests:** `packages/tools/tests/seo.test.ts`, `keyword-map.test.ts`, `apps/web/tests/seo.test.ts`, `indexnow.test.ts` and `e2e/seo.spec.ts` (raw HTML, no JavaScript).
+
+### Changed: search
+
+- Titles read `<keyword page title> | Toolwright` instead of `<name>: Free & Private Online Tool · Toolwright`.
+- `/tools` renders the whole catalogue on the server (it used to have no tool links in its HTML) and no longer shifts when the interactive catalogue loads (layout shift 0.396 to 0).
+- The "Also searched as" keyword list is gone from tool pages; `keywords` now only feeds the in-site search.
+- The Geist Mono font is preloaded: a late swap re-wrapped the breadcrumb and moved the page (layout shift about 0.14 to 0 on two tools).
+- Compress PDF is now one of the featured tools on the home page; the home toolbox shows 14 tools.
+- The home page description no longer says "70+ tools"; the README no longer claims there are no file-size limits (a few tools cap size, and say so).
+
 ### Changed
 
 - The footer line about fonts and paper colour is replaced by "Developed and maintained by raydan.dev".

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Paste request or response headers and get each one explained in plain English.",
   description:
     "Paste headers from dev tools or curl -i and see what each one means, with cache lifetimes, cookie flags and CSP rules broken down. A checklist flags missing security headers. Runs in your browser; nothing is uploaded.",
+  primaryKeyword: "http headers",
+  seoTitle: "HTTP Headers Explained and Security Check",
+  seoDescription:
+    "Paste request or response headers and see each one explained, with cache lifetimes, cookie flags and CSP rules broken down. Runs in your browser.",
+  answer:
+    "HTTP Header Explainer explains each request or response header you paste in plain English, breaks down cache lifetimes, cookie flags and Content Security Policy rules, and flags missing security headers. It runs in your browser.",
   category: "developer",
   keywords: ["http headers", "http header explainer", "security headers checker", "response headers", "cache-control explained", "csp analyzer", "cookie flags"],
   icon: ShieldCheck,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "It is not in this tool's list of standard headers. Many sites add their own, and names starting with X- are usually specific to one site or product.",
     },
   ],
+  nextStep: { slug: "http-status-codes", text: "Looking up a response code too? See what each HTTP status means." },
   related: ["http-status-codes", "curl-to-fetch", "jwt-decoder", "url-parser", "subnet-calculator"],
 });

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn a set of pictures into an animated GIF.",
   description:
     "Drop PNG, JPG or WebP pictures, put them in order, set the speed, size and looping, and make an animated GIF. Pictures of other shapes are fitted or cropped for you. Everything runs in your browser; your pictures are never uploaded.",
+  primaryKeyword: "gif maker",
+  seoTitle: "GIF Maker: Make an Animated GIF from Images",
+  seoDescription:
+    "Turn PNG, JPG or WebP pictures into an animated GIF. Set the order, speed, size and looping. Free, and nothing is uploaded.",
+  answer:
+    "GIF Maker turns a set of PNG, JPG or WebP pictures into an animated GIF in your browser. Put the pictures in order, set the speed, size and looping, and download the result. Nothing is uploaded.",
   category: "image",
   keywords: ["gif maker", "images to gif", "create gif", "png to gif animation", "make animated gif", "photos to gif", "slideshow gif", "frames to gif"],
   icon: Film,
@@ -37,5 +43,6 @@ export default defineTool({
       answer: "Browsers show any delay of 10 ms or less as 100 ms, so very short delays make a GIF slower, not faster.",
     },
   ],
+  nextStep: { slug: "gif-editor", text: "Already have a GIF? Trim, resize or shrink it in the GIF Editor." },
   related: ["gif-editor", "image-resizer", "image-converter", "image-compressor"],
 });

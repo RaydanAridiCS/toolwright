@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Format, validate, minify and repair JSON with exact error positions.",
   description:
     "Pretty-print, minify, sort and validate JSON. Errors point to the exact line and column, and the repair mode fixes comments, trailing commas, single quotes and unquoted keys. Your JSON never leaves your browser.",
+  primaryKeyword: "json formatter",
+  seoTitle: "JSON Formatter & Validator Online",
+  seoDescription:
+    "Format, validate, minify and repair JSON online. Errors show the exact line and column. Free, no sign-up, and your JSON never leaves your browser.",
+  answer:
+    "JSON Formatter & Validator pretty-prints, minifies, sorts and validates JSON in your browser. Errors point to the exact line and column, and repair mode fixes comments, trailing commas, single quotes and unquoted keys. Your JSON is never uploaded.",
   category: "developer",
   keywords: ["json formatter", "json validator", "json beautifier", "json pretty print", "minify json", "fix json", "json lint"],
   icon: Braces,
@@ -16,5 +22,6 @@ export default defineTool({
     { question: "Is my JSON uploaded anywhere?", answer: "No. Parsing and formatting use your browser's built-in JSON engine, and the page makes no network requests with your data." },
     { question: "What does Repair fix?", answer: "It removes comments and trailing commas, converts single quotes to double quotes and quotes bare keys, so JSON5-style or hand-edited data becomes strict JSON." },
   ],
+  nextStep: { slug: "json-to-typescript", text: "Next, generate TypeScript interfaces from your JSON." },
   related: ["json-to-typescript", "json-yaml-converter", "json-csv-converter", "text-diff", "json-diff", "json-schema-generator", "jsonpath-tester", "xml-formatter"],
 });

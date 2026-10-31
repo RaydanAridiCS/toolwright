@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Remove scripts and unsafe links from an SVG before you use it.",
   description:
     "Clean an untrusted SVG: scripts, event handlers, embedded web pages, links to other sites and external styles are removed, and you get a list of exactly what was taken out. It runs in your browser, so the file is never uploaded.",
+  primaryKeyword: "svg sanitizer",
+  seoTitle: "SVG Sanitizer: Remove Scripts from an SVG",
+  seoDescription:
+    "Clean an untrusted SVG by removing scripts, event handlers and external links, with a list of what was removed. Runs in your browser.",
+  answer:
+    "SVG Sanitizer cleans an untrusted SVG by removing scripts, event handlers, embedded web pages, links to other sites and external styles, and lists exactly what was taken out. It runs in your browser. It is a first line of defense, so also sanitize on the server.",
   category: "developer",
   keywords: ["svg sanitizer", "sanitize svg", "svg xss", "remove script from svg", "clean svg", "safe svg upload", "svg security", "dompurify svg"],
   icon: ShieldCheck,
@@ -37,5 +43,6 @@ export default defineTool({
       answer: "If the picture depended on an external image, external font or script, that part is gone by design. The list of removed items shows what changed.",
     },
   ],
+  nextStep: { slug: "svg-optimizer", text: "Cleaned the file? Optimize it for size next." },
   related: ["svg-optimizer", "svg-editor", "svg-data-uri"],
 });

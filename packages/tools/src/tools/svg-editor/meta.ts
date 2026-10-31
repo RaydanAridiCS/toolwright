@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Write, preview, fix and resize SVG code live.",
   description:
     "Edit SVG code with a live preview on white, dark or transparent backgrounds. Format it, fix a missing namespace or viewBox, set an exact size, add space around the drawing and export SVG or PNG. Everything runs in your browser; your file is never uploaded.",
+  primaryKeyword: "svg editor",
+  seoTitle: "SVG Editor: Edit and Preview SVG Code Live",
+  seoDescription:
+    "Edit SVG code with a live preview, fix a missing viewBox, set an exact size and export SVG or PNG. Free, and nothing is uploaded.",
+  answer:
+    "SVG Editor lets you write and preview SVG code live on white, dark or transparent backgrounds. Format it, fix a missing namespace or viewBox, set an exact size, add space around the drawing and export SVG or PNG. It runs in your browser.",
   category: "design",
   keywords: ["svg editor", "svg viewer", "svg preview", "edit svg online", "svg code editor", "svg format", "svg resize", "svg to png"],
   icon: PenTool,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "This tool edits the code. For paths use SVG Path Tools, and for colours use SVG Recolor.",
     },
   ],
+  nextStep: { slug: "svg-optimizer", text: "Done editing? Shrink the file with the SVG Optimizer." },
   related: ["svg-optimizer", "svg-path-tools", "svg-recolor", "svg-to-png", "svg-sanitizer", "xml-formatter"],
 });

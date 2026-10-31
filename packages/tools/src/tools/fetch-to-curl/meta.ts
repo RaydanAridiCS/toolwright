@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn JavaScript fetch code into a cURL command you can run.",
   description:
     "Paste a fetch call and get the equivalent cURL command with method, headers, JSON, form and file bodies. The code is only read, never run, and it stays in your browser, so tokens in it are never uploaded.",
+  primaryKeyword: "fetch to curl",
+  seoTitle: "Fetch to cURL Converter: JavaScript to cURL",
+  seoDescription:
+    "Paste a JavaScript fetch call and get the cURL command with method, headers and body. Free. The code is never run or uploaded.",
+  answer:
+    "Fetch to cURL Converter turns a JavaScript fetch call into the equivalent cURL command, including method, headers and JSON, form or file bodies. The code is only read, never run, and stays in your browser.",
   category: "developer",
   keywords: ["fetch to curl", "javascript to curl", "convert fetch to curl", "fetch curl converter", "js fetch to curl command", "fetch request to curl"],
   icon: SquareTerminal,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "The command uses bash-style single quotes. In PowerShell or cmd, quote it differently or run it in Git Bash or WSL.",
     },
   ],
+  nextStep: { slug: "curl-to-fetch", text: "Need the reverse? Turn a cURL command into fetch code." },
   related: ["curl-to-fetch", "http-header-explainer", "json-formatter", "url-parser", "http-status-codes"],
 });

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Draw, type or upload your signature and place it on a PDF.",
   description:
     "Add a signature picture to a PDF in your browser. Draw it, type it or upload a photo of it, drag it into place on a page preview, and sign one page, the last page or every page, with an optional date line. Your file and signature never leave your device. It is a visible signature, not a certified digital one.",
+  primaryKeyword: "sign pdf",
+  seoTitle: "Sign PDF Online Free: Draw, Type or Upload",
+  seoDescription:
+    "Add your signature to a PDF: draw it, type it or upload a photo, then place it on the page. Free, and your file never leaves your device.",
+  answer:
+    "Sign PDF adds a visible signature to a PDF in your browser. Draw it, type it or upload a picture of it, drag it into place on a page preview and sign one page, the last page or every page. It is a visible signature, not a certified digital one, and your file and signature never leave your device.",
   category: "pdf",
   keywords: ["sign pdf", "add signature to pdf", "sign pdf online free", "pdf signature", "e-sign pdf no upload", "draw signature pdf", "sign a document"],
   icon: PenLine,
@@ -43,5 +49,6 @@ export default defineTool({
       answer: "Typed signatures use handwriting-style fonts installed on your device, and the website cannot load fonts from elsewhere. The result is saved as a picture, so it looks the same everywhere once it is in the PDF.",
     },
   ],
+  nextStep: { slug: "pdf-watermark", text: "Need to mark the document as a draft or confidential? Add a watermark." },
   related: ["merge-pdf", "pdf-watermark", "compress-pdf", "images-to-pdf", "pdf-metadata-editor"],
 });

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn hourly pay into a yearly salary, or the other way, for your own work week.",
   description:
     "Convert pay between hourly, daily, weekly, every two weeks, monthly and yearly amounts. Set your hours, days and paid weeks so the answer matches your job. Calculated locally; your numbers are never stored.",
+  primaryKeyword: "salary to hourly",
+  seoTitle: "Salary to Hourly Converter, and Back",
+  seoDescription:
+    "Turn hourly pay into a yearly salary, or the reverse, for your own hours, days and paid weeks. Calculated in your browser.",
+  answer:
+    "Salary and Hourly Pay Converter changes salary to hourly pay, or hourly pay to salary, and converts between daily, weekly, every-two-weeks, monthly and yearly amounts. Set your hours, days and paid weeks to match your job. It runs in your browser and stores nothing.",
   category: "calculators",
   keywords: ["salary to hourly", "hourly to salary", "hourly wage calculator", "annual salary calculator", "pay converter", "weekly to yearly pay"],
   icon: Banknote,
@@ -34,5 +40,6 @@ export default defineTool({
       answer: "No. All amounts are before tax and deductions, because those depend on where you live and your benefits.",
     },
   ],
+  nextStep: { slug: "percentage-calculator", text: "Working out a raise? Calculate the percentage change." },
   related: ["percentage-calculator", "loan-calculator", "tip-calculator", "mortgage-affordability-calculator"],
 });

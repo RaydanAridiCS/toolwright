@@ -10,6 +10,7 @@ import { MobileMenu } from "./mobile-menu";
 
 export const NAV_LINKS = [
   { href: "/tools", label: "Tools", note: String(tools.length) },
+  { href: "/guides", label: "Guides" },
   { href: "/requests", label: "Requests" },
   { href: "/privacy", label: "Privacy" },
   { href: "/contribute", label: "Contribute" },

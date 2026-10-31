@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Make Code 128, EAN-13, UPC-A, Code 39 and other barcodes as SVG or PNG.",
   description:
     "Type a number or text and get a barcode you can download as a sharp SVG or a PNG: Code 128, EAN-13, EAN-8, UPC-A, Code 39, Interleaved 2 of 5 and ITF-14. Check digits are worked out for you. It runs in your browser, so nothing is uploaded.",
+  primaryKeyword: "barcode generator",
+  seoTitle: "Barcode Generator: Code 128, EAN, UPC Online",
+  seoDescription:
+    "Make a barcode online: Code 128, EAN-13, UPC-A, Code 39 and more. Download SVG or PNG. Free, no sign-up, and nothing is uploaded.",
+  answer:
+    "Barcode Generator makes Code 128, EAN-13, EAN-8, UPC-A, Code 39, Interleaved 2 of 5 and ITF-14 barcodes in your browser. Type the number or text, then download the barcode as SVG or PNG. Nothing is uploaded.",
   category: "generators",
   keywords: ["barcode generator", "code 128 generator", "ean 13 barcode", "upc a barcode", "code 39 barcode", "itf 14 barcode", "make barcode online", "ean 8", "check digit calculator"],
   icon: Barcode,
@@ -41,5 +47,6 @@ export default defineTool({
       answer: "Code 128 and Code 39 hold plain ASCII characters only. For other characters, such as accents or other alphabets, use a QR code.",
     },
   ],
+  nextStep: { slug: "qr-code-generator", text: "Need a code that a phone camera scans from any angle? Make a QR code instead." },
   related: ["qr-code-generator", "unique-id-generator", "image-to-base64", "svg-to-png", "hash-generator"],
 });

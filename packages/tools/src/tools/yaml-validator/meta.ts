@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Check YAML for errors, and for values that parsers read differently.",
   description:
     "Paste or drop YAML and see whether it is valid, with the exact line and column of any error. It also flags classic traps: unquoted yes and no, leading-zero numbers, and versions such as 3.10 that lose a zero. See the result as JSON. Runs in your browser; nothing is uploaded.",
+  primaryKeyword: "yaml validator",
+  seoTitle: "YAML Validator and Linter Online",
+  seoDescription:
+    "Check YAML for errors with the exact line and column, and flag traps such as unquoted yes and no or versions that lose a zero. Free.",
+  answer:
+    "YAML Validator and Linter shows whether YAML is valid, with the exact line and column of any error, and flags classic traps such as unquoted yes and no, leading-zero numbers and versions such as 3.10 that lose a zero. You can see the result as JSON. It runs in your browser.",
   category: "developer",
   keywords: ["yaml validator", "yaml linter", "validate yaml", "yaml checker", "yaml syntax check", "yaml lint online", "yaml error line number"],
   icon: FileCheck2,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "A document that repeats an alias many times can expand into a huge JSON text. When the JSON would be over about 1 MB, the view is hidden and a note says so.",
     },
   ],
+  nextStep: { slug: "json-yaml-converter", text: "Need it as JSON? Convert between YAML and JSON." },
   related: ["json-yaml-converter", "json-formatter", "dockerfile-linter", "json-schema-generator", "csv-delimiter-converter", "xml-formatter"],
 });

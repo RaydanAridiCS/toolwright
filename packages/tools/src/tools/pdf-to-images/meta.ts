@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn PDF pages into PNG, JPG or WebP pictures, as a ZIP or one by one.",
   description:
     "Save every page of a PDF, or just the pages you choose, as PNG, JPG or WebP pictures at 72 to 300 DPI. Download them one at a time or all together in a ZIP. The PDF is drawn in your browser and never leaves your device.",
+  primaryKeyword: "pdf to jpg",
+  seoTitle: "PDF to JPG, PNG and WebP Converter",
+  seoDescription:
+    "Convert PDF pages to JPG, PNG or WebP pictures at 72 to 300 DPI, as a ZIP or one by one. Free, and your PDF never leaves your device.",
+  answer:
+    "PDF to Images converts every page of a PDF, or the pages you choose, to JPG, PNG or WebP pictures at 72 to 300 DPI. The PDF is drawn in your browser and never leaves your device, and you can download single pages or a ZIP.",
   category: "pdf",
   keywords: ["pdf to jpg", "pdf to png", "pdf to image", "pdf to images", "convert pdf to picture", "pdf page to image", "save pdf as image", "pdf to webp", "export pdf pages"],
   icon: Images,
@@ -41,5 +47,6 @@ export default defineTool({
       answer: "Up to 500 pages in one run, and it stops with what is finished if the pictures together grow past 400 MB. For long documents choose a page range or a lower resolution.",
     },
   ],
+  nextStep: { slug: "images-to-pdf", text: "Going the other way? Combine pictures into a PDF." },
   related: ["images-to-pdf", "compress-pdf", "extract-pdf-pages", "pdf-organizer", "image-converter", "pdf-to-text"],
 });

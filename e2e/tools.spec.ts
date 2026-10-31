@@ -48,7 +48,7 @@ test.describe("tool pages", () => {
   test("have SEO metadata, JSON-LD and related tools", async ({ page }) => {
     await page.goto("/tools/json-formatter");
     await expect(page).toHaveTitle(/JSON Formatter/);
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Pretty-print/);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Format, validate, minify and repair JSON/);
     const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
     // A script block can hold one object or an array of them.
     const types = blocks.flatMap((b) => [JSON.parse(b) as { "@type": string } | { "@type": string }[]].flat()).map((x) => x["@type"]);

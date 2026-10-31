@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Make a complete favicon pack from one image, ready to upload.",
   description:
     "Turn a logo into favicon.ico, PNG icons for browsers, iOS and Android, a web app manifest and the HTML tags to use them, all in one ZIP. Your image is processed in your browser and never uploaded.",
+  primaryKeyword: "favicon generator",
+  seoTitle: "Favicon Generator: favicon.ico and App Icons",
+  seoDescription:
+    "Turn one image into a full favicon pack: favicon.ico, PNG icons, Apple touch icon and manifest, in one ZIP. Free, and nothing is uploaded.",
+  answer:
+    "Favicon Generator turns one logo into favicon.ico, PNG icons for browsers, iOS and Android, a web app manifest and the HTML tags to use them, all in one ZIP. Your image is processed in your browser and never uploaded.",
   category: "design",
   keywords: ["favicon generator", "favicon maker", "create favicon", "png to ico", "apple touch icon", "favicon.ico generator", "site icon generator", "web app manifest icons"],
   icon: AppWindow,
@@ -34,5 +40,6 @@ export default defineTool({
       answer: "Not always. A detailed logo can turn to mush at 16 pixels. If so, use a simplified mark as the source image.",
     },
   ],
+  nextStep: { slug: "image-resizer", text: "Need the source image at an exact size first? Resize it." },
   related: ["image-resizer", "image-converter", "svg-to-png", "svg-editor", "image-to-svg", "image-crop"],
 });

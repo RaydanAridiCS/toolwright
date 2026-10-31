@@ -16,6 +16,16 @@ Ideas we'd love help with, roughly ordered by value. Vote on the [request board]
 - **Calculators** — unit price comparison, BMI (with honest caveats), the meeting time planner, mortgage affordability and the salary/hourly converter are built.
 - **PDF** — Sign PDF (visual signatures), PDF to Images and PDF to Text are built. Still open: extracting the pictures embedded in a PDF (as opposed to snapshots of its pages), and OCR so scanned PDFs have text to read (needs WebAssembly). A certificate-based digital signature is a separate, larger job that needs a security review. Compress PDF follow-ups: recompress lossless images that are clearly photographs, and let Smallest file keep selectable text with an invisible text layer (needs OCR). Page previews could also come to Split PDF and Extract PDF Pages, using the same renderer.
 
+## Search and discovery
+
+Queries people type where Toolwright has a tool with thin coverage, or no tool. None of these is built; each would need a page that is accurate and better than what exists.
+
+- **No tool yet:** HEIC to JPG, PDF unlock and PDF protect (password), PDF to Word and Word to PDF, OCR for scans (the commonest reason PDF to Text finds nothing), image background remover, audio and video conversion, a URL or text to speech tool, and Data Matrix and PDF417 codes.
+- **Features searchers ask for that do not exist:** compress to a target size ("compress PDF to 100 KB"). Compress PDF has strengths, not a size target; the guides say so.
+- **More guides worth writing when they can be made accurate:** how to sign a PDF without uploading it, how to convert PDF pages to images and what DPI to use, how to read a JWT safely, regex cheat sheet for the JavaScript engine.
+- **Internationalisation:** hreflang and translated pages are deliberately not started. A later opportunity once the English pages have settled.
+- **After launch:** replace the estimated volume and difficulty in `docs/keyword-map.md` with real queries from Search Console and Bing Webmaster Tools, and rewrite the titles of pages that get impressions but few clicks.
+
 ## Platform improvements
 
 - Publish `@toolwright/core` to npm as a standalone, tree-shakeable library with its own README and examples.

@@ -34,6 +34,10 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
+const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://toolwright.com");
+// The preferred host is the one in SITE.url (the apex). The "www." form of it is redirected there for good.
+const wwwHost = siteUrl.hostname.startsWith("www.") ? null : `www.${siteUrl.hostname}`;
+
 const config: NextConfig = {
   // Only the container build sets this: it emits a minimal self-contained server (see /Dockerfile).
   // Regular `next build` / `next start` (and the e2e tests) are unaffected.
@@ -44,9 +48,19 @@ const config: NextConfig = {
   poweredByHeader: false,
   transpilePackages: ["@toolwright/core", "@toolwright/db", "@toolwright/tools", "@toolwright/ui"],
   serverExternalPackages: ["postgres"],
+  async redirects() {
+    if (isDev || !wwwHost) return [];
+    return [{ source: "/:path*", has: [{ type: "host", value: wwwHost }], destination: `${siteUrl.origin}/:path*`, permanent: true }];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
+      // The request-board API is not for search engines.
+      { source: "/api/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      // PDF.js files are copied from the npm package and are not content-hashed, so cache them for a day, not forever.
+      { source: "/pdfjs/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
+      // The offline fallback page should never show up in search results.
+      { source: "/offline.html", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       // The service worker must always be revalidated so updates roll out.
       { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache" }, { key: "Service-Worker-Allowed", value: "/" }] },
     ];

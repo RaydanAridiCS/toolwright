@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Trim, speed up, reverse, resize and shrink animated GIFs.",
   description:
     "Cut frames, change the speed, reverse or boomerang an animated GIF, rotate, flip, resize, reduce colours and save a smaller file, or export every frame as PNG. Everything runs in your browser; your GIF is never uploaded.",
+  primaryKeyword: "gif editor",
+  seoTitle: "GIF Editor: Trim, Resize and Compress GIFs",
+  seoDescription:
+    "Trim, speed up, reverse, resize and shrink animated GIFs, or export frames as PNG. Free, no sign-up, and nothing is uploaded.",
+  answer:
+    "GIF Editor trims, speeds up, slows down, reverses, rotates, flips, resizes and shrinks animated GIFs, and can export every frame as PNG. It runs in your browser, so your GIF is never uploaded.",
   category: "image",
   keywords: ["gif editor", "gif compressor", "reduce gif size", "reverse gif", "speed up gif", "resize gif", "trim gif", "gif to png frames"],
   icon: Clapperboard,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "Up to 100 MB, 500 frames and about 60 million pixels over all frames (for example 500 × 500 for 240 frames). Larger GIFs are refused with a reason, because the tab would run out of memory.",
     },
   ],
+  nextStep: { slug: "gif-maker", text: "Starting from pictures instead? Make a GIF from a set of images." },
   related: ["gif-maker", "image-compressor", "image-resizer", "image-converter"],
 });

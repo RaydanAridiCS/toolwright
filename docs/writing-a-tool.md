@@ -156,9 +156,30 @@
 `- Every `related` slug must exist and not be itself.
 `- FAQ questions end with `?`.
 `- File tools (image / PDF) must mention that processing is local.
+- The search fields in [Search fields](#search-fields-required-by-tests): title 25-47, description 110-160, answer 80-320, one unique primary keyword, a FAQ and 3 steps, valid `nextStep` (`packages/tools/tests/seo.test.ts`).
 `- Copy must never market the project as self-hostable.
 `
 ``howTo` and `faq` appear on the page *and* as structured data (HowTo / FAQPage) for search engines, so add them for tools people will search for.
+
+### Search fields (required by tests)
+
+Every tool also carries the copy that search engines and answer engines read. Read [seo.md](seo.md) first; the short version:
+
+```ts
+  primaryKeyword: "word wrap",                       // the one query this page owns; lower case, unique across tools
+  seoTitle: "Word Wrap Text Online, Free",           // 25-47 characters, contains the primary keyword, NO brand
+  seoDescription: "Wrap text at any column width ...", // 110-160 characters, unique, a benefit and the privacy angle
+  answer: "Word Wrap breaks long lines at a column width in your browser ...", // 80-320 characters, quotable on its own
+  nextStep: { slug: "whitespace-cleaner", text: "Messy spacing too? Remove extra spaces and line breaks." },
+```
+
+- **Choose the primary keyword first.** What would a person type? Check [keyword-map.md](keyword-map.md): a test fails if another tool owns it, or if you list another tool's primary query as one of yours. Add your tool to `packages/tools/src/seo/keyword-map.ts` (primary, intent, 5-15 secondary queries, modifiers, what you say better). Volume and difficulty there are estimates; say so, do not invent numbers.
+- **Title:** primary keyword first, a modifier only where it reads naturally, never the brand (the page adds ` | Toolwright`).
+- **Description:** one clear benefit, the privacy angle if true, no repetition of the title.
+- **Answer:** one to three sentences: what it does, that it runs in the browser, and its main limit. It is the first paragraph under the H1.
+- **FAQ and steps:** at least one question and three steps for every tool. Questions are real ones people ask, answers are one to three sentences and honest about limits. Check each step against the controls.
+- **Next step:** required on popular tools; descriptive anchor text, never "click here".
+- `npm run docs:seo` regenerates `docs/keyword-map.md`.
 `
 `## 6. Check and ship
 `
@@ -182,6 +203,8 @@
 `- [ ] Built from shared primitives (`ResultSlab` for the headline answer); tokens only, no gradients or tinted result boxes
 `- [ ] `sample` provided for text tools; sensible defaults so the tool does something immediately
 `- [ ] `meta.ts` has accurate copy, synonyms in `keywords`, `related` tools, and `howTo`/`faq` if it's a popular tool
+- [ ] SEO: `primaryKeyword`, `seoTitle`, `seoDescription` and `answer` written for people, a FAQ and steps that match the page, a `nextStep` on popular tools, an entry in `keyword-map.ts`, and `npm run docs:seo` run
+- [ ] Every claim is true: no ratings, no user counts, no "best" or "#1", and limits stated (a test scans for the first two)
 `- [ ] Honest about limitations (security, lossy formats, browser support)
 `- [ ] `npm run lint && npm run typecheck && npm test` pass; `docs/tools.md` regenerated
 `

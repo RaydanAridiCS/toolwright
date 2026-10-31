@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Check a Dockerfile for common mistakes and risky habits.",
   description:
     "Paste or drop a Dockerfile and get line-numbered findings with a fix for each: unpinned base images, running as root, apt-get without -y, curl piped into a shell, secrets in ENV, bad COPY destinations and more. It reads the text only and runs in your browser; nothing is uploaded or built.",
+  primaryKeyword: "dockerfile linter",
+  seoTitle: "Dockerfile Linter: Check Best Practices Online",
+  seoDescription:
+    "Paste a Dockerfile and get line-numbered findings with a fix for each: unpinned images, root user, secrets in ENV and more. Runs in your browser.",
+  answer:
+    "Dockerfile Linter checks a Dockerfile for common mistakes and risky habits, such as unpinned base images, running as root, curl piped into a shell and secrets in ENV, and gives each finding a line number and a fix. It reads the text only and runs in your browser.",
   category: "developer",
   keywords: ["dockerfile linter", "lint dockerfile", "dockerfile checker", "dockerfile best practices", "dockerfile validator", "dockerfile security check", "dockerfile online"],
   icon: FileCheck,

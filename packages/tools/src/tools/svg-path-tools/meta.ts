@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Convert, reverse, move, scale and measure SVG path data.",
   description:
     "Paste the d attribute of an SVG path and make it absolute or relative, turn arcs and shorthand commands into plain curves, reverse it, move, scale or rotate it, shorten the text and read its length and size. Everything runs in your browser, with nothing uploaded.",
+  primaryKeyword: "svg path",
+  seoTitle: "SVG Path Tools: Convert, Reverse, Transform",
+  seoDescription:
+    "Paste an SVG path's d attribute to make it absolute or relative, reverse it, move, scale or rotate it and read its length. Free.",
+  answer:
+    "SVG Path Tools works on the d attribute of an SVG path: make it absolute or relative, turn arcs and shorthand commands into plain curves, reverse it, move, scale or rotate it, shorten the text and read its length and size. It runs in your browser.",
   category: "design",
   keywords: ["svg path", "svg path converter", "svg path absolute relative", "reverse svg path", "svg path length", "transform svg path", "svg path to curves", "svg d attribute"],
   icon: Spline,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "It is the length along the path in drawing units, useful for stroke-dasharray line animations. For curves it is measured very closely, not exactly.",
     },
   ],
+  nextStep: { slug: "svg-editor", text: "Want to see the path drawn? Preview it in the SVG Editor." },
   related: ["svg-editor", "svg-optimizer", "svg-shape-generator", "svg-recolor"],
 });

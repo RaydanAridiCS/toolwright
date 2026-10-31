@@ -78,7 +78,9 @@ describe("SEO files", () => {
     for (const t of tools) expect(urls).toContain(`https://toolwright.com/tools/${t.slug}`);
     for (const c of CATEGORIES) expect(urls).toContain(`https://toolwright.com/category/${c.id}`);
     for (const p of ["/", "/tools", "/requests", "/privacy", "/about", "/contribute"]) expect(urls).toContain(p === "/" ? "https://toolwright.com/" : `https://toolwright.com${p}`);
-    expect(sitemap.every((s) => s.priority! > 0 && s.priority! <= 1)).toBe(true);
+    // priority and changefreq are ignored by search engines, so they are left out; lastmod is a real date.
+    expect(sitemap.some((s) => s.priority !== undefined || s.changeFrequency !== undefined)).toBe(false);
+    for (const s of sitemap.filter((x) => !x.url.endsWith("/requests"))) expect(String(s.lastModified), s.url).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
   it("robots allows crawling but hides the API and points at the sitemap", async () => {

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Format or minify GraphQL queries, mutations and schemas.",
   description:
     "Paste GraphQL and get it laid out cleanly: one field per line, long arguments split, comments and blank lines kept. Works for queries, mutations, fragments and schema definitions, and can minify too. Runs in your browser; nothing is uploaded.",
+  primaryKeyword: "graphql formatter",
+  seoTitle: "GraphQL Formatter and Beautifier Online",
+  seoDescription:
+    "Format or minify GraphQL queries, mutations, fragments and schemas. One field per line, comments kept. Free, runs in your browser.",
+  answer:
+    "GraphQL Formatter lays out GraphQL cleanly, with one field per line, long arguments split and comments kept, and can minify it again. It works for queries, mutations, fragments and schema definitions, and runs in your browser.",
   category: "developer",
   keywords: ["graphql formatter", "format graphql", "graphql beautifier", "graphql prettifier", "minify graphql", "graphql schema formatter", "gql formatter"],
   icon: Braces,

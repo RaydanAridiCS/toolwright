@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Merge two edited JSON files that started from the same original.",
   description:
     "Combine two edited copies of a JSON file with the original they came from, the way git merges code. Changes to different keys combine, key order is kept, conflicts are listed with their paths, and arrays can be matched by ID. Runs in your browser; nothing is uploaded.",
+  primaryKeyword: "json merge",
+  seoTitle: "JSON Merge: Three-Way Merge for JSON Files",
+  seoDescription:
+    "Merge two edited copies of a JSON file with their original, like git does. Conflicts are listed by path. Free, runs in your browser.",
+  answer:
+    "JSON Merge combines two edited copies of a JSON file with the original they came from, the way git merges code. Changes to different keys combine, key order is kept and conflicts are listed with their paths. Nothing is uploaded.",
   category: "developer",
   keywords: ["json merge", "three way merge json", "merge json files", "json conflict", "combine json", "json merge conflict", "json 3 way merge"],
   icon: GitMerge,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "It reads standard JSON, so comments and trailing commas are errors. Numbers beyond JavaScript's precision (above 9 quadrillion) lose digits, and if a key appears twice in one object the last one is used.",
     },
   ],
+  nextStep: { slug: "json-diff", text: "Just need to see the differences? Compare the two files." },
   related: ["json-diff", "json-formatter", "jsonpath-tester", "json-schema-generator", "text-diff"],
 });

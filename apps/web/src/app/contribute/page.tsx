@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { ProsePage } from "../../components/prose-page";
 import { SITE } from "../../lib/site";
 
-export const metadata: Metadata = {
-  title: "Contribute",
-  description: "Add a tool, fix a bug or improve the docs. Every Toolwright tool is a single folder, and a generator scaffolds it for you.",
-  alternates: { canonical: "/contribute" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Contribute a Tool to Toolwright", description: "Add a tool, fix a bug or improve the docs. Every Toolwright tool is a single folder, and a generator scaffolds it for you.", path: "/contribute" });
 
 export default function ContributePage() {
   return (

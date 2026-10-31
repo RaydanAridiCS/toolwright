@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { CommandPalette } from "../components/command-palette";
-import { JsonLd } from "../components/json-ld";
 import { ServiceWorkerRegister } from "../components/service-worker";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { THEME_INIT_SCRIPT } from "../components/theme-toggle";
-import { SITE, absoluteUrl } from "../lib/site";
+import { SITE } from "../lib/site";
 import "./globals.css";
 
 // All three typefaces are served from our own origin (the CSP forbids third-party fonts).
@@ -16,37 +15,29 @@ const display = localFont({
   weight: "200 800",
   variable: "--font-display",
   display: "swap",
+  adjustFontFallback: "Arial", // size-adjusted fallback so the swap to the real font does not reflow headings
 });
 const body = localFont({
   src: "../../../../node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2",
   weight: "400 700",
   variable: "--font-body",
   display: "swap",
+  adjustFontFallback: "Arial", // size-adjusted fallback so the swap to the real font does not reflow headings
 });
 const mono = localFont({
   src: "../../../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
   weight: "100 900",
   variable: "--font-mono",
   display: "swap",
-  preload: false, // used for small labels and data; loads when first needed
+  // Preloaded: the breadcrumb and label plates above the fold use it, and a late swap re-wrapped them (layout shift).
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: { default: `${SITE.name}: ${SITE.tagline}`, template: `%s · ${SITE.name}` },
-  description: SITE.description,
+  title: { default: SITE.homeTitle, template: `%s | ${SITE.name}` },
+  description: SITE.metaDescription,
   applicationName: SITE.name,
-  keywords: ["online tools", "open source", "privacy", "json formatter", "pdf merge", "image compressor", "developer tools"],
-  alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
-  openGraph: {
-    type: "website",
-    siteName: SITE.name,
-    title: `${SITE.name}: ${SITE.tagline}`,
-    description: SITE.description,
-    url: SITE.url,
-  },
-  twitter: { card: "summary_large_image", title: `${SITE.name}: ${SITE.tagline}`, description: SITE.description },
   robots: { index: true, follow: true },
 };
 
@@ -74,16 +65,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
         <CommandPalette />
         <ServiceWorkerRegister />
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: SITE.name,
-            url: absoluteUrl("/"),
-            description: SITE.description,
-            potentialAction: { "@type": "SearchAction", target: `${absoluteUrl("/tools")}?q={search_term_string}`, "query-input": "required name=search_term_string" },
-          }}
-        />
       </body>
     </html>
   );

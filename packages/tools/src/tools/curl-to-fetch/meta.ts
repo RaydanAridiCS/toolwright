@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn a copied cURL command into JavaScript fetch code.",
   description:
     "Paste a cURL command, such as one copied from your browser's network panel, and get the equivalent fetch call with headers, body and auth. It runs in your browser, so tokens in the command are never uploaded.",
+  primaryKeyword: "curl to fetch",
+  seoTitle: "cURL to Fetch Converter for JavaScript",
+  seoDescription:
+    "Paste a cURL command and get the equivalent JavaScript fetch call with headers, body and auth. Free, and tokens never leave your browser.",
+  answer:
+    "cURL to Fetch Converter turns a copied cURL command into a JavaScript fetch call with the headers, body and authorization it carries. It runs in your browser, so tokens in the command are never uploaded.",
   category: "developer",
   keywords: ["curl to fetch", "curl to javascript", "convert curl", "copy as curl", "curl to js", "curl command converter", "curl to node fetch"],
   icon: Terminal,
@@ -34,5 +40,6 @@ export default defineTool({
       answer: "No. It reads the bash-style command, which uses single quotes or $'…' strings. In Chrome, choose “Copy as cURL (bash)”.",
     },
   ],
+  nextStep: { slug: "fetch-to-curl", text: "Going the other way? Turn fetch code back into a cURL command." },
   related: ["fetch-to-curl", "json-formatter", "url-parser", "http-status-codes", "http-header-explainer"],
 });

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Copy the text out of a PDF, page by page, without uploading it.",
   description:
     "Read the text from a PDF and copy it or save it as a .txt file. Lines, paragraphs and split words are put back together, and pages can be marked. The PDF is read in your browser and never leaves your device. Scanned pages have no text to read.",
+  primaryKeyword: "pdf to text",
+  seoTitle: "PDF to Text: Extract Text from a PDF",
+  seoDescription:
+    "Copy the text out of a PDF page by page, or save it as a .txt file. Free, and the PDF is read in your browser, never uploaded.",
+  answer:
+    "PDF to Text extracts the text from a PDF, rebuilds lines, paragraphs and split words, and lets you copy it or save a .txt file. The PDF is read in your browser and never leaves your device. Scanned pages have no text to read, and there is no OCR.",
   category: "pdf",
   keywords: ["pdf to text", "extract text from pdf", "copy text from pdf", "pdf to txt", "pdf text extractor", "read pdf text", "convert pdf to text"],
   icon: FileText,
@@ -41,5 +47,6 @@ export default defineTool({
       answer: "No. Remove the password first, then drop the file here.",
     },
   ],
+  nextStep: { slug: "word-counter", text: "Next, count the words in the text you extracted." },
   related: ["pdf-to-images", "compress-pdf", "word-counter", "readability-score", "extract-pdf-pages", "html-to-markdown"],
 });

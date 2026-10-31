@@ -115,8 +115,9 @@ test.describe("home page", () => {
 
   test("has structured data and a canonical URL", async ({ page }) => {
     await page.goto("/");
-    const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
-    expect(JSON.parse(ld ?? "{}")).toMatchObject({ "@type": "WebSite", name: "Toolwright" });
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const types = blocks.flatMap((b) => [JSON.parse(b) as { "@type": string } | { "@type": string }[]].flat()).map((x) => x["@type"]);
+    expect(types).toEqual(expect.arrayContaining(["Organization", "WebSite", "FAQPage"]));
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /toolwright\.com\/?$/);
   });
 

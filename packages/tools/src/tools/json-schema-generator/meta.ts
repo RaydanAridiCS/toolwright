@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Generate a JSON Schema from a sample JSON document.",
   description:
     "Paste example JSON and get a JSON Schema describing its types, nesting and required keys. When the sample is a list, items are merged so keys missing from some of them become optional. Runs in your browser; nothing is uploaded.",
+  primaryKeyword: "json schema generator",
+  seoTitle: "JSON Schema Generator from a JSON Sample",
+  seoDescription:
+    "Paste example JSON and get a JSON Schema with types, nesting and required keys. Free, and your data stays in your browser.",
+  answer:
+    "JSON Schema Generator builds a JSON Schema from a sample JSON document, describing its types, nesting and required keys. When the sample is a list, the items are merged so keys missing from some of them become optional. It runs in your browser.",
   category: "developer",
   keywords: ["json schema generator", "json to json schema", "generate json schema", "infer json schema", "schema from json", "json schema from example"],
   icon: FileJson,
@@ -30,5 +36,6 @@ export default defineTool({
       answer: "No. The schema is generated in your browser.",
     },
   ],
+  nextStep: { slug: "json-to-typescript", text: "Prefer types in code? Generate TypeScript interfaces from the same JSON." },
   related: ["json-to-typescript", "json-formatter", "json-yaml-converter", "json-diff", "jsonpath-tester"],
 });

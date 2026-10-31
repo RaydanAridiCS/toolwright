@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Write Mermaid text, see the diagram, download it as SVG or PNG.",
   description:
     "Turn Mermaid text into flowcharts, sequence, class, state, ER, Gantt, pie, journey, git, mind map, timeline and more. See it update as you type, change the theme and background, then download SVG or PNG or share a link. Drawn in your browser with scripts disabled; nothing is uploaded.",
+  primaryKeyword: "mermaid live editor",
+  seoTitle: "Mermaid Live Editor: Diagrams as SVG or PNG",
+  seoDescription:
+    "Write Mermaid text and see flowcharts, sequence, class, ER and Gantt diagrams update live. Download SVG or PNG. Free, in your browser.",
+  answer:
+    "Mermaid Diagram Editor is a live editor that turns Mermaid text into flowcharts, sequence, class, state, ER, Gantt, pie, journey, git, mind map and timeline diagrams. Download SVG or PNG or share a link. It is drawn in your browser with scripts disabled.",
   category: "developer",
   keywords: ["mermaid editor", "mermaid live editor", "mermaid diagram", "mermaid to png", "mermaid to svg", "flowchart maker", "sequence diagram generator", "diagram as code"],
   icon: Workflow,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "50,000 characters of diagram text, which is Mermaid's own limit, and PNGs are capped at about 16 megapixels so the browser can draw them. Very large diagrams can be slow to lay out.",
     },
   ],
+  nextStep: { slug: "svg-editor", text: "Exported an SVG? Edit and tidy it in the SVG Editor." },
   related: ["markdown-preview", "svg-to-png", "json-formatter", "text-diff", "regex-tester"],
 });

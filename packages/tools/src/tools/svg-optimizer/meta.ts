@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Shrink SVG files by removing editor junk and extra digits.",
   description:
     "Drop one SVG or a whole folder of them and make them much smaller with SVGO, the standard optimizer. See before and after side by side, choose how many decimals to keep, and download a ZIP. Everything runs in your browser; your files are never uploaded.",
+  primaryKeyword: "svg optimizer",
+  seoTitle: "SVG Optimizer: Compress SVG Files Online",
+  seoDescription:
+    "Make SVG files much smaller with SVGO. See before and after side by side and download a ZIP. Free, and your files stay in your browser.",
+  answer:
+    "SVG Optimizer shrinks SVG files with SVGO, the standard optimizer. Drop one SVG or a whole folder, see before and after side by side, choose how many decimals to keep and download a ZIP. It runs in your browser, so your files are never uploaded.",
   category: "design",
   keywords: ["svg optimizer", "svg minifier", "compress svg", "svgo online", "reduce svg size", "minify svg", "svg compressor", "clean svg"],
   icon: Minimize2,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "Only if you ask, with Remove scripts and event handlers. For untrusted files use the SVG Sanitizer, which is built for that.",
     },
   ],
+  nextStep: { slug: "svg-to-png", text: "Need a picture instead of a vector? Convert the SVG to PNG." },
   related: ["svg-editor", "svg-sanitizer", "svg-to-react", "svg-data-uri", "image-compressor"],
 });

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Flesch, Flesch-Kincaid, Gunning Fog, SMOG and more for English text.",
   description:
     "Paste English text and get six standard readability scores, the school grade needed to follow it, reading time and the sentences that are hardest to read. It counts in your browser, so drafts stay private. Scores are guides, and syllable counting is approximate.",
+  primaryKeyword: "readability score",
+  seoTitle: "Readability Score Checker: Flesch and More",
+  seoDescription:
+    "Get Flesch, Flesch-Kincaid, Gunning Fog and SMOG scores, the school grade needed, and reading time for English text. Private.",
+  answer:
+    "Readability Score Checker gives six standard readability scores for English text, including Flesch Reading Ease, Flesch-Kincaid and Gunning Fog, plus the school grade needed to follow it, the reading time and the sentences that are hardest to read. Scores are guides, and syllable counting is approximate.",
   category: "text",
   keywords: ["readability score", "flesch reading ease", "flesch kincaid grade level", "gunning fog index", "smog index", "reading level checker", "text readability test"],
   icon: BookOpenCheck,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "For general web content, a Flesch Reading Ease of 60 to 70 (plain English) and a grade level around 7 to 9 is a common target. Technical or legal writing is often harder, and that can be fine for its audience.",
     },
   ],
+  nextStep: { slug: "word-counter", text: "Want the plain counts too? Count words, characters and sentences." },
   related: ["word-counter", "word-frequency", "case-converter", "text-diff", "lorem-ipsum"],
 });

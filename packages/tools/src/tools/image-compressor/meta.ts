@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Shrink JPG, PNG and WebP images without uploading them anywhere.",
   description:
     "Compress photos and graphics right in your browser. Adjust the quality, optionally resize, and compare file sizes before and after. Batch many images at once and download them together as a ZIP. Your images never leave your device.",
+  primaryKeyword: "image compressor",
+  seoTitle: "Image Compressor: Compress JPG, PNG, WebP",
+  seoDescription:
+    "Compress JPG, PNG and WebP images in your browser. Set the quality, compare sizes, batch many files. No upload, no sign-up, no watermark.",
+  answer:
+    "Image Compressor reduces the file size of JPG, PNG and WebP images in your browser. Choose a quality, optionally resize, compare the sizes before and after, and download many images at once as a ZIP. Nothing is uploaded.",
   category: "image",
   keywords: ["image compressor", "compress jpg", "compress png", "reduce image size", "optimize images", "tinypng alternative", "shrink photo"],
   icon: ImageDown,
@@ -16,5 +22,6 @@ export default defineTool({
     { question: "Is my image uploaded to a server?", answer: "No. Compression uses your browser's canvas, so the image stays on your device. You can verify this with your browser's network tab." },
     { question: "Will compression remove EXIF metadata?", answer: "Yes. Re-encoding through the canvas drops EXIF and other metadata, including GPS location. Use the EXIF Remover if you want to strip metadata without recompressing." },
   ],
+  nextStep: { slug: "image-resizer", text: "Still too big? Resize the image to smaller dimensions as well." },
   related: ["image-converter", "image-resizer", "exif-remover", "gif-editor", "svg-optimizer", "image-crop"],
 });

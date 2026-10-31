@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn an SVG into a React or TypeScript component.",
   description:
     "Convert an SVG into a React component with the right attribute names, style objects and optional TypeScript, props, currentColor and memo. Editor junk is dropped for you. It runs in your browser; your SVG is never uploaded.",
+  primaryKeyword: "svg to react",
+  seoTitle: "SVG to React Component Converter (JSX, TSX)",
+  seoDescription:
+    "Convert an SVG into a React component with correct attribute names, optional TypeScript, props and currentColor. Free, runs in your browser.",
+  answer:
+    "SVG to React converts an SVG into a React component with the right attribute names, style objects and optional TypeScript, props, currentColor and memo, and drops editor junk. It runs in your browser, so your SVG is never uploaded.",
   category: "developer",
   keywords: ["svg to react", "svg to jsx", "svg to tsx", "svg react component", "svgr online", "convert svg to component", "react icon component", "svg to typescript"],
   icon: Component,
@@ -34,5 +40,6 @@ export default defineTool({
       answer: "The output is standard JSX and TSX, so it works with Next.js and Vite. React Native needs react-native-svg components instead, which this tool does not produce.",
     },
   ],
+  nextStep: { slug: "svg-optimizer", text: "Smaller components start with a smaller SVG. Optimize it first." },
   related: ["svg-optimizer", "svg-data-uri", "svg-editor", "html-to-markdown"],
 });

@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Turn an SVG into a CSS or HTML data URI you can paste.",
   description:
     "Convert an SVG into a data URI for CSS backgrounds, masks, img tags or Markdown. The URL-encoded form is usually much smaller than Base64. It runs in your browser, so your file is never uploaded.",
+  primaryKeyword: "svg to data uri",
+  seoTitle: "SVG to Data URI Converter for CSS and HTML",
+  seoDescription:
+    "Convert an SVG into a data URI for CSS backgrounds, masks, img tags or Markdown. The URL-encoded form is smaller than Base64. Free.",
+  answer:
+    "SVG to Data URI converts an SVG into a data URI for CSS backgrounds, masks, img tags and Markdown. The URL-encoded form is usually much smaller than Base64. It runs in your browser, so your file is never uploaded.",
   category: "developer",
   keywords: ["svg to data uri", "svg data url", "svg css background", "inline svg css", "svg base64", "svg url encode", "svg to base64", "css mask svg"],
   icon: Link2,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "It adds the SVG namespace if missing, removes comments and the XML declaration, switches attributes to single quotes, and tidies whitespace so the string is as short as it can be.",
     },
   ],
+  nextStep: { slug: "svg-optimizer", text: "Smaller input gives a smaller URI. Optimize the SVG first." },
   related: ["svg-optimizer", "svg-to-react", "image-to-base64", "base64-encoder"],
 });

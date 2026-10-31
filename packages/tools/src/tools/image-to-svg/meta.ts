@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Trace a logo or drawing into a scalable SVG.",
   description:
     "Turn a PNG, JPG, WebP or GIF into SVG paths in black and white or colour, with control over detail, noise and the number of colours. Best for logos, icons and line art. It runs in your browser and your picture is never uploaded.",
+  primaryKeyword: "image to svg",
+  seoTitle: "Image to SVG Converter: Trace PNG and JPG",
+  seoDescription:
+    "Trace a PNG, JPG, WebP or GIF into SVG paths in black and white or color. Control detail, noise and colors. Free, no upload.",
+  answer:
+    "Image to SVG traces a PNG, JPG, WebP or GIF into SVG paths, in black and white or color, with control over detail, noise and the number of colors. It works best for logos, icons and line art, and runs in your browser.",
   category: "image",
   keywords: ["image to svg", "png to svg", "jpg to svg", "vectorize image", "trace image", "raster to vector", "logo to svg", "bitmap to svg"],
   icon: Waypoints,
@@ -38,5 +44,6 @@ export default defineTool({
       answer: "Yes. Use fewer colours, a smoother detail level or a higher Ignore specks value, then run the SVG through the SVG Optimizer.",
     },
   ],
+  nextStep: { slug: "svg-optimizer", text: "Traced paths can be heavy. Shrink the SVG with the SVG Optimizer." },
   related: ["svg-optimizer", "svg-editor", "svg-recolor", "image-converter", "svg-to-png"],
 });

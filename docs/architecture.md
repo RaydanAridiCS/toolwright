@@ -56,6 +56,8 @@ Each tool is a folder under `src/tools/<slug>/`:
 | `meta.ts` | Pure data (`defineTool({...})`): name, tagline, description, category, keywords, icon, optional `howTo`, `faq`, `related`. Safe to import on the server; drives routing, search, SEO and sitemap. |
 | `Tool.tsx` | The UI (default export). Client component, loaded lazily. |
 
+`meta.ts` also holds the search fields (`primaryKeyword`, `seoTitle`, `seoDescription`, `answer`, `nextStep`). The research behind them (secondary queries, intent, estimates) is `src/seo/keyword-map.ts`, the category landing copy is `src/seo/category-content.ts`, and `docs/keyword-map.md` is generated from the first (`npm run docs:seo`).
+
 `scripts/gen-registry.mjs` scans the folders and writes two generated files (committed, and verified by a test):
 
 - `registry.generated.ts` — the list of every tool's `meta`.
@@ -87,7 +89,7 @@ Next.js App Router. Key points:
 - **Network ledger.** `lib/use-outside-requests.ts` observes Resource Timing (`PerformanceObserver`, `buffered: true`) and `NetworkLedger` shows how many requests this page made to other origins. It shows "…" until measured, never a number the browser has not seen. What it proves and what it does not: see [privacy-model.md](privacy-model.md).
 - **Command palette** (`cmdk`): `Ctrl/Cmd+K` or `/`, ranked by `searchTools`, with favorites and recents from `localStorage`.
 - **PWA**: `public/sw.js` caches build assets and visited pages so opened tools work offline; `manifest.ts` and generated icons make it installable.
-- **SEO**: per-tool titles/descriptions, canonical URLs, Open Graph images (`opengraph-image.tsx`), `sitemap.ts`, `robots.ts`, and JSON-LD (`WebApplication`, `BreadcrumbList`, `FAQPage`, `HowTo`).
+- **SEO and answer engines** (see [seo.md](seo.md)): `lib/seo.ts` builds every page's title, canonical URL and social card (`pageMetadata`); `lib/structured-data.ts` builds the JSON-LD (WebApplication, BreadcrumbList, FAQPage, HowTo, CollectionPage with an ItemList, Organization, WebSite, Article); `robots.ts` is generated from `lib/crawler-policy.ts`; `/llms.txt` and `/llms-full.txt` come from `lib/llms.ts`; `sitemap.ts` uses real dates from `scripts/gen-lastmod.mjs`; `content/guides.ts` holds the guides. Tool, category and guide pages put the title, answer, steps and FAQ in the static HTML, and `/tools` renders the whole catalogue on the server so a crawler that does not run JavaScript sees every link.
 
 ## Data flow for a typical tool
 

@@ -6,6 +6,7 @@ import { NetworkLedger } from "./network-ledger";
 import { Ruler } from "./ruler";
 
 const PROJECT_LINKS = [
+  { href: "/guides", label: "Guides" },
   { href: "/about", label: "About" },
   { href: "/privacy", label: "How privacy works" },
   { href: "/requests", label: "Request a tool" },

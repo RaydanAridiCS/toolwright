@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Find a time that falls inside everyone's working hours across time zones.",
   description:
     "Add the cities your team works in, set their working hours, pick a day, and see the windows when everyone is at work, in each person's local time. Handles daylight saving time and half-hour zones, and suggests compromises when nothing fits. Shareable link, calculated in your browser.",
+  primaryKeyword: "meeting planner",
+  seoTitle: "Meeting Planner: Find a Time Across Time Zones",
+  seoDescription:
+    "Add your teammates' cities and working hours and see the windows when everyone is at work, in local times. Handles daylight saving.",
+  answer:
+    "Meeting Time Planner finds the times when everyone is inside their working hours across time zones. Add the cities, set each person's hours, pick a day and read the windows in each person's local time. It handles daylight saving and half-hour zones, and it runs in your browser.",
   category: "calculators",
   keywords: ["meeting planner", "time zone meeting planner", "find meeting time across time zones", "world clock meeting", "best time to meet", "overlapping working hours", "schedule across time zones"],
   icon: CalendarClock,
@@ -33,5 +39,6 @@ export default defineTool({
       answer: "A calendar day starts at different moments around the world, so the plan needs one place to define it. The tool tries every half hour of that day in the first city's time, and shows the others' local times, including when they fall on the next or previous day.",
     },
   ],
+  nextStep: { slug: "time-zone-converter", text: "Just converting one time? Use the Time Zone Converter." },
   related: ["time-zone-converter", "date-calculator", "timestamp-converter", "cron-explainer", "salary-converter"],
 });

@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "node ../../scripts/gen-registry.mjs && node ../../scripts/copy-pdfjs-assets.mjs",
     "dev": "next dev",
-    "prebuild": "node ../../scripts/gen-registry.mjs && node ../../scripts/copy-pdfjs-assets.mjs",
+    "prebuild": "node ../../scripts/gen-registry.mjs && node ../../scripts/copy-pdfjs-assets.mjs && node ../../scripts/gen-lastmod.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit"

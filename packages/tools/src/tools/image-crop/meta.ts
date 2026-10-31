@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Crop a picture, turn it, flip it or straighten it, without an upload.",
   description:
     "Crop a JPG, PNG or WebP to any shape or a fixed ratio, turn it in quarter steps, flip it, or straighten a crooked photo. The picture is processed in your browser and never leaves your device.",
+  primaryKeyword: "crop image",
+  seoTitle: "Crop Image Online: Crop, Rotate and Flip",
+  seoDescription:
+    "Crop a JPG, PNG or WebP to any shape or ratio, rotate, flip or straighten it. Free, and the picture never leaves your device.",
+  answer:
+    "Crop, Rotate & Flip Image crops a JPG, PNG or WebP to any shape or a fixed ratio, turns it in quarter steps, flips it or straightens a crooked photo. It runs in your browser, so the picture is never uploaded.",
   category: "image",
   keywords: ["crop image", "rotate image", "flip image", "straighten photo", "image cropper", "crop photo online", "mirror image", "crop to square", "aspect ratio crop"],
   icon: Crop,
@@ -37,5 +43,6 @@ export default defineTool({
       answer: "Yes. Type the left, top, width and height of the box, or focus the box and use the arrow keys to move it and Shift with the arrows to resize it.",
     },
   ],
+  nextStep: { slug: "image-resizer", text: "Cropped and need an exact size? Resize the image next." },
   related: ["image-resizer", "image-compressor", "image-converter", "favicon-generator", "exif-remover"],
 });

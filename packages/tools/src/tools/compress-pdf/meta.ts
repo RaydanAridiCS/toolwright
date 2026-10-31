@@ -7,6 +7,12 @@ export default defineTool({
   tagline: "Make a PDF smaller by recompressing its images. Nothing is uploaded.",
   description:
     "Shrink a PDF in your browser. Keep text recompresses the photos inside and leaves text, links and forms alone. Smallest file turns each page into a picture for the biggest saving. Your file never leaves your device, and you are never handed a file larger than the original.",
+  primaryKeyword: "compress pdf",
+  seoTitle: "Compress PDF Online Free, No Upload",
+  seoDescription:
+    "Compress a PDF in your browser to cut its file size. No upload, no sign-up, no watermark. You never get a file bigger than the original.",
+  answer:
+    "Compress PDF reduces a PDF's file size in your browser. Nothing is uploaded. Keep text recompresses the photos inside and leaves text, links and forms alone; Smallest file turns each page into a picture for the biggest saving. If the result would not be smaller, you get your original back.",
   category: "pdf",
   keywords: ["compress pdf", "reduce pdf size", "shrink pdf", "pdf compressor", "make pdf smaller", "compress pdf no upload", "pdf too large"],
   icon: Shrink,
@@ -48,5 +54,6 @@ export default defineTool({
       answer: "Files up to 200 MB, and up to 1,000 pages for Smallest file. Bigger files can exhaust a browser tab's memory, so the tool refuses them and suggests splitting the file first. Large files can take a minute or more; you can cancel at any time.",
     },
   ],
+  nextStep: { slug: "merge-pdf", text: "Compressing several files? Merge the PDFs into one first." },
   related: ["merge-pdf", "split-pdf", "images-to-pdf", "image-compressor", "pdf-to-images", "pdf-to-text"],
 });

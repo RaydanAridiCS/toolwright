@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { tools } from "@toolwright/tools";
 import { ProsePage } from "../../components/prose-page";
 import { SITE } from "../../lib/site";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: "Toolwright is a free, open-source, community-built collection of private online tools. Learn why it exists and how it works.",
-  alternates: { canonical: "/about" },
-};
+export const metadata: Metadata = pageMetadata({ title: "About: Free, Open-Source, Private Tools", description: "Toolwright is a free, open-source, community-built collection of private online tools. Learn why it exists and how it works.", path: "/about" });
 
 export default function AboutPage() {
   return (

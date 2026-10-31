@@ -31,6 +31,16 @@ export interface ToolMeta {
   related?: string[];
   /** Highlight on the home page. */
   popular?: boolean;
+  /** The one search query this page is meant to own, lower case ("compress pdf"). Unique across tools. */
+  primaryKeyword?: string;
+  /** Search-result title WITHOUT the brand (the page adds " | Toolwright"). 25-47 characters, contains `primaryKeyword`. */
+  seoTitle?: string;
+  /** Meta description, 110-160 characters: a clear benefit, the privacy angle, no stuffing. Unique across tools. */
+  seoDescription?: string;
+  /** Answer-first summary shown under the H1, 80-320 characters, written so it can be quoted on its own. Contains `primaryKeyword`. */
+  answer?: string;
+  /** Optional "what to do next" link on the tool page; `text` is the descriptive anchor sentence. */
+  nextStep?: { slug: string; text: string };
 }
 
 export function defineTool<T extends ToolMeta>(meta: T): T {
